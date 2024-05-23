@@ -21,7 +21,7 @@ export default function BottomTabsNavigator() {
       <Tab.Screen name="Foods" component={FoodsScreen} options={{
         tabBarIcon: ({focused, color, size}) => <FontAwesome5 name="clipboard-list" size={24} color={focused ? "blue" : "black"} />
       }}/>
-      <Tab.Screen name="Home" component={HomeScreen} options={{
+      <Tab.Screen name="Diary" component={HomeScreen} options={{
         tabBarIcon: ({focused, color, size}) => <MaterialCommunityIcons name="food-fork-drink" size={24} color={focused ? "blue" : "black"} />
       }} />
       <Tab.Screen name="Weight" component={WeightScreen} options={{
