@@ -3,6 +3,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import { SQLiteProvider } from "expo-sqlite/next";
 import { NavigationContainer } from "@react-navigation/native";
 import { Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
@@ -68,10 +69,12 @@ export default function App() {
   }
 
   return (
-    <SQLiteProvider databaseName="database.db">
-      <NavigationContainer>
-        <BottomTabsNavigator />
-      </NavigationContainer>
-    </SQLiteProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SQLiteProvider databaseName="database.db">
+        <NavigationContainer>
+          <BottomTabsNavigator />
+        </NavigationContainer>
+      </SQLiteProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSQLiteContext } from "expo-sqlite/next";
+import {
+  View,
+  TextField,
+  Text,
+  Button,
+  Drawer,
+  Colors,
+} from "react-native-ui-lib";
+import MealDrawer from "../components/MealDrawer";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const database = useSQLiteContext();
@@ -10,18 +20,19 @@ export default function HomeScreen() {
   console.log(meals);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {meals.map((meal) => {
-        return <Text key={meal.id}>{meal.name}</Text>;
+        return <MealDrawer key={meal.id} meal={meal} />;
       })}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 10,
   },
 });
