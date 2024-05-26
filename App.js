@@ -49,7 +49,6 @@ export default function App() {
       try {
         const db = await openDatabase();
         setDatabase(db);
-        // console.log(db);
       } catch (error) {
         console.error(error);
       } finally {
