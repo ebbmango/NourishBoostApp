@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
-import {
-  View,
-  TextField,
-  Text,
-  Button,
-  Drawer,
-  Colors,
-} from "react-native-ui-lib";
 import MealDrawer from "../components/MealDrawer";
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -22,8 +14,6 @@ export default function HomeScreen() {
   addDatabaseChangeListener(() => {
     setMeals(getMeals());
   });
-
-  // console.log(meals);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
