@@ -9,7 +9,8 @@ import {
   Colors,
   ExpandableSection,
 } from "react-native-ui-lib";
-import ConfirmationAlert from "./ConfirmationAlert";
+import DeleteMealDialog from "./DeleteMealDialog";
+import EditMealDialog from "./EditMealDialog";
 
 // Get the screen width
 const screenWidth = Dimensions.get("window").width;
@@ -26,28 +27,36 @@ const onRightPress = () => {
 
 export default function MealDrawer({ meal }) {
   const [expanded, setExpanded] = useState(false);
-  const [alertVisibility, setAlertVisibility] = useState(false);
+  const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
+  const [showEditDialogue, setShowEditDialogue] = useState(false);
 
   return (
     <>
-      <ConfirmationAlert
-        visible={alertVisibility}
-        setVisible={setAlertVisibility}
-        meal={ meal }
+      <DeleteMealDialog
+        visible={showDeleteDialogue}
+        setVisible={setShowDeleteDialogue}
+        meal={meal}
+      />
+      <EditMealDialog
+        visible={showEditDialogue}
+        setVisible={setShowEditDialogue}
+        meal={meal}
       />
       <Drawer
         rightItems={[
           {
             text: "Edit",
             background: Colors.yellow10,
-            onPress: () => console.log("read pressed"),
+            onPress: () => {
+              setShowEditDialogue(true);
+            },
           },
         ]}
         leftItem={{
           text: "Delete",
           background: Colors.red30,
           onPress: () => {
-            setAlertVisibility(true);
+            setShowDeleteDialogue(true);
           },
         }}
         style={{ marginBottom: 10, width: screenWidth * 0.8, borderRadius: 10 }}

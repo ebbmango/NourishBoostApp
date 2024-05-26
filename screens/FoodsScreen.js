@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import ConfirmationAlert from "../components/ConfirmationAlert";
 
 export default function FoodsScreen() {
   return (

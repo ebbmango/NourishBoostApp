@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { useSQLiteContext } from "expo-sqlite/next";
+import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
 import {
   View,
   TextField,
@@ -15,9 +15,15 @@ import { ScrollView } from "react-native-gesture-handler";
 export default function HomeScreen() {
   const database = useSQLiteContext();
 
-  const meals = database.getAllSync("SELECT * FROM meals;");
+  const getMeals = () => database.getAllSync("SELECT * FROM meals;");
 
-  console.log(meals);
+  const [meals, setMeals] = useState(getMeals());
+
+  addDatabaseChangeListener(() => {
+    setMeals(getMeals());
+  });
+
+  // console.log(meals);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
