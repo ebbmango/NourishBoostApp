@@ -1,10 +1,6 @@
 import { Dialog, PanningProvider } from "react-native-ui-lib";
 import { View, StyleSheet } from "react-native";
 import { Button, Text, Colors } from "react-native-ui-lib";
-import { useState } from "react";
-import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
-
-const mealName = "breakfast";
 
 export default function DeleteMealDialog({ visible, setVisible, meal }) {
   return (

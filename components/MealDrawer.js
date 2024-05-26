@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Dimensions } from "react-native";
 import {
   View,
-  TextField,
   Text,
-  Button,
   Drawer,
   Colors,
   ExpandableSection,
@@ -14,16 +12,6 @@ import EditMealDialog from "./EditMealDialog";
 
 // Get the screen width
 const screenWidth = Dimensions.get("window").width;
-
-const onLeftPress = () => {
-  // Handle left drawer item press
-  console.log("Left drawer item pressed");
-};
-
-const onRightPress = () => {
-  // Handle right drawer item press
-  console.log("Right drawer item pressed");
-};
 
 export default function MealDrawer({ meal }) {
   const [expanded, setExpanded] = useState(false);

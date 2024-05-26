@@ -1,5 +1,5 @@
 import { Dialog, PanningProvider } from "react-native-ui-lib";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Button, Text, Colors, TextField } from "react-native-ui-lib";
 import { useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
