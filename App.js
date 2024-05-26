@@ -69,7 +69,10 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SQLiteProvider databaseName="database.db">
+      <SQLiteProvider
+        databaseName="database.db"
+        options={{ enableChangeListener: true }}
+      >
         <NavigationContainer>
           <BottomTabsNavigator />
         </NavigationContainer>
