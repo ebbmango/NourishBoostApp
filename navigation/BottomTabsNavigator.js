@@ -18,7 +18,10 @@ const Tab = createBottomTabNavigator();
 // Component
 export default function BottomTabsNavigator() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Diary"
+    >
       <Tab.Screen
         name="Foods"
         component={FoodsStackNavigator}
