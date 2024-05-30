@@ -6,11 +6,11 @@ import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 // Get the screen width
 const screenWidth = Dimensions.get("window").width;
 
-export default function FoodListItem({ food }) {
+export default function FoodListItem({ food, navigation }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log(food.name);
+        navigation.navigate("Details");
       }}
     >
       <ListItem style={{ marginTop: 5 }}>

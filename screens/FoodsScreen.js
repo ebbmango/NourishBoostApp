@@ -8,7 +8,7 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 import FoodListItem from "../components/FoodListItem";
 import getFoodsQuery from "../queries/getFoods";
 
-export default function FoodsScreen() {
+export default function FoodsScreen({ navigation }) {
   const database = useSQLiteContext();
 
   const getFoods = () => database.getAllSync(getFoodsQuery);
@@ -44,7 +44,9 @@ export default function FoodsScreen() {
       </View>
       <ScrollView contentContainerStyle={styles.itemsList}>
         {foods.map((food) => {
-          return <FoodListItem key={food.id} food={food} />;
+          return (
+            <FoodListItem key={food.id} food={food} navigation={navigation} />
+          );
         })}
       </ScrollView>
     </>
