@@ -10,7 +10,7 @@ export default function FoodListItem({ food, navigation }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("Details");
+        navigation.navigate("Details", { food: food });
       }}
     >
       <ListItem style={{ marginTop: 5 }}>
