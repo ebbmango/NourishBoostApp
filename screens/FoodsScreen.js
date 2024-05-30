@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
-import { Assets, Button, Colors, Icon, Image } from "react-native-ui-lib";
-import iconImage from "../assets/icons/plus-solid.svg";
+import { Assets, Button, Colors, ListItem } from "react-native-ui-lib";
 
 import PlusIcon from "../components/PlusIcon";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import FoodListItem from "../components/FoodListItem";
+import getFoodsQuery from "../queries/getFoods";
 
 export default function FoodsScreen() {
-  Assets.loadAssetsGroup("icons", {
-    icon1: require("../assets/icons/plus-solid.svg"),
-  });
-
   const database = useSQLiteContext();
 
-  const getFoods = () => database.getAllSync("SELECT * FROM foods;");
+  const getFoods = () => database.getAllSync(getFoodsQuery);
 
   const [foods, setFoods] = useState(getFoods());
 
   addDatabaseChangeListener(() => {
     setFoods(getFoods());
   });
-
-  console.log(foods);
 
   return (
     <>
@@ -41,19 +37,23 @@ export default function FoodsScreen() {
           }}
           round
           style={{ width: 30, height: 30, padding: 6 }}
+          onPress={() => {
+            // do something
+          }}
         />
       </View>
-      <View style={styles.container}>
-        <Text>Foods Screen</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.itemsList}>
+        {foods.map((food) => {
+          return <FoodListItem key={food.id} food={food} />;
+        })}
+      </ScrollView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  itemsList: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
 });
