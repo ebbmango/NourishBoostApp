@@ -10,6 +10,8 @@ import {
 } from "react-native-ui-lib";
 import getNutriTablesQuery from "../queries/getNutriTables";
 import { useEffect, useState } from "react";
+import GaugeIcon from "../components/icons/GaugeIcon";
+import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 
 export default function FoodDetailsScreen({ navigation, route }) {
   const database = useSQLiteContext();
@@ -41,23 +43,30 @@ export default function FoodDetailsScreen({ navigation, route }) {
   console.log(selectedNutriTable);
 
   return (
-    <View style={{ justifyContent: "center", alignItems: "center" }}>
-      <Text>{selectedNutriTable.name}</Text>
+    <View>
+      <Text text30>{food.name}</Text>
+      {/* Change quantity field */}
       <View
-        centerH
-        style={{ flexDirection: "row", width: screenWidth - 40, gap: 10 }}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 15,
+          marginLeft: 16,
+        }}
       >
-        <Text>Measurement unit:</Text>
+        <View width={24} height={24}>
+          <GaugeIcon />
+        </View>
         <Picker
           value={selectedUnit}
           onChange={(element) => {
             setSelectedUnit(element);
           }}
           style={{
-            width: 100,
-            marginVertical: 20,
-            backgroundColor: Colors.grey50,
-            borderRadius: 10,
+            width: screenWidth - 64,
+            height: 36,
+            backgroundColor: Colors.grey60,
+            borderRadius: 5,
             paddingHorizontal: 10,
           }}
         >
@@ -71,6 +80,47 @@ export default function FoodDetailsScreen({ navigation, route }) {
         </Picker>
       </View>
 
+      {/* Change unit field */}
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 15,
+          marginTop: 12,
+          marginLeft: 16,
+        }}
+      >
+        <View width={24} height={24}>
+          <RulerVerticalIcon />
+        </View>
+        <Picker
+          value={selectedUnit}
+          onChange={(element) => {
+            setSelectedUnit(element);
+          }}
+          style={{
+            width: screenWidth - 64,
+            height: 36,
+            backgroundColor: Colors.grey60,
+            borderRadius: 5,
+            paddingHorizontal: 10,
+          }}
+        >
+          {nutritionalTables.map((nutritionalTable) => (
+            <Picker.Item
+              key={nutritionalTable.unit}
+              value={nutritionalTable.unit}
+              label={nutritionalTable.unit}
+            />
+          ))}
+        </Picker>
+      </View>
+
+      <View
+        centerH
+        style={{ flexDirection: "row", width: screenWidth - 32, gap: 10 }}
+      ></View>
+      {/* Macronutrients grid */}
       <GridView
         numColumns={2}
         items={[
@@ -103,12 +153,13 @@ export default function FoodDetailsScreen({ navigation, route }) {
           return (
             <View
               style={{
-                width: screenWidth / 2 - 20, // Adjust the width for padding/margin
-                margin: 10,
+                width: screenWidth / 2 - 15, // Adjust the width for padding/margin
                 padding: 10,
-                borderWidth: 1,
-                borderColor: "#ccc",
                 justifyContent: "center",
+                backgroundColor: Colors.grey50,
+                borderRadius: 5,
+                marginLeft: 10,
+                marginTop: 10,
                 alignItems: "center",
               }}
             >
@@ -121,7 +172,26 @@ export default function FoodDetailsScreen({ navigation, route }) {
           );
         }}
       />
-      <Button label="Go to List" onPress={() => navigation.navigate("List")} />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          width: screenWidth,
+        }}
+      >
+        <Button
+          label="Delete"
+          backgroundColor={Colors.red20}
+          borderRadius={10}
+          onPress={() => navigation.navigate("List")}
+        />
+        <Button
+          label="Edit"
+          backgroundColor={Colors.yellow10}
+          borderRadius={10}
+          onPress={() => navigation.navigate("List")}
+        />
+      </View>
     </View>
   );
 }

@@ -3,7 +3,8 @@ import { View, Text, StyleSheet } from "react-native";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
 import { Assets, Button, Colors, ListItem } from "react-native-ui-lib";
 
-import PlusIcon from "../components/PlusIcon";
+import PlusIcon from "../components/icons/PlusIcon";
+
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import FoodListItem from "../components/FoodListItem";
 import getFoodsQuery from "../queries/getFoods";
