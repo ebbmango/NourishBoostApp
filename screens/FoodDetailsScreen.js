@@ -4,48 +4,83 @@ import {
   Button,
   Colors,
   GridView,
+  NumberInput,
   Picker,
   Text,
   View,
 } from "react-native-ui-lib";
 import getNutriTablesQuery from "../queries/getNutriTables";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 
 export default function FoodDetailsScreen({ navigation, route }) {
+  // Retrieving the database.
   const database = useSQLiteContext();
 
+  // Retrieving the screen's width.
   const screenWidth = Dimensions.get("window").width;
-  const food = route.params.food;
 
-  const nutritionalTables = database.getAllSync(getNutriTablesQuery(food.id));
+  // Creating handler for the food object passed as a parameter.
+  const foodObject = route.params.food;
 
-  //   console.log(nutritionalTables);
+  // Getting all the nutritional tables for the currently selected food object.
+  const nutritionalTables = database.getAllSync(
+    getNutriTablesQuery(foodObject.id)
+  );
 
+  // Creating stateful variables for the measurement unit and the quantity and
+  // setting their initial values to those of the food's first nutritional table.
   const [selectedUnit, setSelectedUnit] = useState(nutritionalTables[0].unit);
+  const [quantity, setQuantity] = useState(nutritionalTables[0].base_measure);
 
+  // Function to retrieve the nutritional table that uses the correct measurement unit.
   function getNutriTable(unit) {
     return nutritionalTables.filter((nutriTable) => {
       return nutriTable.unit === unit;
     })[0];
   }
 
-  const [selectedNutriTable, setSelectedNutriTable] = useState(
+  // Creating a stateful variable for the current nutritional table and setting
+  // its initial value to the one that uses the currently selected measurement unit.
+  const [nutritionalTable, setNutritionalTable] = useState(
     getNutriTable(selectedUnit)
   );
 
+  // Creating a key to manually re-render the <InputNumber/> component.
+  const [inputKey, setInputKey] = useState(Date.now());
+
+  // Hook to automatically update the currently selected nutritional table as soon
+  // as the currently selected measurement unit is changes.
   useEffect(() => {
-    setSelectedNutriTable(getNutriTable(selectedUnit));
+    setNutritionalTable(getNutriTable(selectedUnit));
+    // Resetting the quantity (in order to trigger the update of the displayed macronutrients
+    // in accordance to the newly selected nutritional table's base measure).
+    setQuantity(nutritionalTable.base_measure);
+    // Forcing the re-render of the <InputNumber/> component.
+    setInputKey(Date.now());
   }, [selectedUnit]);
 
-  //   console.log(selectedNutrient);
-  console.log(selectedNutriTable);
+  // Function to calculate the quantities fo each macronutrient in the food
+  // according to its currently informed portion.
+  function calculateProportion(number) {
+    return (number / nutritionalTable.base_measure) * quantity;
+  }
+
+  // Object to hold all the details of the currently informed food portion.
+  const foodDetails = {
+    name: foodObject.name,
+    portion: quantity,
+    calories: calculateProportion(nutritionalTable.calories),
+    carbs: calculateProportion(nutritionalTable.carbs),
+    fats: calculateProportion(nutritionalTable.fats),
+    protein: calculateProportion(nutritionalTable.protein),
+  };
 
   return (
     <View>
-      <Text text30>{food.name}</Text>
-      {/* Change quantity field */}
+      <Text text30>{foodDetails.name}</Text>
+      {/* Field that changes the amount of food */}
       <View
         style={{
           flexDirection: "row",
@@ -57,30 +92,23 @@ export default function FoodDetailsScreen({ navigation, route }) {
         <View width={24} height={24}>
           <GaugeIcon />
         </View>
-        <Picker
-          value={selectedUnit}
-          onChange={(element) => {
-            setSelectedUnit(element);
+        <NumberInput
+          key={inputKey}
+          initialNumber={quantity}
+          onChangeNumber={(numberInput) => {
+            setQuantity(numberInput.number);
           }}
-          style={{
+          containerStyle={{
             width: screenWidth - 64,
             height: 36,
             backgroundColor: Colors.grey60,
             borderRadius: 5,
             paddingHorizontal: 10,
+            alignItems: "center",
           }}
-        >
-          {nutritionalTables.map((nutritionalTable) => (
-            <Picker.Item
-              key={nutritionalTable.unit}
-              value={nutritionalTable.unit}
-              label={nutritionalTable.unit}
-            />
-          ))}
-        </Picker>
+        />
       </View>
-
-      {/* Change unit field */}
+      {/* Field that changes the currently selected measurement unit */}
       <View
         style={{
           flexDirection: "row",
@@ -115,36 +143,31 @@ export default function FoodDetailsScreen({ navigation, route }) {
           ))}
         </Picker>
       </View>
-
-      <View
-        centerH
-        style={{ flexDirection: "row", width: screenWidth - 32, gap: 10 }}
-      ></View>
       {/* Macronutrients grid */}
       <GridView
         numColumns={2}
         items={[
           {
             title: "Calories",
-            value: selectedNutriTable.calories,
+            value: foodDetails.calories,
             macro: false,
             onPress: () => console.log("item 1 pressed"),
           },
           {
             title: "Carbohydrates",
-            value: selectedNutriTable.carbs,
+            value: foodDetails.carbs,
             macro: true,
             onPress: () => console.log("item 2 pressed"),
           },
           {
             title: "Fats",
-            value: selectedNutriTable.fats,
+            value: foodDetails.fats,
             macro: true,
             onPress: () => console.log("item 3 pressed"),
           },
           {
             title: "Protein",
-            value: selectedNutriTable.protein,
+            value: foodDetails.protein,
             macro: true,
             onPress: () => console.log("item 4 pressed"),
           },
@@ -172,6 +195,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
           );
         }}
       />
+      {/* Delete and edit buttons */}
       <View
         style={{
           flexDirection: "row",
