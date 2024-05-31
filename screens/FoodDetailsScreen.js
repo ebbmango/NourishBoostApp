@@ -201,7 +201,6 @@ export default function FoodDetailsScreen({ navigation, route }) {
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-around",
           width: screenWidth,
           marginTop: 20,
         }}
@@ -221,8 +220,12 @@ export default function FoodDetailsScreen({ navigation, route }) {
             padding: 6,
             borderRadius: 10,
             backgroundColor: Colors.red20,
+            marginHorizontal: 10,
           }}
-          onPress={() => navigation.navigate("List")}
+          onPress={() => {
+            console.log("delete!");
+            // navigation.navigate("List");
+          }}
         />
         {/* Edit button */}
         <Button
@@ -240,7 +243,10 @@ export default function FoodDetailsScreen({ navigation, route }) {
             borderRadius: 10,
             backgroundColor: Colors.yellow10,
           }}
-          onPress={() => navigation.navigate("List")}
+          onPress={() => {
+            console.log("edit!");
+            // navigation.navigate("List");
+          }}
         />
       </View>
     </View>
