@@ -1,12 +1,18 @@
-const getNutriTablesQuery = (food_id) => {
-  return `
-    SELECT *
-    FROM food_nutri_table nt
-    JOIN units u ON nt.unit_id = u.id
-    WHERE nt.food_id = ${food_id};
-    `;
-};
+const getNutriTablesQuery = ` 
+SELECT 
+nt.id AS tableId,
+fd.name AS foodName,
+nt.food_id AS foodId,
+nt.base_measure as baseMeasure,
+un.unit,
+nt.calories,
+nt.carbs,
+nt.fats,
+nt.protein
+FROM food_nutri_table nt
+INNER JOIN foods fd ON foodId = fd.id
+INNER JOIN units un ON nt.unit_id = un.id
+WHERE foodId = $food_id;
+`;
 
 export default getNutriTablesQuery;
-// JOIN
-//     units u ON nt.unit_id = u.id

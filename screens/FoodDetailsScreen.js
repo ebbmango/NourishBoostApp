@@ -1,5 +1,7 @@
-import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
+// Libraries
+import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite/next";
 import { Dimensions } from "react-native";
+import { useEffect, useState } from "react";
 import {
   Button,
   Colors,
@@ -9,14 +11,18 @@ import {
   Text,
   View,
 } from "react-native-ui-lib";
+
+// Queries
 import getNutriTablesQuery from "../queries/getNutriTables";
-import { useEffect, useRef, useState } from "react";
+
+// Components
+import DeleteFoodDialog from "../components/DeleteFoodDialog";
+
+// Icons
 import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
-import PlusIcon from "../components/icons/PlusIcon";
 import EditIcon from "../components/icons/EditIcon";
 import TrashIcon from "../components/icons/TrashIcon";
-import DeleteFoodDialog from "../components/DeleteFoodDialog";
 
 export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the database.
@@ -25,18 +31,15 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the screen's width.
   const screenWidth = Dimensions.get("window").width;
 
-  // Creating handler for the food object passed as a parameter.
-  const foodObject = route.params.food;
-
-  // Getting all the nutritional tables for the currently selected food object.
-  const nutritionalTables = database.getAllSync(
-    getNutriTablesQuery(foodObject.id)
-  );
+  // Getting all the nutritional tables for the currently selected food.
+  const nutritionalTables = database.getAllSync(getNutriTablesQuery, {
+    $food_id: route.params.food.id,
+  });
 
   // Creating stateful variables for the measurement unit and the quantity and
   // setting their initial values to those of the food's first nutritional table.
   const [selectedUnit, setSelectedUnit] = useState(nutritionalTables[0].unit);
-  const [quantity, setQuantity] = useState(nutritionalTables[0].base_measure);
+  const [quantity, setQuantity] = useState(nutritionalTables[0].baseMeasure);
 
   // Function to retrieve the nutritional table that uses the correct measurement unit.
   function getNutriTable(unit) {
@@ -60,7 +63,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
     setNutritionalTable(getNutriTable(selectedUnit));
     // Resetting the quantity (in order to trigger the update of the displayed macronutrients
     // in accordance to the newly selected nutritional table's base measure).
-    setQuantity(nutritionalTable.base_measure);
+    setQuantity(nutritionalTable.baseMeasure);
     // Forcing the re-render of the <InputNumber/> component.
     setInputKey(Date.now());
   }, [selectedUnit]);
@@ -68,13 +71,11 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Function to calculate the quantities fo each macronutrient in the food
   // according to its currently informed portion.
   function calculateProportion(number) {
-    return (number / nutritionalTable.base_measure) * quantity;
+    return (number / nutritionalTable.baseMeasure) * quantity;
   }
 
   // Object to hold all the details of the currently informed food portion.
-  const foodDetails = {
-    name: foodObject.name,
-    portion: quantity,
+  const portionDetails = {
     calories: calculateProportion(nutritionalTable.calories),
     carbs: calculateProportion(nutritionalTable.carbs),
     fats: calculateProportion(nutritionalTable.fats),
@@ -83,17 +84,23 @@ export default function FoodDetailsScreen({ navigation, route }) {
 
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
 
+  // console.log(nutritionalTable);
+
   return (
     <>
       <DeleteFoodDialog
+        navigation={navigation}
+        food={{
+          id: nutritionalTable.foodId,
+          name: nutritionalTable.foodName,
+        }}
+        nutritionalTable={nutritionalTable}
         visible={showDeleteDialogue}
         setVisible={setShowDeleteDialogue}
-        foodDetails={foodDetails}
-        nutritionalTable={nutritionalTable}
       />
       <View>
         <Text text30 style={{ marginLeft: 16, marginVertical: 20 }}>
-          {foodDetails.name}
+          {nutritionalTable.foodName}
         </Text>
         {/* Field that changes the amount of food */}
         <View
@@ -164,22 +171,22 @@ export default function FoodDetailsScreen({ navigation, route }) {
           items={[
             {
               title: "Calories",
-              value: foodDetails.calories,
+              value: portionDetails.calories,
               macro: false,
             },
             {
               title: "Carbohydrates",
-              value: foodDetails.carbs,
+              value: portionDetails.carbs,
               macro: true,
             },
             {
               title: "Fats",
-              value: foodDetails.fats,
+              value: portionDetails.fats,
               macro: true,
             },
             {
               title: "Protein",
-              value: foodDetails.protein,
+              value: portionDetails.protein,
               macro: true,
             },
           ]}
@@ -233,7 +240,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
               marginHorizontal: 10,
             }}
             onPress={() => {
-              console.log("delete!");
+              // console.log("delete!");
               setShowDeleteDialogue(true);
               // navigation.navigate("List");
             }}
@@ -255,7 +262,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
               backgroundColor: Colors.yellow10,
             }}
             onPress={() => {
-              console.log("edit!");
+              // console.log("edit!");
               // navigation.navigate("List");
             }}
           />

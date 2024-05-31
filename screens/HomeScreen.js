@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
+import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite/next";
 import MealDrawer from "../components/MealDrawer";
 import { ScrollView } from "react-native-gesture-handler";
 
