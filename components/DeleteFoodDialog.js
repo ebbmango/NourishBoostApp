@@ -7,7 +7,6 @@ import getNutriTablesQuery from "../queries/getNutriTables";
 export default function DeleteFoodDialog({
   visible,
   setVisible,
-  food,
   nutritionalTable,
   navigation,
 }) {
@@ -40,7 +39,7 @@ export default function DeleteFoodDialog({
         <Text style={{ fontWeight: "bold" }}>{nutritionalTable.unit}</Text> for
         the food item
       </Text>
-      <Text text70BL>"{food.name}"?</Text>
+      <Text text70BL>"{nutritionalTable.foodName}"?</Text>
       <Text text70BL color={Colors.red10}>
         This action cannot be undone.
       </Text>

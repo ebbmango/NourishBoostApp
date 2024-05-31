@@ -90,10 +90,6 @@ export default function FoodDetailsScreen({ navigation, route }) {
     <>
       <DeleteFoodDialog
         navigation={navigation}
-        food={{
-          id: nutritionalTable.foodId,
-          name: nutritionalTable.foodName,
-        }}
         nutritionalTable={nutritionalTable}
         visible={showDeleteDialogue}
         setVisible={setShowDeleteDialogue}
