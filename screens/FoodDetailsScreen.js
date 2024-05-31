@@ -13,6 +13,9 @@ import getNutriTablesQuery from "../queries/getNutriTables";
 import { useEffect, useRef, useState } from "react";
 import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
+import PlusIcon from "../components/icons/PlusIcon";
+import EditIcon from "../components/icons/EditIcon";
+import TrashIcon from "../components/icons/TrashIcon";
 
 export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the database.
@@ -79,7 +82,9 @@ export default function FoodDetailsScreen({ navigation, route }) {
 
   return (
     <View>
-      <Text text30>{foodDetails.name}</Text>
+      <Text text30 style={{ marginLeft: 16, marginVertical: 20 }}>
+        {foodDetails.name}
+      </Text>
       {/* Field that changes the amount of food */}
       <View
         style={{
@@ -151,30 +156,27 @@ export default function FoodDetailsScreen({ navigation, route }) {
             title: "Calories",
             value: foodDetails.calories,
             macro: false,
-            onPress: () => console.log("item 1 pressed"),
           },
           {
             title: "Carbohydrates",
             value: foodDetails.carbs,
             macro: true,
-            onPress: () => console.log("item 2 pressed"),
           },
           {
             title: "Fats",
             value: foodDetails.fats,
             macro: true,
-            onPress: () => console.log("item 3 pressed"),
           },
           {
             title: "Protein",
             value: foodDetails.protein,
             macro: true,
-            onPress: () => console.log("item 4 pressed"),
           },
         ]}
         renderCustomItem={({ title, value, macro }) => {
           return (
             <View
+              key={title}
               style={{
                 width: screenWidth / 2 - 15, // Adjust the width for padding/margin
                 padding: 10,
@@ -201,18 +203,43 @@ export default function FoodDetailsScreen({ navigation, route }) {
           flexDirection: "row",
           justifyContent: "space-around",
           width: screenWidth,
+          marginTop: 20,
         }}
       >
+        {/* Delete button */}
         <Button
           label="Delete"
-          backgroundColor={Colors.red20}
-          borderRadius={10}
+          iconSource={() => {
+            return (
+              <View width={20} height={20} style={{ marginRight: 6 }}>
+                <TrashIcon color={Colors.white} />
+              </View>
+            );
+          }}
+          style={{
+            width: screenWidth / 2 - 15,
+            padding: 6,
+            borderRadius: 10,
+            backgroundColor: Colors.red20,
+          }}
           onPress={() => navigation.navigate("List")}
         />
+        {/* Edit button */}
         <Button
           label="Edit"
-          backgroundColor={Colors.yellow10}
-          borderRadius={10}
+          iconSource={() => {
+            return (
+              <View width={20} height={20} style={{ marginRight: 6 }}>
+                <EditIcon color={Colors.white} />
+              </View>
+            );
+          }}
+          style={{
+            width: screenWidth / 2 - 15,
+            padding: 6,
+            borderRadius: 10,
+            backgroundColor: Colors.yellow10,
+          }}
           onPress={() => navigation.navigate("List")}
         />
       </View>
