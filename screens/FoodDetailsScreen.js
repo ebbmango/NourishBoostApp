@@ -16,6 +16,7 @@ import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 import PlusIcon from "../components/icons/PlusIcon";
 import EditIcon from "../components/icons/EditIcon";
 import TrashIcon from "../components/icons/TrashIcon";
+import DeleteFoodDialog from "../components/DeleteFoodDialog";
 
 export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the database.
@@ -80,175 +81,186 @@ export default function FoodDetailsScreen({ navigation, route }) {
     protein: calculateProportion(nutritionalTable.protein),
   };
 
+  const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
+
   return (
-    <View>
-      <Text text30 style={{ marginLeft: 16, marginVertical: 20 }}>
-        {foodDetails.name}
-      </Text>
-      {/* Field that changes the amount of food */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 15,
-          marginLeft: 16,
-        }}
-      >
-        <View width={24} height={24}>
-          <GaugeIcon />
-        </View>
-        <NumberInput
-          key={inputKey}
-          initialNumber={quantity}
-          onChangeNumber={(numberInput) => {
-            setQuantity(numberInput.number);
-          }}
-          containerStyle={{
-            width: screenWidth - 64,
-            height: 36,
-            backgroundColor: Colors.grey60,
-            borderRadius: 5,
-            paddingHorizontal: 10,
-            alignItems: "center",
-          }}
-        />
-      </View>
-      {/* Field that changes the currently selected measurement unit */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 15,
-          marginTop: 12,
-          marginLeft: 16,
-        }}
-      >
-        <View width={24} height={24}>
-          <RulerVerticalIcon />
-        </View>
-        <Picker
-          value={selectedUnit}
-          onChange={(element) => {
-            setSelectedUnit(element);
-          }}
+    <>
+      <DeleteFoodDialog
+        visible={showDeleteDialogue}
+        setVisible={setShowDeleteDialogue}
+        foodDetails={foodDetails}
+        nutritionalTable={nutritionalTable}
+      />
+      <View>
+        <Text text30 style={{ marginLeft: 16, marginVertical: 20 }}>
+          {foodDetails.name}
+        </Text>
+        {/* Field that changes the amount of food */}
+        <View
           style={{
-            width: screenWidth - 64,
-            height: 36,
-            backgroundColor: Colors.grey60,
-            borderRadius: 5,
-            paddingHorizontal: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 15,
+            marginLeft: 16,
           }}
         >
-          {nutritionalTables.map((nutritionalTable) => (
-            <Picker.Item
-              key={nutritionalTable.unit}
-              value={nutritionalTable.unit}
-              label={nutritionalTable.unit}
-            />
-          ))}
-        </Picker>
-      </View>
-      {/* Macronutrients grid */}
-      <GridView
-        numColumns={2}
-        items={[
-          {
-            title: "Calories",
-            value: foodDetails.calories,
-            macro: false,
-          },
-          {
-            title: "Carbohydrates",
-            value: foodDetails.carbs,
-            macro: true,
-          },
-          {
-            title: "Fats",
-            value: foodDetails.fats,
-            macro: true,
-          },
-          {
-            title: "Protein",
-            value: foodDetails.protein,
-            macro: true,
-          },
-        ]}
-        renderCustomItem={({ title, value, macro }) => {
-          return (
-            <View
-              key={title}
-              style={{
-                width: screenWidth / 2 - 15, // Adjust the width for padding/margin
-                padding: 10,
-                justifyContent: "center",
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                marginLeft: 10,
-                marginTop: 10,
-                alignItems: "center",
-              }}
-            >
-              <Text text70>{title}</Text>
-              <Text text70BL>
-                {value}
-                {macro && "g"}
-              </Text>
-            </View>
-          );
-        }}
-      />
-      {/* Delete and edit buttons */}
-      <View
-        style={{
-          flexDirection: "row",
-          width: screenWidth,
-          marginTop: 20,
-        }}
-      >
-        {/* Delete button */}
-        <Button
-          label="Delete"
-          iconSource={() => {
+          <View width={24} height={24}>
+            <GaugeIcon />
+          </View>
+          <NumberInput
+            key={inputKey}
+            initialNumber={quantity}
+            onChangeNumber={(numberInput) => {
+              setQuantity(numberInput.number);
+            }}
+            containerStyle={{
+              width: screenWidth - 64,
+              height: 36,
+              backgroundColor: Colors.grey60,
+              borderRadius: 5,
+              paddingHorizontal: 10,
+              alignItems: "center",
+            }}
+          />
+        </View>
+        {/* Field that changes the currently selected measurement unit */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 15,
+            marginTop: 12,
+            marginLeft: 16,
+          }}
+        >
+          <View width={24} height={24}>
+            <RulerVerticalIcon />
+          </View>
+          <Picker
+            value={selectedUnit}
+            onChange={(element) => {
+              setSelectedUnit(element);
+            }}
+            style={{
+              width: screenWidth - 64,
+              height: 36,
+              backgroundColor: Colors.grey60,
+              borderRadius: 5,
+              paddingHorizontal: 10,
+            }}
+          >
+            {nutritionalTables.map((nutritionalTable) => (
+              <Picker.Item
+                key={nutritionalTable.unit}
+                value={nutritionalTable.unit}
+                label={nutritionalTable.unit}
+              />
+            ))}
+          </Picker>
+        </View>
+        {/* Macronutrients grid */}
+        <GridView
+          numColumns={2}
+          items={[
+            {
+              title: "Calories",
+              value: foodDetails.calories,
+              macro: false,
+            },
+            {
+              title: "Carbohydrates",
+              value: foodDetails.carbs,
+              macro: true,
+            },
+            {
+              title: "Fats",
+              value: foodDetails.fats,
+              macro: true,
+            },
+            {
+              title: "Protein",
+              value: foodDetails.protein,
+              macro: true,
+            },
+          ]}
+          renderCustomItem={({ title, value, macro }) => {
             return (
-              <View width={20} height={20} style={{ marginRight: 6 }}>
-                <TrashIcon color={Colors.white} />
+              <View
+                key={title}
+                style={{
+                  width: screenWidth / 2 - 15, // Adjust the width for padding/margin
+                  padding: 10,
+                  justifyContent: "center",
+                  backgroundColor: Colors.grey50,
+                  borderRadius: 5,
+                  marginLeft: 10,
+                  marginTop: 10,
+                  alignItems: "center",
+                }}
+              >
+                <Text text70>{title}</Text>
+                <Text text70BL>
+                  {value}
+                  {macro && "g"}
+                </Text>
               </View>
             );
           }}
-          style={{
-            width: screenWidth / 2 - 15,
-            padding: 6,
-            borderRadius: 10,
-            backgroundColor: Colors.red20,
-            marginHorizontal: 10,
-          }}
-          onPress={() => {
-            console.log("delete!");
-            // navigation.navigate("List");
-          }}
         />
-        {/* Edit button */}
-        <Button
-          label="Edit"
-          iconSource={() => {
-            return (
-              <View width={20} height={20} style={{ marginRight: 6 }}>
-                <EditIcon color={Colors.white} />
-              </View>
-            );
-          }}
+        {/* Delete and edit buttons */}
+        <View
           style={{
-            width: screenWidth / 2 - 15,
-            padding: 6,
-            borderRadius: 10,
-            backgroundColor: Colors.yellow10,
+            flexDirection: "row",
+            width: screenWidth,
+            marginTop: 20,
           }}
-          onPress={() => {
-            console.log("edit!");
-            // navigation.navigate("List");
-          }}
-        />
+        >
+          {/* Delete button */}
+          <Button
+            label="Delete"
+            iconSource={() => {
+              return (
+                <View width={20} height={20} style={{ marginRight: 6 }}>
+                  <TrashIcon color={Colors.white} />
+                </View>
+              );
+            }}
+            style={{
+              width: screenWidth / 2 - 15,
+              padding: 6,
+              borderRadius: 10,
+              backgroundColor: Colors.red20,
+              marginHorizontal: 10,
+            }}
+            onPress={() => {
+              console.log("delete!");
+              setShowDeleteDialogue(true);
+              // navigation.navigate("List");
+            }}
+          />
+          {/* Edit button */}
+          <Button
+            label="Edit"
+            iconSource={() => {
+              return (
+                <View width={20} height={20} style={{ marginRight: 6 }}>
+                  <EditIcon color={Colors.white} />
+                </View>
+              );
+            }}
+            style={{
+              width: screenWidth / 2 - 15,
+              padding: 6,
+              borderRadius: 10,
+              backgroundColor: Colors.yellow10,
+            }}
+            onPress={() => {
+              console.log("edit!");
+              // navigation.navigate("List");
+            }}
+          />
+        </View>
       </View>
-    </View>
+    </>
   );
 }
