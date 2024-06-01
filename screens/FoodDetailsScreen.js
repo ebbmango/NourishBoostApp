@@ -284,8 +284,9 @@ export default function FoodDetailsScreen({ navigation, route }) {
               backgroundColor: Colors.yellow10,
             }}
             onPress={() => {
-              // console.log("edit!");
-              // navigation.navigate("List");
+              navigation.navigate("Edit", {
+                nutritionalTable: nutritionalTable,
+              });
             }}
           />
         </View>
