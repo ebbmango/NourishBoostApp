@@ -123,7 +123,7 @@ export default function FoodEditScreen() {
                 width: screenWidth / 2 - 15, // Adjust the width for padding/margin
                 padding: 10,
                 justifyContent: "center",
-                backgroundColor: Colors.grey50,
+                backgroundColor: Colors.green30,
                 borderRadius: 5,
                 marginLeft: 10,
                 marginTop: 10,
@@ -240,7 +240,7 @@ export default function FoodEditScreen() {
           onPress={() => {
             // console.log("edit!");
             // navigation.navigate("Edit");
-            console.log("confirm!")
+            console.log("confirm!");
           }}
         />
       </View>
