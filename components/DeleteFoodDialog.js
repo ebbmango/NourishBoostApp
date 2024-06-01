@@ -13,7 +13,14 @@ export default function DeleteFoodDialog({
   // Retrieving the database.
   const database = useSQLiteContext();
 
-  async function handleDelete() {
+  function handleDelete() {
+    console.log(nutritionalTable.tableId);
+
+    database.runSync("DELETE FROM food_nutri_table WHERE id = ?", [
+      nutritionalTable.tableId,
+    ]);
+
+    setVisible(false);
   }
 
   return (
@@ -35,7 +42,7 @@ export default function DeleteFoodDialog({
       {/* Warning text */}
       <Text text70>Are you sure you want to delete the nutritional</Text>
       <Text text70>
-        table in{" "}
+        information in{" "}
         <Text style={{ fontWeight: "bold" }}>{nutritionalTable.unit}</Text> for
         the food item
       </Text>

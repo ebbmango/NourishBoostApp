@@ -31,10 +31,11 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the screen's width.
   const screenWidth = Dimensions.get("window").width;
 
-  // Getting all the nutritional tables for the currently selected food.
-  const nutritionalTables = database.getAllSync(getNutriTablesQuery, {
-    $food_id: route.params.food.id,
-  });
+  const [nutritionalTables, setNutritionalTables] = useState(
+    database.getAllSync(getNutriTablesQuery, {
+      $food_id: route.params.food.id,
+    })
+  );
 
   // Creating stateful variables for the measurement unit and the quantity and
   // setting their initial values to those of the food's first nutritional table.
@@ -82,9 +83,34 @@ export default function FoodDetailsScreen({ navigation, route }) {
     protein: calculateProportion(nutritionalTable.protein),
   };
 
+  // Handles the display of the deletion dialogue.
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
 
-  // console.log(nutritionalTable);
+  // Handles changes everytime the user deletes a table.
+  useEffect(() => {
+    const listener = addDatabaseChangeListener(() => {
+      const tables = database.getAllSync(getNutriTablesQuery, {
+        $food_id: route.params.food.id,
+      });
+
+      if (tables.length === 0) {
+        navigation.navigate("List");
+        database.runSync("DELETE FROM foods WHERE id = ?", [
+          route.params.food.id,
+        ]);
+      } else {
+        setNutritionalTables(tables);
+        setNutritionalTable(tables[0]);
+        setSelectedUnit(tables[0].unit);
+        setQuantity(tables[0].baseMeasure);
+        setInputKey(Date.now());
+      }
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   return (
     <>
