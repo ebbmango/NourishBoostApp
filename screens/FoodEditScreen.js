@@ -25,15 +25,16 @@ export default function FoodEditScreen() {
   const navigator = useNavigation();
   const database = useSQLiteContext();
 
-  const [baseMeasure, setBaseMeasure] = useState(0);
-  const [calories, setCalories] = useState(0);
-  const [carbs, setCarbs] = useState(0);
-  const [fats, setFats] = useState(0);
-  const [protein, setProtein] = useState(0);
-
   const route = useRoute();
-
+  
   const { nutritionalTable } = route.params;
+
+  const [baseMeasure, setBaseMeasure] = useState(nutritionalTable.baseMeasure);
+  const [calories, setCalories] = useState(nutritionalTable.calories);
+  const [carbs, setCarbs] = useState(nutritionalTable.carbs);
+  const [fats, setFats] = useState(nutritionalTable.fats);
+  const [protein, setProtein] = useState(nutritionalTable.protein);
+
 
   const screenWidth = Dimensions.get("window").width;
 
