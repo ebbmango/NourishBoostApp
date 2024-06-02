@@ -8,8 +8,11 @@ import PlusIcon from "../components/icons/PlusIcon";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import FoodListItem from "../components/FoodListItem";
 import getFoodsQuery from "../queries/getFoods";
+import { useNavigation } from "@react-navigation/native";
 
-export default function FoodsScreen({ navigation }) {
+export default function FoodsScreen() {
+  const navigator = useNavigation();
+
   const database = useSQLiteContext();
 
   const getFoods = () => database.getAllSync(getFoodsQuery);
@@ -39,14 +42,14 @@ export default function FoodsScreen({ navigation }) {
           round
           style={{ width: 30, height: 30, padding: 6 }}
           onPress={() => {
-            // do something
+            navigator.navigate("Create");
           }}
         />
       </View>
       <ScrollView contentContainerStyle={styles.itemsList}>
         {foods.map((food) => {
           return (
-            <FoodListItem key={food.id} food={food} navigation={navigation} />
+            <FoodListItem key={food.id} food={food} navigation={navigator} />
           );
         })}
       </ScrollView>
