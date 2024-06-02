@@ -17,9 +17,14 @@ import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 import EditIcon from "../components/icons/EditIcon";
 import { ScrollView } from "react-native-gesture-handler";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 export default function FoodEditScreen() {
+  // Retrieving the database.
+
+  const navigator = useNavigation();
+  const database = useSQLiteContext();
+
   const [baseMeasure, setBaseMeasure] = useState(0);
   const [calories, setCalories] = useState(0);
   const [carbs, setCarbs] = useState(0);
@@ -87,7 +92,7 @@ export default function FoodEditScreen() {
             paddingHorizontal: 10,
           }}
         >
-          <Text>g</Text>
+          <Text>{nutritionalTable.unit}</Text>
         </View>
       </View>
       {/* Macronutrients grid */}
@@ -238,9 +243,19 @@ export default function FoodEditScreen() {
             marginBottom: 20,
           }}
           onPress={() => {
-            // console.log("edit!");
-            // navigation.navigate("Edit");
-            console.log("confirm!");
+            const statement = `
+            UPDATE food_nutri_table SET
+            base_measure = ${baseMeasure},
+            calories = ${calories},
+            carbs = ${carbs},
+            fats = ${fats},
+            protein = ${protein}
+            WHERE id = ${nutritionalTable.tableId};
+            `;
+
+            database.runSync(statement);
+
+            navigator.goBack();
           }}
         />
       </View>

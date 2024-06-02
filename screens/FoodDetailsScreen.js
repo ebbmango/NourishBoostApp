@@ -72,6 +72,9 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Function to calculate the quantities fo each macronutrient in the food
   // according to its currently informed portion.
   function calculateProportion(number) {
+
+    if (number === 0) return 0;
+
     return (number / nutritionalTable.baseMeasure) * quantity;
   }
 
@@ -111,6 +114,8 @@ export default function FoodDetailsScreen({ navigation, route }) {
       listener.remove();
     };
   }, []);
+
+  console.log(nutritionalTable)
 
   return (
     <>
