@@ -1,7 +1,11 @@
 import { Button, Colors, Dialog, Text, View } from "react-native-ui-lib";
 import AlertTriangleIcon from "./icons/AlertTriangleIcon";
 
-export default function EmptyNameDialog({ visibility, setVisibility }) {
+export default function AlertDialog({
+  visibility,
+  setVisibility,
+  alertContent,
+}) {
   function dismiss() {
     setVisibility(false);
   }
@@ -27,7 +31,7 @@ export default function EmptyNameDialog({ visibility, setVisibility }) {
       <Text text70BL color={Colors.green10}>
         ALERT
       </Text>
-      <Text text70L>The food's name cannot be empty!</Text>
+      <Text text70L>{alertContent}</Text>
       <Button
         onPress={dismiss}
         style={{

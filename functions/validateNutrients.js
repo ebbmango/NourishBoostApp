@@ -1,12 +1,7 @@
-export default function validateNutrition(calories, carbs, fats, protein) {
-  // Ensures there are no negative values.
-  if (calories < 0 || carbs < 0 || fats < 0 || protein < 0) {
-    return -1;
-  }
-
+export default function validateNutrients({ calories, carbs, fats, protein }) {
   // Ensures that no nutrients have been input if the total calories are zero.
   if (calories === 0 && (carbs !== 0 || fats !== 0 || protein !== 0)) {
-    return 0;
+    return false;
   }
 
   // Calculates expected calories from macronutrients.
@@ -17,23 +12,9 @@ export default function validateNutrition(calories, carbs, fats, protein) {
 
   // Checks if the provided calories match the expected calories (given the margin of error).
   if (Math.abs(calories - expectedCalories) > marginOfError) {
-    return 0;
+    return false;
   }
 
   // If all checks have passed:
-  return 1;
+  return true;
 }
-
-
-/*
-
-Return values:
-
--1: Unmanageable error! Do not accept.
-
- 0: Manageable error. Prefered approach: not to interfere with the user's freedom.
-    Inform them of the issue and allow them to continue if they wish.
-
- 1: All good.
-
-*/

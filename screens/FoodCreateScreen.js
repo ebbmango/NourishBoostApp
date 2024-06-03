@@ -21,7 +21,10 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import PencilIcon from "../components/icons/PencilIcon";
 import validateString from "../functions/validateString";
-import EmptyNameDialog from "../components/EmptyNameDialog";
+import AlertDialog from "../components/AlertDialog";
+import validateNutrients from "../functions/validateNutrients";
+import NutrientsDialog from "../components/NutrientsDialog";
+import validateNumericField from "../functions/validateNumericField";
 
 export default function FoodCreateScreen() {
   const navigator = useNavigation();
@@ -34,30 +37,69 @@ export default function FoodCreateScreen() {
   // DATA:
 
   const [foodName, setFoodName] = useState("");
-
   const [nameValidity, setNameValidity] = useState(false);
+
   const [unit, setUnit] = useState(measurementUnits[0].unit);
 
-  const [measureValidity, setMeasureValidity] = useState(false);
   const [baseMeasure, setBaseMeasure] = useState(0);
+  const [measureValidity, setMeasureValidity] = useState(false);
 
-  const [nutritionValidity, setNutritionValidity] = useState(false);
   const [calories, setCalories] = useState(0);
+  const [caloriesValidity, setCaloriesValidity] = useState(true);
+
   const [carbs, setCarbs] = useState(0);
+  const [carbsValidity, setCarbsValidity] = useState(true);
+
   const [fats, setFats] = useState(0);
+  const [fatsValidity, setFatsValidity] = useState(true);
+
   const [protein, setProtein] = useState(0);
+  const [proteinValidity, setProteinValidity] = useState(true);
+
+  const [startValidating, setStartValidating] = useState(false);
+
+  const [showNameAlert, setShowNameAlert] = useState(false);
+  const [showMeasureAlert, setShowMeasureAlert] = useState(false);
+  const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
+  const [showCaloriesDialog, setShowCaloriesDialog] = useState(false);
+
+  const [alertCalories, setAlertCalories] = useState(true);
 
   // REF
 
   const scrollViewRef = useRef(null);
 
-  const [nameAlertVisibility, setNameAlertVisibility] = useState(false);
-
   return (
     <>
-      <EmptyNameDialog
-        visibility={nameAlertVisibility}
-        setVisibility={setNameAlertVisibility}
+      {/* Total calories confirmation dialogue */}
+      <NutrientsDialog
+        visibility={showCaloriesDialog}
+        setVisibility={setShowCaloriesDialog}
+        expectedCalories={carbs * 4 + protein * 4 + fats * 9}
+        informedCalories={calories}
+        setAlertCalories={setAlertCalories}
+      />
+      {/* Total calories validity alert */}
+      <AlertDialog
+        alertContent={"Nutrients and calories cannot be negative!"}
+        visibility={showNutrientsAlert}
+        setVisibility={setShowNutrientsAlert}
+      />
+      {/* Base measure validity alert */}
+      <AlertDialog
+        alertContent={
+          baseMeasure === 0
+            ? "The base measure cannot be zero!"
+            : "The base measure cannot be negative!"
+        }
+        visibility={showMeasureAlert}
+        setVisibility={setShowMeasureAlert}
+      />
+      {/* Food validity alert */}
+      <AlertDialog
+        alertContent={"The food's name cannot be empty!"}
+        visibility={showNameAlert}
+        setVisibility={setShowNameAlert}
       />
       <ScrollView ref={scrollViewRef}>
         <Text
@@ -86,12 +128,19 @@ export default function FoodCreateScreen() {
             placeholder={"Enter the food name here."}
             onChangeText={(text) => {
               setFoodName(text);
+              const validity = validateString(text);
+              setNameValidity(validity);
             }}
             containerStyle={{
               width: screenWidth - 64,
               height: 36,
               backgroundColor: Colors.grey60,
               borderRadius: 5,
+              borderWidth: 1,
+              borderColor:
+                startValidating && !nameValidity
+                  ? Colors.green30
+                  : Colors.grey60,
               paddingHorizontal: 10,
               justifyContent: "center",
             }}
@@ -112,13 +161,22 @@ export default function FoodCreateScreen() {
           <NumberInput
             initialNumber={baseMeasure}
             onChangeNumber={(numberInput) => {
-              setBaseMeasure(numberInput.number);
+              const number = numberInput.number;
+              setBaseMeasure(number);
+              const validity = number > 0;
+              setMeasureValidity(validity);
+              console.log(validity);
             }}
             containerStyle={{
               width: screenWidth - 64,
               height: 36,
               backgroundColor: Colors.grey60,
               borderRadius: 5,
+              borderWidth: 1,
+              borderColor:
+                startValidating && !measureValidity
+                  ? Colors.green30
+                  : Colors.grey60,
               paddingHorizontal: 10,
               marginTop: 12,
               alignItems: "center",
@@ -223,7 +281,10 @@ export default function FoodCreateScreen() {
             <NumberInput
               initialNumber={calories}
               onChangeNumber={(numberInput) => {
-                setCalories(numberInput.number);
+                const number = numberInput.number;
+                const validity = validateNumericField(number);
+                setCalories(number);
+                setCaloriesValidity(validity);
               }}
               containerStyle={{
                 width: screenWidth - 20,
@@ -232,6 +293,11 @@ export default function FoodCreateScreen() {
                 borderRadius: 5,
                 paddingHorizontal: 10,
                 alignItems: "center",
+                borderWidth: 1,
+                borderColor:
+                  startValidating && !caloriesValidity
+                    ? Colors.green30
+                    : Colors.grey60,
               }}
             />
           </View>
@@ -241,7 +307,10 @@ export default function FoodCreateScreen() {
             <NumberInput
               initialNumber={carbs}
               onChangeNumber={(numberInput) => {
-                setCarbs(numberInput.number);
+                const number = numberInput.number;
+                const validity = validateNumericField(number);
+                setCarbs(number);
+                setCarbsValidity(validity);
               }}
               containerStyle={{
                 width: screenWidth - 20,
@@ -250,6 +319,11 @@ export default function FoodCreateScreen() {
                 borderRadius: 5,
                 paddingHorizontal: 10,
                 alignItems: "center",
+                borderWidth: 1,
+                borderColor:
+                  startValidating && !carbsValidity
+                    ? Colors.green30
+                    : Colors.grey60,
               }}
             />
           </View>
@@ -259,7 +333,10 @@ export default function FoodCreateScreen() {
             <NumberInput
               initialNumber={fats}
               onChangeNumber={(numberInput) => {
-                setFats(numberInput.number);
+                const number = numberInput.number;
+                const validity = validateNumericField(number);
+                setFats(number);
+                setFatsValidity(validity);
               }}
               containerStyle={{
                 width: screenWidth - 20,
@@ -268,6 +345,11 @@ export default function FoodCreateScreen() {
                 borderRadius: 5,
                 paddingHorizontal: 10,
                 alignItems: "center",
+                borderWidth: 1,
+                borderColor:
+                  startValidating && !fatsValidity
+                    ? Colors.green30
+                    : Colors.grey60,
               }}
             />
           </View>
@@ -277,7 +359,10 @@ export default function FoodCreateScreen() {
             <NumberInput
               initialNumber={protein}
               onChangeNumber={(numberInput) => {
-                setProtein(numberInput.number);
+                const number = numberInput.number;
+                const validity = validateNumericField(number);
+                setProtein(number);
+                setProteinValidity(validity);
               }}
               containerStyle={{
                 width: screenWidth - 20,
@@ -286,6 +371,11 @@ export default function FoodCreateScreen() {
                 borderRadius: 5,
                 paddingHorizontal: 10,
                 alignItems: "center",
+                borderWidth: 1,
+                borderColor:
+                  startValidating && !proteinValidity
+                    ? Colors.green30
+                    : Colors.grey60,
               }}
             />
           </View>
@@ -308,6 +398,8 @@ export default function FoodCreateScreen() {
               marginBottom: 20,
             }}
             onPress={() => {
+              setStartValidating(true);
+
               // const statement = `
               // UPDATE food_nutri_table SET
               // base_measure = ${baseMeasure},
@@ -318,26 +410,46 @@ export default function FoodCreateScreen() {
               // WHERE id = ${nutritionalTable.tableId};
               // `;
 
-              // database.runSync(statement);
+              const issuesUp = !nameValidity || !measureValidity;
+              const issuesDown =
+                !caloriesValidity ||
+                !carbsValidity ||
+                !fatsValidity ||
+                !proteinValidity;
+              const majorIssues = issuesUp || issuesDown;
 
-              const object = {
-                name: foodName,
-              };
+              // First, show the data type errors:
+              if (majorIssues) {
+                // Scroll up if the issues are in the first fields.
+                if (issuesUp) {
+                  scrollViewRef.current.scrollTo({ y: 0, animated: true });
+                  // Show each of the issues in the first fields:
+                  setShowNameAlert(!nameValidity);
+                  setShowMeasureAlert(!measureValidity);
+                }
+                // Show the issues in the last fields.
+                setShowNutrientsAlert(issuesDown);
+              } else {
+                // Second, show the unwanted but manageable errors:
+                const nutrientsValidity = validateNutrients({
+                  calories,
+                  carbs,
+                  fats,
+                  protein,
+                });
+                // Only show the dialog if...
+                setShowCaloriesDialog(
+                  // The user has not dismissed it previously.
+                  alertCalories &&
+                    // There is something amiss with the nutrients' count.
+                    !nutrientsValidity
+                );
 
-              const nutritionalTable = {
-                baseMeasure,
-                unit,
-                calories,
-                carbs,
-                fats,
-                protein,
-              };
-
-              const nameValidity = validateString(foodName);
-
-              if (!nameValidity) {
-                scrollViewRef.current.scrollTo({ y: 0, animated: true });
-                setNameAlertVisibility(true);
+                // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
+                if (!alertCalories || nutrientsValidity) {
+                  // Run the query to insert the data into the database and redirect to the newly created food page
+                  console.log("good to go!");
+                }
               }
             }}
           />
