@@ -398,7 +398,7 @@ export default function FoodCreateScreen() {
           </View>
           {/* Confirm button */}
           <Button
-            label="Register food item"
+            label="Confirm edit"
             iconSource={() => {
               return (
                 <View width={20} height={20} style={{ marginRight: 6 }}>
@@ -407,7 +407,7 @@ export default function FoodCreateScreen() {
               );
             }}
             style={{
-              width: screenWidth / 2,
+              width: screenWidth / 2 - 15,
               padding: 6,
               borderRadius: 10,
               backgroundColor: Colors.green30,
