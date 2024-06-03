@@ -103,7 +103,6 @@ export default function FoodDetailsScreen({ navigation, route }) {
     };
   }, []);
 
-  console.log(nutritionalTable);
 
   return (
     <>
@@ -258,9 +257,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
               marginHorizontal: 10,
             }}
             onPress={() => {
-              // console.log("delete!");
               setShowDeleteDialogue(true);
-              // navigation.navigate("List");
             }}
           />
           {/* Edit button */}
