@@ -23,6 +23,8 @@ import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 import EditIcon from "../components/icons/EditIcon";
 import TrashIcon from "../components/icons/TrashIcon";
+import PlusIcon from "../components/icons/PlusIcon";
+import FileWriteIcon from "../components/icons/FileWriteIcon";
 
 export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the database.
@@ -102,7 +104,6 @@ export default function FoodDetailsScreen({ navigation, route }) {
       listener.remove();
     };
   }, []);
-
 
   return (
     <>
@@ -280,6 +281,37 @@ export default function FoodDetailsScreen({ navigation, route }) {
               navigation.navigate("Edit", {
                 nutritionalTable: nutritionalTable,
               });
+            }}
+          />
+        </View>
+        <View
+          style={{
+            width: "100%",
+            justifyContent: "center",
+            flexDirection: "row",
+            marginVertical: 10,
+          }}
+        >
+          <Button
+            label="Add nutritional table"
+            iconSource={() => {
+              return (
+                <View width={20} height={20} style={{ marginRight: 6 }}>
+                  <PlusIcon color={Colors.white} />
+                </View>
+              );
+            }}
+            style={{
+              width: screenWidth / 2 + 15,
+              padding: 6,
+              borderRadius: 10,
+              backgroundColor: Colors.green30,
+            }}
+            onPress={() => {
+              console.log("navigate");
+              // navigation.navigate("Edit", {
+              //   nutritionalTable: nutritionalTable,
+              // });
             }}
           />
         </View>
