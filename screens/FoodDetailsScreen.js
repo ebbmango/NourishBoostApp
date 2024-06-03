@@ -58,21 +58,9 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Creating a key to manually re-render the <InputNumber/> component.
   const [inputKey, setInputKey] = useState(Date.now());
 
-  // Hook to automatically update the currently selected nutritional table as soon
-  // as the currently selected measurement unit is changes.
-  useEffect(() => {
-    setNutritionalTable(getNutriTable(selectedUnit));
-    // Resetting the quantity (in order to trigger the update of the displayed macronutrients
-    // in accordance to the newly selected nutritional table's base measure).
-    setQuantity(nutritionalTable.baseMeasure);
-    // Forcing the re-render of the <InputNumber/> component.
-    setInputKey(Date.now());
-  }, [selectedUnit]);
-
   // Function to calculate the quantities fo each macronutrient in the food
   // according to its currently informed portion.
   function calculateProportion(number) {
-
     if (number === 0) return 0;
 
     return (number / nutritionalTable.baseMeasure) * quantity;
@@ -115,7 +103,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
     };
   }, []);
 
-  console.log(nutritionalTable)
+  console.log(nutritionalTable);
 
   return (
     <>
@@ -172,8 +160,11 @@ export default function FoodDetailsScreen({ navigation, route }) {
           </View>
           <Picker
             value={selectedUnit}
-            onChange={(element) => {
-              setSelectedUnit(element);
+            onChange={(unit) => {
+              setSelectedUnit(unit);
+              const newSelectedTable = getNutriTable(unit);
+              setNutritionalTable(newSelectedTable);
+              setQuantity(newSelectedTable.baseMeasure);
             }}
             style={{
               width: screenWidth - 64,
