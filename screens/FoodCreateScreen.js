@@ -1,8 +1,9 @@
+// External imports
 import { useRef, useState } from "react";
-
-import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite/next";
+import { useSQLiteContext } from "expo-sqlite/next";
 import { Dimensions } from "react-native";
-
+import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 import {
   Button,
   Colors,
@@ -14,27 +15,32 @@ import {
   View,
 } from "react-native-ui-lib";
 
+// Icons
 import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 import EditIcon from "../components/icons/EditIcon";
-import { ScrollView } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
 import PencilIcon from "../components/icons/PencilIcon";
-import validateString from "../functions/validateString";
+
+// Components
 import AlertDialog from "../components/AlertDialog";
-import validateNutrients from "../functions/validateNutrients";
 import NutrientsDialog from "../components/NutrientsDialog";
+
+// Functions
+import validateNutrients from "../functions/validateNutrients";
+import validateString from "../functions/validateString";
 import validateNumericField from "../functions/validateNumericField";
 
 export default function FoodCreateScreen() {
+  // Controllers & misc.
   const navigator = useNavigation();
-  // Retrieving the database.
   const database = useSQLiteContext();
   const screenWidth = Dimensions.get("window").width;
+  const scrollViewRef = useRef(null);
 
+  // Data
   const measurementUnits = database.getAllSync("SELECT * FROM units;");
 
-  // DATA:
+  // Stateful variables: data, validation status & controllers.
 
   const [foodName, setFoodName] = useState("");
   const [nameValidity, setNameValidity] = useState(false);
@@ -56,18 +62,16 @@ export default function FoodCreateScreen() {
   const [protein, setProtein] = useState(0);
   const [proteinValidity, setProteinValidity] = useState(true);
 
-  const [startValidating, setStartValidating] = useState(false);
-
   const [showNameAlert, setShowNameAlert] = useState(false);
   const [showMeasureAlert, setShowMeasureAlert] = useState(false);
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
   const [showCaloriesDialog, setShowCaloriesDialog] = useState(false);
 
+  // Activates once the submit button is pressed.
+  const [startValidating, setStartValidating] = useState(false);
+
+  // Deactivates once the "proceed anyway" button is pressed.
   const [alertCalories, setAlertCalories] = useState(true);
-
-  // REF
-
-  const scrollViewRef = useRef(null);
 
   return (
     <>
@@ -165,7 +169,6 @@ export default function FoodCreateScreen() {
               setBaseMeasure(number);
               const validity = number > 0;
               setMeasureValidity(validity);
-              console.log(validity);
             }}
             containerStyle={{
               width: screenWidth - 64,
