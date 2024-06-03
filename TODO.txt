@@ -1,7 +1,7 @@
 [x] 1. Add uniqueness validation for the food's name in the create screen.
 
-[ ] 2. Add validation to relevant fields in edit screen (mimicking the create screen).
+[x] 2. Add validation to relevant fields in edit screen (mimicking the create screen).
 
-[ ] 3. Allow for the changing of the food's name in the edit screen.
+[x] 3. Allow for the changing of the food's name in the edit screen.
 
 [ ] 4. Create "add nutrition table" screen.
