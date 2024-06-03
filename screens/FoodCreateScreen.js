@@ -400,16 +400,6 @@ export default function FoodCreateScreen() {
             onPress={() => {
               setStartValidating(true);
 
-              // const statement = `
-              // UPDATE food_nutri_table SET
-              // base_measure = ${baseMeasure},
-              // calories = ${calories},
-              // carbs = ${carbs},
-              // fats = ${fats},
-              // protein = ${protein}
-              // WHERE id = ${nutritionalTable.tableId};
-              // `;
-
               const issuesUp = !nameValidity || !measureValidity;
               const issuesDown =
                 !caloriesValidity ||
@@ -448,7 +438,32 @@ export default function FoodCreateScreen() {
                 // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
                 if (!alertCalories || nutrientsValidity) {
                   // Run the query to insert the data into the database and redirect to the newly created food page
-                  console.log("good to go!");
+
+                  const createFoodStatement = `INSERT INTO foods (name) VALUES ('${foodName}');`;
+
+                  const newFoodId =
+                    database.runSync(createFoodStatement).lastInsertRowId;
+
+                  const unitId = measurementUnits.filter((unitObject) => {
+                    return unitObject.unit === unit;
+                  })[0].id;
+
+                  const createNutrStatement = `
+                  INSERT INTO food_nutri_table
+                  (food_id, unit_id, base_measure, calories, protein, carbs, fats)
+                  VALUES (
+                    ${newFoodId},
+                    ${unitId},
+                    ${baseMeasure},
+                    ${calories},
+                    ${protein},
+                    ${carbs},
+                    ${fats}
+                  );`;
+
+                  database.runSync(createNutrStatement);
+
+                  navigator.navigate("List");
                 }
               }
             }}
