@@ -1,4 +1,4 @@
-[ ] 1. Add uniqueness validation for the food's name in the create screen.
+[x] 1. Add uniqueness validation for the food's name in the create screen.
 
 [ ] 2. Add validation to relevant fields in edit screen (mimicking the create screen).
 

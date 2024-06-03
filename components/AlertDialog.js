@@ -31,7 +31,8 @@ export default function AlertDialog({
       <Text text70BL color={Colors.green10}>
         ALERT
       </Text>
-      <Text text70L>{alertContent}</Text>
+      <Text text70L center
+      >{alertContent}</Text>
       <Button
         onPress={dismiss}
         style={{

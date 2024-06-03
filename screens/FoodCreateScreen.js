@@ -39,11 +39,16 @@ export default function FoodCreateScreen() {
 
   // Data
   const measurementUnits = database.getAllSync("SELECT * FROM units;");
+  const allFoodNames = database
+    .getAllSync("SELECT name FROM foods;")
+    .map((foodObject) => foodObject.name);
 
   // Stateful variables: data, validation status & controllers.
 
   const [foodName, setFoodName] = useState("");
   const [nameValidity, setNameValidity] = useState(false);
+  const [isNameEmpty, setIsNameEmpty] = useState(true);
+  const [isNameUnique, setIsNameUnique] = useState(true);
 
   const [unit, setUnit] = useState(measurementUnits[0].unit);
 
@@ -101,7 +106,11 @@ export default function FoodCreateScreen() {
       />
       {/* Food validity alert */}
       <AlertDialog
-        alertContent={"The food's name cannot be empty!"}
+        alertContent={
+          isNameEmpty
+            ? "The food's name cannot be empty!"
+            : `The food's name must be unique!\nThis name already belongs to a food item.`
+        }
         visibility={showNameAlert}
         setVisibility={setShowNameAlert}
       />
@@ -131,9 +140,16 @@ export default function FoodCreateScreen() {
           <TextField
             placeholder={"Enter the food name here."}
             onChangeText={(text) => {
+              // Changing the display name to accord to the input name.
               setFoodName(text);
-              const validity = validateString(text);
-              setNameValidity(validity);
+              // Checking whether the name is empty or not.
+              const isEmpty = !validateString(text);
+              setIsNameEmpty(isEmpty);
+              // Checking whether the name is unique or not.
+              const isUnique = !allFoodNames.includes(text);
+              setIsNameUnique(isUnique);
+              // Checking overall validity.
+              setNameValidity(isUnique && !isEmpty);
             }}
             containerStyle={{
               width: screenWidth - 64,
