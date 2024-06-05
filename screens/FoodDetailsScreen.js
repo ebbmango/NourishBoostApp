@@ -33,7 +33,10 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the screen's width.
   const screenWidth = Dimensions.get("window").width;
 
-  const foodId = route.params.food.id;
+  const foodObject = route.params.food;
+
+  const foodName = foodObject.name;
+  const foodId = foodObject.id;
 
   const [nutritionalTables, setNutritionalTables] = useState(
     getNutritionalTables({ database, foodId })
@@ -309,6 +312,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
               // console.log("navigate");
               navigation.navigate("Add Nutritional Table", {
                 foodId,
+                foodName,
               });
             }}
           />

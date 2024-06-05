@@ -2,7 +2,7 @@ import { Dialog, PanningProvider } from "react-native-ui-lib";
 import { View, StyleSheet } from "react-native";
 import { Button, Text, Colors } from "react-native-ui-lib";
 import { useSQLiteContext } from "expo-sqlite";
-import getNutriTablesQuery from "../queries/getNutriTables";
+import getNutriTablesQuery from "../queries/getNutritionalTables";
 
 export default function DeleteFoodDialog({
   visible,
