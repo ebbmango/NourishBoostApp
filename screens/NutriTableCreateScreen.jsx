@@ -1,5 +1,3 @@
-import getNutritionalTables from "../queries/getNutritionalTables";
-
 // External imports
 import { useRef, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite/next";
@@ -13,7 +11,6 @@ import {
   NumberInput,
   Picker,
   Text,
-  TextField,
   View,
 } from "react-native-ui-lib";
 
@@ -21,15 +18,16 @@ import {
 import GaugeIcon from "../components/icons/GaugeIcon";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 import EditIcon from "../components/icons/EditIcon";
-import PencilIcon from "../components/icons/PencilIcon";
 
 // Components
 import AlertDialog from "../components/AlertDialog";
 import NutrientsDialog from "../components/NutrientsDialog";
 
+// Queries
+import getNutritionalTables from "../queries/getNutritionalTables";
+
 // Functions
 import validateNutrients from "../functions/validateNutrients";
-import validateString from "../functions/validateString";
 import validateNumericField from "../functions/validateNumericField";
 import createNutritionalTable from "../queries/createNutritionalTable";
 
@@ -423,8 +421,6 @@ export default function FoodCreateScreen() {
                 });
 
                 navigator.navigate("List");
-
-                // console.log("good to go!");
               }
             }}
           />
