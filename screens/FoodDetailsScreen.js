@@ -13,7 +13,7 @@ import {
 } from "react-native-ui-lib";
 
 // Queries
-import getNutriTablesQuery from "../queries/getNutriTables";
+import getNutritionalTables from "../queries/getNutritionalTables";
 
 // Components
 import DeleteFoodDialog from "../components/DeleteFoodDialog";
@@ -33,10 +33,10 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the screen's width.
   const screenWidth = Dimensions.get("window").width;
 
+  const foodId = route.params.food.id;
+
   const [nutritionalTables, setNutritionalTables] = useState(
-    database.getAllSync(getNutriTablesQuery, {
-      $food_id: route.params.food.id,
-    })
+    getNutritionalTables({ database, foodId })
   );
 
   // Creating stateful variables for the measurement unit and the quantity and
@@ -83,14 +83,12 @@ export default function FoodDetailsScreen({ navigation, route }) {
   useEffect(() => {
     const listener = addDatabaseChangeListener(() => {
       const tables = database.getAllSync(getNutriTablesQuery, {
-        $food_id: route.params.food.id,
+        $food_id: foodId,
       });
 
       if (tables.length === 0) {
         navigation.navigate("List");
-        database.runSync("DELETE FROM foods WHERE id = ?", [
-          route.params.food.id,
-        ]);
+        database.runSync("DELETE FROM foods WHERE id = ?", [foodId]);
       } else {
         setNutritionalTables(tables);
         setNutritionalTable(tables[0]);
@@ -308,10 +306,10 @@ export default function FoodDetailsScreen({ navigation, route }) {
               backgroundColor: Colors.green30,
             }}
             onPress={() => {
-              console.log("navigate");
-              // navigation.navigate("Edit", {
-              //   nutritionalTable: nutritionalTable,
-              // });
+              // console.log("navigate");
+              navigation.navigate("Add Nutritional Table", {
+                foodId,
+              });
             }}
           />
         </View>

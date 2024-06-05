@@ -7,7 +7,7 @@ import PlusIcon from "../components/icons/PlusIcon";
 
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import FoodListItem from "../components/FoodListItem";
-import getFoodsQuery from "../queries/getFoods";
+import getFoods from "../queries/getFoods";
 import { useNavigation } from "@react-navigation/native";
 
 export default function FoodsScreen() {
@@ -15,12 +15,11 @@ export default function FoodsScreen() {
 
   const database = useSQLiteContext();
 
-  const getFoods = () => database.getAllSync(getFoodsQuery);
 
-  const [foods, setFoods] = useState(getFoods());
+  const [foods, setFoods] = useState(getFoods(database));
 
   addDatabaseChangeListener(() => {
-    setFoods(getFoods());
+    setFoods(getFoods(database));
   });
 
   return (
