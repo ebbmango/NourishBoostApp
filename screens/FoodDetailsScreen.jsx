@@ -25,6 +25,7 @@ import EditIcon from "../components/icons/EditIcon";
 import TrashIcon from "../components/icons/TrashIcon";
 import PlusIcon from "../components/icons/PlusIcon";
 import FileWriteIcon from "../components/icons/FileWriteIcon";
+import getFood from "../queries/getFood";
 
 export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the database.
@@ -33,10 +34,13 @@ export default function FoodDetailsScreen({ navigation, route }) {
   // Retrieving the screen's width.
   const screenWidth = Dimensions.get("window").width;
 
-  const foodObject = route.params.food;
+  const foodId = route.params.food.id;
+
+  const foodObject = getFood(database, { foodId });
+
+  console.log(foodObject);
 
   const foodName = foodObject.name;
-  const foodId = foodObject.id;
 
   const [nutritionalTables, setNutritionalTables] = useState(
     getNutritionalTables({ database, foodId })
@@ -73,7 +77,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
 
   // Object to hold all the details of the currently informed food portion.
   const portionDetails = {
-    calories: calculateProportion(nutritionalTable.calories),
+    kcals: calculateProportion(nutritionalTable.kcals),
     carbs: calculateProportion(nutritionalTable.carbs),
     fats: calculateProportion(nutritionalTable.fats),
     protein: calculateProportion(nutritionalTable.protein),
@@ -190,7 +194,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
           items={[
             {
               title: "Calories",
-              value: portionDetails.calories,
+              value: portionDetails.kcals,
               macro: false,
             },
             {

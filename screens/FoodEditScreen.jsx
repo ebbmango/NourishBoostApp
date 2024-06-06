@@ -44,7 +44,7 @@ export default function FoodCreateScreen() {
   const initialValues = {
     name: nutritionalTable.foodName,
     baseMeasure: nutritionalTable.baseMeasure,
-    calories: nutritionalTable.calories,
+    kcals: nutritionalTable.kcals,
     carbs: nutritionalTable.carbs,
     fats: nutritionalTable.fats,
     protein: nutritionalTable.protein,
@@ -61,8 +61,8 @@ export default function FoodCreateScreen() {
 
   const unit = nutritionalTable.unit;
 
-  const [calories, setCalories] = useState(initialValues.calories);
-  const [caloriesValidity, setCaloriesValidity] = useState(true);
+  const [kcals, setKcals] = useState(initialValues.kcals);
+  const [caloriesValidity, setKcalsValidity] = useState(true);
 
   const [carbs, setCarbs] = useState(initialValues.carbs);
   const [carbsValidity, setCarbsValidity] = useState(true);
@@ -76,13 +76,13 @@ export default function FoodCreateScreen() {
   const [showNameAlert, setShowNameAlert] = useState(false);
   const [showMeasureAlert, setShowMeasureAlert] = useState(false);
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
-  const [showCaloriesDialog, setShowCaloriesDialog] = useState(false);
+  const [showKcalsDialog, setShowKcalsDialog] = useState(false);
 
   // Activates once the submit button is pressed.
   const [startValidating, setStartValidating] = useState(false);
 
   // Deactivates once the "proceed anyway" button is pressed.
-  const [alertCalories, setAlertCalories] = useState(true);
+  const [alertKcals, setAlertKcals] = useState(true);
 
   // Data
   const allFoodNames = database
@@ -92,15 +92,15 @@ export default function FoodCreateScreen() {
 
   return (
     <>
-      {/* Total calories confirmation dialogue */}
+      {/* Total kcals confirmation dialogue */}
       <NutrientsDialog
-        visibility={showCaloriesDialog}
-        setVisibility={setShowCaloriesDialog}
-        expectedCalories={carbs * 4 + protein * 4 + fats * 9}
-        informedCalories={calories}
-        setAlertCalories={setAlertCalories}
+        visibility={showKcalsDialog}
+        setVisibility={setShowKcalsDialog}
+        expectedKcals={carbs * 4 + protein * 4 + fats * 9}
+        informedKcals={kcals}
+        setAlertKcals={setAlertKcals}
       />
-      {/* Total calories validity alert */}
+      {/* Total kcals validity alert */}
       <AlertDialog
         alertContent={"Nutrients and calories cannot be negative!"}
         visibility={showNutrientsAlert}
@@ -240,8 +240,8 @@ export default function FoodCreateScreen() {
           numColumns={2}
           items={[
             {
-              title: "Calories",
-              value: calories,
+              title: "Kcals",
+              value: kcals,
               macro: false,
             },
             {
@@ -292,16 +292,16 @@ export default function FoodCreateScreen() {
             gap: 10,
           }}
         >
-          {/* Calories input */}
+          {/* Kcals input */}
           <View style={{ gap: 5 }}>
-            <Text text70>Calories:</Text>
+            <Text text70>Kcals:</Text>
             <NumberInput
-              initialNumber={calories}
+              initialNumber={kcals}
               onChangeNumber={(numberInput) => {
                 const number = numberInput.number;
                 const validity = validateNumericField(number);
-                setCalories(number);
-                setCaloriesValidity(validity);
+                setKcals(number);
+                setKcalsValidity(validity);
               }}
               containerStyle={{
                 width: screenWidth - 20,
@@ -439,26 +439,26 @@ export default function FoodCreateScreen() {
               } else {
                 // Second, show the unwanted but manageable errors:
                 const nutrientsValidity = validateNutrients({
-                  calories,
+                  kcals,
                   carbs,
                   fats,
                   protein,
                 });
                 // Only show the dialog if...
-                setShowCaloriesDialog(
+                setShowKcalsDialog(
                   // The user has not dismissed it previously.
-                  alertCalories &&
+                  alertKcals &&
                     // There is something amiss with the nutrients' count.
                     !nutrientsValidity
                 );
 
                 // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
-                if (!alertCalories || nutrientsValidity) {
+                if (!alertKcals || nutrientsValidity) {
                   // If any changes have been made:
                   if (
                     initialValues.name !== foodName ||
                     initialValues.baseMeasure !== baseMeasure ||
-                    initialValues.calories !== calories ||
+                    initialValues.kcals !== kcals ||
                     initialValues.carbs !== carbs ||
                     initialValues.fats !== fats ||
                     initialValues.protein !== protein
@@ -472,7 +472,7 @@ export default function FoodCreateScreen() {
                     const updateNutrientsStatement = `
                     UPDATE food_nutri_table SET
                     base_measure = ${baseMeasure},
-                    calories = ${calories},
+                    kcals = ${kcals},
                     carbs = ${carbs},
                     fats = ${fats},
                     protein = ${protein}

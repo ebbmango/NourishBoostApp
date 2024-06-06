@@ -29,6 +29,7 @@ import NutrientsDialog from "../components/NutrientsDialog";
 import validateNutrients from "../functions/validateNutrients";
 import validateString from "../functions/validateString";
 import validateNumericField from "../functions/validateNumericField";
+import createNutritionalTable from "../queries/createNutritionalTable";
 
 export default function FoodCreateScreen() {
   // Controllers & misc.
@@ -467,20 +468,15 @@ export default function FoodCreateScreen() {
                     return unitObject.unit === unit;
                   })[0].id;
 
-                  const createNutrStatement = `
-                  INSERT INTO food_nutri_table
-                  (food_id, unit_id, base_measure, calories, protein, carbs, fats)
-                  VALUES (
-                    ${newFoodId},
-                    ${unitId},
-                    ${baseMeasure},
-                    ${calories},
-                    ${protein},
-                    ${carbs},
-                    ${fats}
-                  );`;
-
-                  database.runSync(createNutrStatement);
+                  createNutritionalTable(database, {
+                    foodId,
+                    unitId,
+                    baseMeasure,
+                    calories,
+                    protein,
+                    carbs,
+                    fats,
+                  });
 
                   navigator.navigate("List");
                 }

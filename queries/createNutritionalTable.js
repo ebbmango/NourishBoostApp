@@ -1,6 +1,6 @@
 const query = `
 INSERT INTO food_nutri_table
-(food_id, unit_id, base_measure, calories, protein, carbs, fats)
+(foodId, unitId, baseMeasure, kcals, protein, carbs, fats)
 VALUES (
   $foodId,
   $unitId,
