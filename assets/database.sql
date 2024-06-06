@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS "recipeNutritionalTables" (
 
 CREATE TABLE IF NOT EXISTS "units" (
   "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
-  "unit" TEXT
+  "symbol" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "entries" (
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS "recipeIngredients" (
 );
 
 -- Inserts initial ("out-of-the-box") units.
-INSERT INTO units (unit)
+INSERT INTO units (symbol)
 VALUES
     ('g'),
     ('ml'),
