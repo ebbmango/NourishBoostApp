@@ -2,6 +2,7 @@
 import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite/next";
 import { Dimensions } from "react-native";
 import { useEffect, useState } from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   Button,
   Colors,
@@ -13,6 +14,7 @@ import {
 } from "react-native-ui-lib";
 
 // Queries
+import getFood from "../queries/getFood";
 import getNutritionalTables from "../queries/getNutritionalTables";
 
 // Components
@@ -25,86 +27,65 @@ import EditIcon from "../components/icons/EditIcon";
 import TrashIcon from "../components/icons/TrashIcon";
 import PlusIcon from "../components/icons/PlusIcon";
 import FileWriteIcon from "../components/icons/FileWriteIcon";
-import getFood from "../queries/getFood";
+import deleteFood from "../queries/deleteFood";
+import getUnits from "../queries/getUnits";
+import fixDecimals from "../functions/fixDecimals";
 
-export default function FoodDetailsScreen({ navigation, route }) {
-  // Retrieving the database.
-  const database = useSQLiteContext();
-
-  // Retrieving the screen's width.
+export default function FoodDetailsScreen() {
+  // Extracting the device's dimensions
   const screenWidth = Dimensions.get("window").width;
 
-  const foodId = route.params.food.id;
+  // Instantiating the navigator.
+  const navigator = useNavigation();
 
-  const foodObject = getFood(database, { foodId });
+  // Connecting to the database.
+  const database = useSQLiteContext();
 
-  console.log(foodObject);
+  // Extracting the food's ID and name from the parameters.
+  const { id: foodId, name: foodName } = useRoute().params.food;
 
-  const foodName = foodObject.name;
+  // Getting all nutritional tables for the selected food.
+  const initialTables = getNutritionalTables(database, { foodId });
 
-  const [nutritionalTables, setNutritionalTables] = useState(
-    getNutritionalTables({ database, foodId })
-  );
+  // Setting up stateful variable to hold all available nutritional tables (since they might be altered).
+  const [nutritionalTables, setNutritionalTables] = useState(initialTables);
 
-  // Creating stateful variables for the measurement unit and the quantity and
-  // setting their initial values to those of the food's first nutritional table.
-  const [selectedUnit, setSelectedUnit] = useState(nutritionalTables[0].unit);
-  const [quantity, setQuantity] = useState(nutritionalTables[0].baseMeasure);
+  // Setting up stateful variable to hold the currently selected nutritional table.
+  const [nutritionalTable, setNutritionalTable] = useState(initialTables[0]);
 
-  // Function to retrieve the nutritional table that uses the correct measurement unit.
-  function getNutriTable(unit) {
-    return nutritionalTables.filter((nutriTable) => {
-      return nutriTable.unit === unit;
-    })[0];
-  }
+  // Retrieving all measurement units used by the food object's nutritional tables.
+  const availableUnits = nutritionalTables.map((table) => table.unit);
 
-  // Creating a stateful variable for the current nutritional table and setting
-  // its initial value to the one that uses the currently selected measurement unit.
-  const [nutritionalTable, setNutritionalTable] = useState(
-    getNutriTable(selectedUnit)
-  );
+  // Extracting the relevant information from the currently selected nutritional table.
+  const { tableId, baseMeasure, unit, kcals, carbs, fats, protein } =
+    nutritionalTable;
 
-  // Creating a key to manually re-render the <InputNumber/> component.
-  const [inputKey, setInputKey] = useState(Date.now());
+  // Creating state for the selected food's currently informed quantity.
+  const [quantity, setQuantity] = useState(baseMeasure);
 
-  // Function to calculate the quantities fo each macronutrient in the food
-  // according to its currently informed portion.
-  function calculateProportion(number) {
-    if (number === 0) return 0;
-
-    return (number / nutritionalTable.baseMeasure) * quantity;
-  }
-
-  // Object to hold all the details of the currently informed food portion.
-  const portionDetails = {
-    kcals: calculateProportion(nutritionalTable.kcals),
-    carbs: calculateProportion(nutritionalTable.carbs),
-    fats: calculateProportion(nutritionalTable.fats),
-    protein: calculateProportion(nutritionalTable.protein),
-  };
-
-  // Handles the display of the deletion dialogue.
+  // Stateful visibility for the delete dialogue.
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
 
-  // Handles changes everytime the user deletes a table.
+  // Function to calculate how much calories or nutrients there are in a portion.
+  const proportion = (number) => {
+    return number === 0 ? 0 : (number / baseMeasure) * quantity;
+  };
+
+  // Creating a state for the key of the base measure field to manually trigger it's re-rendering.
+  const [fieldKey, setFieldKey] = useState(Date.now());
+
   useEffect(() => {
     const listener = addDatabaseChangeListener(() => {
-      const tables = database.getAllSync(getNutriTablesQuery, {
-        $food_id: foodId,
-      });
+      // Retrieve the nutritional tables once again.
+      const tables = getNutritionalTables(database, { foodId });
 
-      if (tables.length === 0) {
-        navigation.navigate("List");
-        database.runSync("DELETE FROM foods WHERE id = ?", [foodId]);
-      } else {
-        setNutritionalTables(tables);
-        setNutritionalTable(tables[0]);
-        setSelectedUnit(tables[0].unit);
-        setQuantity(tables[0].baseMeasure);
-        setInputKey(Date.now());
-      }
+      setNutritionalTables(tables);
+      setNutritionalTable(tables[0]);
+      setQuantity(tables[0].baseMeasure);
+      setFieldKey(Date.now());
     });
 
+    // Remove the listener when the component unmounts.
     return () => {
       listener.remove();
     };
@@ -113,14 +94,14 @@ export default function FoodDetailsScreen({ navigation, route }) {
   return (
     <>
       <DeleteFoodDialog
-        navigation={navigation}
-        nutritionalTable={nutritionalTable}
+        foodDetails={{ foodId, foodName }}
+        nutritionalTableDetails={{ tableId, unitSymbol: unit.symbol }}
         visible={showDeleteDialogue}
         setVisible={setShowDeleteDialogue}
       />
       <View>
         <Text text30 style={{ marginLeft: 16, marginVertical: 20 }}>
-          {nutritionalTable.foodName}
+          {foodName}
         </Text>
         {/* Field that changes the amount of food */}
         <View
@@ -135,8 +116,8 @@ export default function FoodDetailsScreen({ navigation, route }) {
             <GaugeIcon />
           </View>
           <NumberInput
-            key={inputKey}
-            initialNumber={quantity}
+            key={fieldKey}
+            initialNumber={baseMeasure}
             onChangeNumber={(numberInput) => {
               setQuantity(numberInput.number);
             }}
@@ -164,12 +145,26 @@ export default function FoodDetailsScreen({ navigation, route }) {
             <RulerVerticalIcon />
           </View>
           <Picker
-            value={selectedUnit}
-            onChange={(unit) => {
-              setSelectedUnit(unit);
-              const newSelectedTable = getNutriTable(unit);
-              setNutritionalTable(newSelectedTable);
-              setQuantity(newSelectedTable.baseMeasure);
+            value={unit.symbol}
+            onChange={(value) => {
+              // Retrieves the measurement unit object whose symbol equals the one chosen by the user.
+              const userChoice = availableUnits.filter(
+                (unit) => unit.symbol === value
+              )[0];
+
+              // Retrieves the nutritional table whose unit is the one chosen by the user.
+              const selectedTable = nutritionalTables.filter(
+                (table) => table.unit === userChoice
+              )[0];
+
+              // Updating the currently selected nutritional table.
+              setNutritionalTable(selectedTable);
+
+              // Resetting the food amount number input.
+              setQuantity(selectedTable.baseMeasure);
+
+              // Manually trigerring the re-rendering of the number input field component.
+              setFieldKey(Date.now());
             }}
             style={{
               width: screenWidth - 64,
@@ -179,11 +174,11 @@ export default function FoodDetailsScreen({ navigation, route }) {
               paddingHorizontal: 10,
             }}
           >
-            {nutritionalTables.map((nutritionalTable) => (
+            {availableUnits.map((unit) => (
               <Picker.Item
-                key={nutritionalTable.unit}
-                value={nutritionalTable.unit}
-                label={nutritionalTable.unit}
+                key={unit.id}
+                value={unit.symbol}
+                label={unit.symbol}
               />
             ))}
           </Picker>
@@ -194,22 +189,22 @@ export default function FoodDetailsScreen({ navigation, route }) {
           items={[
             {
               title: "Calories",
-              value: portionDetails.kcals,
+              value: fixDecimals(proportion(kcals)),
               macro: false,
             },
             {
               title: "Carbohydrates",
-              value: portionDetails.carbs,
+              value: fixDecimals(proportion(carbs)),
               macro: true,
             },
             {
               title: "Fats",
-              value: portionDetails.fats,
+              value: fixDecimals(proportion(fats)),
               macro: true,
             },
             {
               title: "Protein",
-              value: portionDetails.protein,
+              value: fixDecimals(proportion(protein)),
               macro: true,
             },
           ]}
@@ -218,7 +213,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
               <View
                 key={title}
                 style={{
-                  width: screenWidth / 2 - 15, // Adjust the width for padding/margin
+                  width: screenWidth / 2 - 15,
                   padding: 10,
                   justifyContent: "center",
                   backgroundColor: Colors.grey50,
@@ -283,8 +278,10 @@ export default function FoodDetailsScreen({ navigation, route }) {
               backgroundColor: Colors.yellow10,
             }}
             onPress={() => {
-              navigation.navigate("Edit", {
-                nutritionalTable: nutritionalTable,
+              navigator.navigate("Edit", {
+                foodId,
+                foodName,
+                nutritionalTable,
               });
             }}
           />
@@ -313,8 +310,7 @@ export default function FoodDetailsScreen({ navigation, route }) {
               backgroundColor: Colors.green30,
             }}
             onPress={() => {
-              // console.log("navigate");
-              navigation.navigate("Add Nutritional Table", {
+              navigator.navigate("Add Nutritional Table", {
                 foodId,
                 foodName,
               });

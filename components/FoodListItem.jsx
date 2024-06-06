@@ -1,5 +1,5 @@
+// External dependencies
 import { Dimensions } from "react-native";
-
 import { View, Text, Colors, ListItem } from "react-native-ui-lib";
 import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 

@@ -1,3 +1,4 @@
+// External dependencies
 import { Dialog, PanningProvider } from "react-native-ui-lib";
 import { View } from "react-native";
 import { Button, Text, Colors, TextField } from "react-native-ui-lib";

@@ -30,61 +30,58 @@ import getNutritionalTables from "../queries/getNutritionalTables";
 import validateNutrients from "../functions/validateNutrients";
 import validateNumericField from "../functions/validateNumericField";
 import createNutritionalTable from "../queries/createNutritionalTable";
+import getUnits from "../queries/getUnits";
+import getDifference from "../functions/getDifference";
 
 export default function FoodCreateScreen() {
-  // Controllers & misc.
-  const navigator = useNavigation();
-  const database = useSQLiteContext();
+  // Extracting the device's dimensions
   const screenWidth = Dimensions.get("window").width;
+
+  // Instantiating the navigator.
+  const navigator = useNavigation();
+
+  // Connecting to the database.
+  const database = useSQLiteContext();
+
+  // Creating a reference to the scrollView (to be able to use scroll functions).
   const scrollViewRef = useRef(null);
 
-  // Data (available units from which to choose)
-
-  const route = useRoute();
-  const { foodId, foodName } = route.params;
-
-  // Retrieving all the available units on the database
-  const unitObjects = database.getAllSync("SELECT * FROM units;");
-
-  // Making an array of only their names.
-  const unitNames = unitObjects.map((unitObject) => unitObject.unit);
+  // Extracting the food's ID and name from the parameters.
+  const { foodId, foodName } = useRoute().params;
 
   // Retrieving all the nutritional tables already present for the relevant food item.
-  const nutritionalTables = getNutritionalTables({ database, foodId });
+  const nutritionalTables = getNutritionalTables(database, { foodId });
 
+  // Retrieving all measurement units.
+  const measurementUnits = getUnits(database);
+
+  // Retrieving all measurement units used by the food object's nutritional tables.
   const alreadyUsedUnits = nutritionalTables.map((table) => table.unit);
 
-  const availableUnits = unitNames.filter(
-    (unit) => !alreadyUsedUnits.includes(unit)
-  );
+  // Figuring out what measurement units have not been used by the object's nutritional tables yet.
+  const availableUnits = getDifference(measurementUnits, alreadyUsedUnits);
 
-  // Stateful variables: data, validation status & controllers.
+  // Creating stateful variables to hold all data that concerns the food.
   const [unit, setUnit] = useState(availableUnits[0]);
-
   const [baseMeasure, setBaseMeasure] = useState(0);
-  const [measureValidity, setMeasureValidity] = useState(false);
-
   const [kcals, setKcals] = useState(0);
-  const [kcalsValidity, setKcalsValidity] = useState(true);
-
   const [carbs, setCarbs] = useState(0);
-  const [carbsValidity, setCarbsValidity] = useState(true);
-
   const [fats, setFats] = useState(0);
-  const [fatsValidity, setFatsValidity] = useState(true);
-
   const [protein, setProtein] = useState(0);
+
+  // Creating stateful variables to validate all of the above data.
+  const [measureValidity, setMeasureValidity] = useState(false);
+  const [kcalsValidity, setKcalsValidity] = useState(true);
+  const [carbsValidity, setCarbsValidity] = useState(true);
+  const [fatsValidity, setFatsValidity] = useState(true);
   const [proteinValidity, setProteinValidity] = useState(true);
 
+  // Creating stateful variables to control the visibility of the alerts and dialogs.
   const [showMeasureAlert, setShowMeasureAlert] = useState(false);
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
   const [showKcalsDialog, setShowKcalsDialog] = useState(false);
-
-  // Activates once the submit button is pressed.
-  const [startValidating, setStartValidating] = useState(false);
-
-  // Deactivates once the "proceed anyway" button is pressed.
-  const [alertKcals, setAlertKcals] = useState(true);
+  const [startValidating, setStartValidating] = useState(false); // (Activates once the submit button is pressed.)
+  const [alertKcals, setAlertKcals] = useState(true); // (Deactivates once the "proceed anyway" button is pressed.)
 
   return (
     <>
@@ -172,9 +169,14 @@ export default function FoodCreateScreen() {
             <RulerVerticalIcon />
           </View>
           <Picker
-            value={unit}
-            onChange={(element) => {
-              setUnit(element);
+            value={unit.symbol}
+            onChange={(value) => {
+              // Retrieves the measurement unit object whose symbol equals the one chosen by the user.
+              const userChoice = availableUnits.filter(
+                (unit) => unit.symbol === value
+              )[0];
+              // Updates the currently selected measurement unit.
+              setUnit(userChoice);
             }}
             style={{
               width: screenWidth - 64,
@@ -185,7 +187,11 @@ export default function FoodCreateScreen() {
             }}
           >
             {availableUnits.map((unit) => (
-              <Picker.Item key={unit} value={unit} label={unit} />
+              <Picker.Item
+                key={unit.id}
+                value={unit.symbol}
+                label={unit.symbol}
+              />
             ))}
           </Picker>
         </View>
@@ -406,13 +412,10 @@ export default function FoodCreateScreen() {
               // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
               if (!alertKcals || nutrientsValidity) {
                 // Run the query to insert the data into the database and redirect to the newly created food page
-                const unitId = unitObjects.filter((unitObject) => {
-                  return unitObject.unit === unit;
-                })[0].id;
 
                 createNutritionalTable(database, {
                   foodId,
-                  unitId,
+                  unitId: unit.id,
                   baseMeasure,
                   kcals,
                   protein,

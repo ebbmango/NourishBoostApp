@@ -1,3 +1,4 @@
+// External dependencies
 import { useState } from "react";
 import { Dimensions } from "react-native";
 import {
@@ -7,13 +8,13 @@ import {
   Colors,
   ExpandableSection,
 } from "react-native-ui-lib";
+
+// Components
 import DeleteMealDialog from "./DeleteMealDialog";
 import EditMealDialog from "./EditMealDialog";
 
-// Get the screen width
-const screenWidth = Dimensions.get("window").width;
-
 export default function MealDrawer({ meal }) {
+  const screenWidth = Dimensions.get("window").width;
   const [expanded, setExpanded] = useState(false);
   const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
   const [showEditDialogue, setShowEditDialogue] = useState(false);

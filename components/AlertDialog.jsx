@@ -1,4 +1,7 @@
+// External dependencies
 import { Button, Colors, Dialog, Text, View } from "react-native-ui-lib";
+
+// Components
 import AlertTriangleIcon from "./icons/AlertTriangleIcon";
 
 export default function AlertDialog({

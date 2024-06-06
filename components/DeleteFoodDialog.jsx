@@ -1,26 +1,45 @@
+// External dependencies
 import { Dialog, PanningProvider } from "react-native-ui-lib";
 import { View, StyleSheet } from "react-native";
 import { Button, Text, Colors } from "react-native-ui-lib";
 import { useSQLiteContext } from "expo-sqlite";
-import getNutriTablesQuery from "../queries/getNutritionalTables";
+import { useNavigation } from "@react-navigation/native";
+
+// Queries
+import deleteNutritionalTable from "../queries/deleteNutritionalTable";
+import getNutritionalTables from "../queries/getNutritionalTables";
+import deleteFood from "../queries/deleteFood";
 
 export default function DeleteFoodDialog({
+  foodDetails,
+  nutritionalTableDetails,
   visible,
   setVisible,
-  nutritionalTable,
-  navigation,
 }) {
+  // Instantiating the navigator.
+  const navigator = useNavigation();
+
   // Retrieving the database.
   const database = useSQLiteContext();
 
-  function handleDelete() {
-    console.log(nutritionalTable.tableId);
+  // Destructuring the food's ID and name from the parameters.
+  const { foodId, foodName } = foodDetails;
 
-    database.runSync("DELETE FROM food_nutri_table WHERE id = ?", [
-      nutritionalTable.tableId,
-    ]);
+  // Destructuring the nutritional table's ID and measurement unit from the parameters.
+  const { tableId, unitSymbol } = nutritionalTableDetails;
 
-    setVisible(false);
+  async function handleDelete() {
+    const nutritionalTables = getNutritionalTables(database, { foodId });
+
+    if (nutritionalTables.length === 1) {
+      // delete food
+      deleteFood(database, { foodId });
+      navigator.navigate("List");
+    } else {
+      // delete nutritional table
+      deleteNutritionalTable(database, { tableId });
+      setVisible(false);
+    }
   }
 
   return (
@@ -42,11 +61,10 @@ export default function DeleteFoodDialog({
       {/* Warning text */}
       <Text text70>Are you sure you want to delete the nutritional</Text>
       <Text text70>
-        information in{" "}
-        <Text style={{ fontWeight: "bold" }}>{nutritionalTable.unit}</Text> for
-        the food item
+        information in <Text style={{ fontWeight: "bold" }}>{unitSymbol}</Text>{" "}
+        for the food item
       </Text>
-      <Text text70BL>"{nutritionalTable.foodName}"?</Text>
+      <Text text70BL>"{foodName}"?</Text>
       <Text text70BL color={Colors.red10}>
         This action cannot be undone.
       </Text>
@@ -73,7 +91,6 @@ export default function DeleteFoodDialog({
           size={Button.sizes.medium}
           label="Cancel"
           onPress={() => {
-            // console.log("canceled");
             setVisible(false);
           }}
         />

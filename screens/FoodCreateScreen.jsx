@@ -30,6 +30,7 @@ import validateNutrients from "../functions/validateNutrients";
 import validateString from "../functions/validateString";
 import validateNumericField from "../functions/validateNumericField";
 import createNutritionalTable from "../queries/createNutritionalTable";
+import createFood from "../queries/createFood";
 
 export default function FoodCreateScreen() {
   // Controllers & misc.
@@ -458,11 +459,7 @@ export default function FoodCreateScreen() {
                 // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
                 if (!alertCalories || nutrientsValidity) {
                   // Run the query to insert the data into the database and redirect to the newly created food page
-
-                  const createFoodStatement = `INSERT INTO foods (name) VALUES ('${foodName}');`;
-
-                  const newFoodId =
-                    database.runSync(createFoodStatement).lastInsertRowId;
+                  const foodId = createFood(database, { foodName }).lastInsertRowId;
 
                   const unitId = measurementUnits.filter((unitObject) => {
                     return unitObject.unit === unit;

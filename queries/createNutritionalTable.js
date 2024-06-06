@@ -1,5 +1,5 @@
 const query = `
-INSERT INTO food_nutri_table
+INSERT INTO foodNutritionalTables
 (foodId, unitId, baseMeasure, kcals, protein, carbs, fats)
 VALUES (
   $foodId,
@@ -15,7 +15,7 @@ export default function createNutritionalTable(
   database,
   { foodId, unitId, baseMeasure, calories, protein, carbs, fats }
 ) {
-  database.runSync(query, {
+  return database.runSync(query, {
     $foodId: foodId,
     $unitId: unitId,
     $baseMeasure: baseMeasure,

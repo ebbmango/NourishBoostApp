@@ -1,20 +1,33 @@
 const query = ` 
 SELECT 
-nt.id AS tableId,
-fd.name AS foodName,
-nt.foodId AS foodId,
-nt.baseMeasure as baseMeasure,
-un.unit,
-nt.kcals,
-nt.carbs,
-nt.fats,
-nt.protein
-FROM foodNutritionalTables nt
-INNER JOIN foods fd ON foodId = fd.id
-INNER JOIN units un ON nt.unitId = un.id
-WHERE foodId = $foodId;
+    t.id AS tableId,
+    t.baseMeasure AS baseMeasure,
+    u.id AS unitId,
+    u.symbol AS unitSymbol,
+    t.kcals,
+    t.carbs,
+    t.fats,
+    t.protein
+FROM 
+    foodNutritionalTables AS t
+INNER JOIN 
+    units AS u ON t.unitId = u.id
+WHERE 
+    t.foodId = $foodId;
 `;
 
-export default function getNutritionalTables({ database, foodId }) {
-  return database.getAllSync(query, { $foodId: foodId });
+export default function getNutritionalTables(database, { foodId }) {
+  const tables = database.getAllSync(query, { $foodId: foodId });
+  return tables.map((table) => ({
+    baseMeasure: table.baseMeasure,
+    carbs: table.carbs,
+    fats: table.fats,
+    kcals: table.kcals,
+    protein: table.protein,
+    tableId: table.tableId,
+    unit: {
+      id: table.unitId,
+      symbol: table.unitSymbol,
+    },
+  }));
 }

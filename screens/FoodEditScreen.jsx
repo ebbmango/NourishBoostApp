@@ -9,7 +9,6 @@ import {
   Colors,
   GridView,
   NumberInput,
-  Picker,
   Text,
   TextField,
   View,
@@ -29,66 +28,68 @@ import NutrientsDialog from "../components/NutrientsDialog";
 import validateNutrients from "../functions/validateNutrients";
 import validateString from "../functions/validateString";
 import validateNumericField from "../functions/validateNumericField";
+import updateNutritionalTable from "../queries/updateNutritionalTable";
+import updateFoodName from "../queries/updateFoodName";
+import getFoods from "../queries/getFoods";
 
 export default function FoodCreateScreen() {
-  // Controllers & misc.
-  const navigator = useNavigation();
-  const database = useSQLiteContext();
+  // Extracting the device's dimensions
   const screenWidth = Dimensions.get("window").width;
+
+  // Instantiating the navigator.
+  const navigator = useNavigation();
+
+  // Connecting to the database.
+  const database = useSQLiteContext();
+
+  // Creating a reference to the scrollView (to be able to use scroll functions).
   const scrollViewRef = useRef(null);
 
-  // Parametersescl
-  const route = useRoute();
-  const { nutritionalTable } = route.params;
+  // Extracting the food's ID, name and relevant nutritional table from the parameters.
+  const {
+    foodId,
+    newFoodName: originalFoodName,
+    nutritionalTable,
+  } = useRoute().params;
 
-  const initialValues = {
-    name: nutritionalTable.foodName,
-    baseMeasure: nutritionalTable.baseMeasure,
-    kcals: nutritionalTable.kcals,
-    carbs: nutritionalTable.carbs,
-    fats: nutritionalTable.fats,
-    protein: nutritionalTable.protein,
-  };
+  // Destructuring the original values from the nutritional table.
+  const {
+    baseMeasure: originalMeasure,
+    kcals: originalKcals,
+    carbs: originalCarbs,
+    fats: originalFats,
+    protein: originalProtein,
+  } = nutritionalTable;
 
-  // Stateful variables: data, validation status & controllers.
-  const [foodName, setFoodName] = useState(initialValues.name);
+  // Creating stateful variables to hold all data that concerns the food.
+  const [newFoodName, setNewFoodName] = useState(originalFoodName);
+  const [baseMeasure, setBaseMeasure] = useState(originalMeasure);
+  const unit = nutritionalTable.unit; // Not stateful, but nonetheless concerns the food.
+  const [kcals, setKcals] = useState(originalKcals);
+  const [carbs, setCarbs] = useState(originalCarbs);
+  const [fats, setFats] = useState(originalFats);
+  const [protein, setProtein] = useState(originalProtein);
+
+  // Creating stateful variables to validate all of the above data.
   const [nameValidity, setNameValidity] = useState(true);
-  const [isNameEmpty, setIsNameEmpty] = useState(false);
-  const [isNameUnique, setIsNameUnique] = useState(true);
-
-  const [baseMeasure, setBaseMeasure] = useState(initialValues.baseMeasure);
   const [measureValidity, setMeasureValidity] = useState(true);
-
-  const unit = nutritionalTable.unit;
-
-  const [kcals, setKcals] = useState(initialValues.kcals);
   const [caloriesValidity, setKcalsValidity] = useState(true);
-
-  const [carbs, setCarbs] = useState(initialValues.carbs);
   const [carbsValidity, setCarbsValidity] = useState(true);
-
-  const [fats, setFats] = useState(initialValues.fats);
   const [fatsValidity, setFatsValidity] = useState(true);
-
-  const [protein, setProtein] = useState(initialValues.protein);
   const [proteinValidity, setProteinValidity] = useState(true);
 
+  // Creating stateful variables to control the visibility of the alerts and dialogs.
   const [showNameAlert, setShowNameAlert] = useState(false);
   const [showMeasureAlert, setShowMeasureAlert] = useState(false);
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
   const [showKcalsDialog, setShowKcalsDialog] = useState(false);
+  const [startValidating, setStartValidating] = useState(false); // (Activates once the submit button is pressed.)
+  const [alertKcals, setAlertKcals] = useState(true); // (Deactivates once the "proceed anyway" button is pressed.)
 
-  // Activates once the submit button is pressed.
-  const [startValidating, setStartValidating] = useState(false);
-
-  // Deactivates once the "proceed anyway" button is pressed.
-  const [alertKcals, setAlertKcals] = useState(true);
-
-  // Data
-  const allFoodNames = database
-    .getAllSync("SELECT name FROM foods;")
-    .map((foodObject) => foodObject.name)
-    .filter((name) => name !== initialValues.name);
+  // Retrieving the names of all the foods currently registered in the database (for uniqueness check).
+  const allFoodNames = getFoods(database)
+    .map((food) => food.name)
+    .filter((name) => name !== originalFoodName); // Excluding, of course, the currently selected food.
 
   return (
     <>
@@ -131,7 +132,7 @@ export default function FoodCreateScreen() {
             color: Colors.black,
           }}
         >
-          {foodName.length === 0 ? initialValues.name : foodName}
+          {newFoodName.length === 0 ? originalFoodName : newFoodName}
         </Text>
         {/* Field that changes the food's name */}
         <View
@@ -146,17 +147,15 @@ export default function FoodCreateScreen() {
             <PencilIcon />
           </View>
           <TextField
-            placeholder={initialValues.name}
+            placeholder={originalFoodName}
             onChangeText={(text) => {
-              // Changing the display name to accord to the input name.
-              setFoodName(text);
               // Checking whether the name is empty or not.
               const isEmpty = !validateString(text);
-              setIsNameEmpty(isEmpty);
+              // If it is, revert the name back to its original value; if it is not, change it to match the input field.
+              setNewFoodName(isEmpty ? originalFoodName : text);
               // Checking whether the name is unique or not.
               const isUnique = !allFoodNames.includes(text);
-              // Checking overall validity.
-              setNameValidity(isUnique); // (Empty names default to the original value.)
+              setNameValidity(isUnique);
             }}
             containerStyle={{
               width: screenWidth - 64,
@@ -232,7 +231,7 @@ export default function FoodCreateScreen() {
               paddingHorizontal: 10,
             }}
           >
-            <Text>{unit}</Text>
+            <Text>{unit.symbol}</Text>
           </View>
         </View>
         {/* Macronutrients grid */}
@@ -418,11 +417,13 @@ export default function FoodCreateScreen() {
               setStartValidating(true);
 
               const issuesUp = !nameValidity || !measureValidity;
+
               const issuesDown =
                 !caloriesValidity ||
                 !carbsValidity ||
                 !fatsValidity ||
                 !proteinValidity;
+
               const majorIssues = issuesUp || issuesDown;
 
               // First, show the data type errors:
@@ -456,29 +457,26 @@ export default function FoodCreateScreen() {
                 if (!alertKcals || nutrientsValidity) {
                   // If any changes have been made:
                   if (
-                    initialValues.name !== foodName ||
-                    initialValues.baseMeasure !== baseMeasure ||
-                    initialValues.kcals !== kcals ||
-                    initialValues.carbs !== carbs ||
-                    initialValues.fats !== fats ||
-                    initialValues.protein !== protein
+                    originalFoodName !== newFoodName ||
+                    originalMeasure !== baseMeasure ||
+                    originalKcals !== kcals ||
+                    originalCarbs !== carbs ||
+                    originalFats !== fats ||
+                    originalProtein !== protein
                   ) {
-                    // If it was to the foodName:
-                    if (foodName !== initialValues.name) {
-                      const updateNameStatement = `UPDATE foods SET name = '${foodName}' WHERE name = '${initialValues.name}';`;
-                      database.runSync(updateNameStatement);
+                    // If it was to the newFoodName:
+                    if (newFoodName !== originalFoodName) {
+                      updateFoodName(database, { foodId, newFoodName });
                     }
                     // If it was to anything else:
-                    const updateNutrientsStatement = `
-                    UPDATE food_nutri_table SET
-                    base_measure = ${baseMeasure},
-                    kcals = ${kcals},
-                    carbs = ${carbs},
-                    fats = ${fats},
-                    protein = ${protein}
-                    WHERE id = ${nutritionalTable.tableId};
-                    `;
-                    database.runSync(updateNutrientsStatement);
+                    updateNutritionalTable(database, {
+                      tableId: nutritionalTable.tableId,
+                      baseMeasure,
+                      kcals,
+                      carbs,
+                      fats,
+                      protein,
+                    });
                   }
 
                   // Notwithstanding what happened:
