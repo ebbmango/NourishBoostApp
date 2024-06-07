@@ -48,7 +48,7 @@ export default function FoodCreateScreen() {
   // Extracting the food's ID, name and relevant nutritional table from the parameters.
   const {
     foodId,
-    newFoodName: originalFoodName,
+    foodName: originalFoodName,
     nutritionalTable,
   } = useRoute().params;
 
