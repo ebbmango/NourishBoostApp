@@ -12,6 +12,9 @@ import {
 // Components
 import DeleteMealDialog from "./DeleteMealDialog";
 import EditMealDialog from "./EditMealDialog";
+import AngleDownIcon from "./icons/AngleDownIcon";
+import AngleUpIcon from "./icons/AngleUpIcon";
+import RotatingCaret from "./RotatingCaret";
 
 export default function MealDrawer({ meal }) {
   const screenWidth = Dimensions.get("window").width;
@@ -54,9 +57,18 @@ export default function MealDrawer({ meal }) {
           <ExpandableSection
             expanded={expanded}
             sectionHeader={
-              <Text grey10 text70>
-                {meal.name}
-              </Text>
+              <View
+                centerH
+                style={{
+                  width: screenWidth * 0.8,
+                  height: "auto",
+                }}
+              >
+                <Text grey10 text70>
+                  {meal.name}
+                </Text>
+                <RotatingCaret rotated={expanded} />
+              </View>
             }
             onPress={() => setExpanded(!expanded)}
           >
