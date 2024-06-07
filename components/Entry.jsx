@@ -6,11 +6,11 @@ export default function Entry({ name, kcals }) {
   return (
     <View
       style={{
-        width: screenWidth * 0.7,
+        width: screenWidth * 0.75,
         backgroundColor: Colors.green70,
         paddingHorizontal: 15,
         paddingVertical: 8,
-        borderRadius: 10,
+        borderRadius: 100,
         flexDirection: "row",
         justifyContent: "space-between",
       }}

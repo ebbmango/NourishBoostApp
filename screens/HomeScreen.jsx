@@ -95,5 +95,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 10,
+    gap: 10,
   },
 });
