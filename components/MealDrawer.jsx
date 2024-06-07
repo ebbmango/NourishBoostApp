@@ -1,11 +1,18 @@
 // External dependencies
 import { useState } from "react";
 import { Dimensions } from "react-native";
-import { View, Text, Colors, ExpandableSection } from "react-native-ui-lib";
+import {
+  View,
+  Text,
+  Colors,
+  ExpandableSection,
+  Button,
+} from "react-native-ui-lib";
 
 // Components
 import Entry from "./Entry";
 import RotatingCaret from "./RotatingCaret";
+import PlusIcon from "./icons/PlusIcon";
 
 export default function MealDrawer({ meal }) {
   // Extracting the device's dimensions.
@@ -53,9 +60,23 @@ export default function MealDrawer({ meal }) {
             borderBottomRightRadius: 10,
           }}
         >
-          <Entry name={"food"} kcals={106} />
+          {/* <Entry name={"food"} kcals={106} />
           <Entry name={"food 2"} kcals={80} />
-          <Entry name={"food 3"} kcals={42} />
+          <Entry name={"food 3"} kcals={42} /> */}
+          <Button
+            backgroundColor={Colors.green70}
+            style={{ padding: 9 }}
+            iconSource={() => (
+              <PlusIcon
+                style={{ width: 16, height: 16 }}
+                color={Colors.green10}
+              />
+            )}
+            round
+            onPress={() => {
+              console.log("AAA");
+            }}
+          />
         </View>
       </ExpandableSection>
     </>
