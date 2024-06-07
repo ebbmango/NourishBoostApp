@@ -1,56 +1,19 @@
 // External dependencies
 import { useState } from "react";
 import { Dimensions } from "react-native";
-import {
-  View,
-  Text,
-  Drawer,
-  Colors,
-  ExpandableSection,
-} from "react-native-ui-lib";
+import { View, Text, Colors, ExpandableSection } from "react-native-ui-lib";
 
 // Components
-import DeleteMealDialog from "./DeleteMealDialog";
-import EditMealDialog from "./EditMealDialog";
-import AngleDownIcon from "./icons/AngleDownIcon";
-import AngleUpIcon from "./icons/AngleUpIcon";
+import Entry from "./Entry";
 import RotatingCaret from "./RotatingCaret";
 
 export default function MealDrawer({ meal }) {
   const screenWidth = Dimensions.get("window").width;
   const [expanded, setExpanded] = useState(false);
-  const [showDeleteDialogue, setShowDeleteDialogue] = useState(false);
-  const [showEditDialogue, setShowEditDialogue] = useState(false);
 
   return (
     <>
-      <DeleteMealDialog
-        visible={showDeleteDialogue}
-        setVisible={setShowDeleteDialogue}
-        meal={meal}
-      />
-      <EditMealDialog
-        visible={showEditDialogue}
-        setVisible={setShowEditDialogue}
-        meal={meal}
-      />
-      <Drawer
-        rightItems={[
-          {
-            text: "Edit",
-            background: Colors.yellow10,
-            onPress: () => {
-              setShowEditDialogue(true);
-            },
-          },
-        ]}
-        leftItem={{
-          text: "Delete",
-          background: Colors.red30,
-          onPress: () => {
-            setShowDeleteDialogue(true);
-          },
-        }}
+      <View
         style={{ marginBottom: 10, width: screenWidth * 0.8, borderRadius: 10 }}
       >
         <View centerV centerH padding-s4 bg-white style={{ minHeight: 60 }}>
@@ -72,14 +35,14 @@ export default function MealDrawer({ meal }) {
             }
             onPress={() => setExpanded(!expanded)}
           >
-            <View centerH>
-              <Text text70 style={{ paddingVertical: 10 }}>
-                Entries come here
-              </Text>
+            <View centerH style={{ gap: 10 }}>
+              <Entry name={"food"} kcals={106} />
+              <Entry name={"food 2"} kcals={80} />
+              <Entry name={"food 3"} kcals={42} />
             </View>
           </ExpandableSection>
         </View>
-      </Drawer>
+      </View>
     </>
   );
 }
