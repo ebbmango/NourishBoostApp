@@ -72,7 +72,11 @@ export default function MealDrawer({ meal }) {
             }
             onPress={() => setExpanded(!expanded)}
           >
-            <Text text70 style={{ height: 70 }}></Text>
+            <View centerH>
+              <Text text70 style={{ paddingVertical: 10 }}>
+                Entries come here
+              </Text>
+            </View>
           </ExpandableSection>
         </View>
       </Drawer>
