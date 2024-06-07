@@ -1,5 +1,6 @@
-// Dependencies
+// External dependencies
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Colors, Text } from "react-native-ui-lib";
 
 // Screens
 import FoodsScreen from "../screens/FoodsScreen";
@@ -8,9 +9,11 @@ import WeightScreen from "../screens/WeightScreen";
 import FoodsStackNavigator from "./FoodsStackNavigator";
 
 // Icons
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import PlusIcon from "../components/icons/PlusIcon";
+import ListIcon from "../components/icons/ListIcon";
+import UtensilsIcon from "../components/icons/UtensilsIcon";
+import ScaleIcon from "../components/icons/ScaleIcon";
+import ListClipboardIcon from "../components/icons/ListClipboardIcon";
 
 // Initializing navigator
 const Tab = createBottomTabNavigator();
@@ -26,11 +29,11 @@ export default function BottomTabsNavigator() {
         name="Foods"
         component={FoodsStackNavigator}
         options={{
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <FontAwesome5
-              name="clipboard-list"
-              size={24}
-              color={focused ? "blue" : "black"}
+            <ListClipboardIcon
+              color={focused ? Colors.green30 : Colors.black}
+              style={{ width: 26, height: 26 }}
             />
           ),
         }}
@@ -39,11 +42,11 @@ export default function BottomTabsNavigator() {
         name="Diary"
         component={HomeScreen}
         options={{
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons
-              name="food-fork-drink"
-              size={24}
-              color={focused ? "blue" : "black"}
+            <UtensilsIcon
+              color={focused ? Colors.green30 : Colors.black}
+              style={{ width: 24, height: 24 }}
             />
           ),
         }}
@@ -52,11 +55,11 @@ export default function BottomTabsNavigator() {
         name="Weight"
         component={WeightScreen}
         options={{
+          tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="scale"
-              size={24}
-              color={focused ? "blue" : "black"}
+            <ScaleIcon
+              color={focused ? Colors.green30 : Colors.black}
+              style={{ width: 26, height: 26 }}
             />
           ),
         }}
