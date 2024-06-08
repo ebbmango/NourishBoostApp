@@ -15,7 +15,6 @@ export default function FoodsScreen() {
 
   const database = useSQLiteContext();
 
-
   const [foods, setFoods] = useState(getFoods(database));
 
   addDatabaseChangeListener(() => {
@@ -28,7 +27,7 @@ export default function FoodsScreen() {
         style={{
           height: 50,
           width: "100%",
-          backgroundColor: Colors.blue70,
+          backgroundColor: Colors.green60,
           display: "flex",
           alignItems: "flex-end",
           padding: 10,
@@ -38,6 +37,7 @@ export default function FoodsScreen() {
           iconSource={() => {
             return <PlusIcon color={Colors.white} />;
           }}
+          backgroundColor={Colors.green30}
           round
           style={{ width: 30, height: 30, padding: 6 }}
           onPress={() => {
@@ -60,5 +60,7 @@ const styles = StyleSheet.create({
   itemsList: {
     flex: 1,
     alignItems: "center",
+    gap: 4,
+    marginTop: 4,
   },
 });

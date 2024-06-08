@@ -1,4 +1,5 @@
 // External dependencies
+import { useState } from "react";
 import { Dimensions } from "react-native";
 import { View, Text, Colors, ListItem } from "react-native-ui-lib";
 import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
@@ -7,21 +8,35 @@ import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 const screenWidth = Dimensions.get("window").width;
 
 export default function FoodListItem({ food, navigation }) {
+  const [touched, setTouched] = useState(false);
+
+  if (touched) {
+    setTimeout(() => {
+      setTouched(false)
+    }, 1000)
+  }
+
   return (
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("Details", { food: food });
+        setTouched(true);
       }}
     >
-      <ListItem style={{ marginTop: 5 }}>
-        <View
-          centerV
-          centerH
-          bg-white
-          style={{ height: 60, width: screenWidth * 0.95, borderRadius: 10 }}
-        >
-          <Text text60L>{food.name}</Text>
-        </View>
+      <ListItem
+        style={{
+        
+          // Shape
+          backgroundColor: Colors.white,
+          borderRadius: 16,
+          width: screenWidth * 0.95,
+          // Layout
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Text text60L>{food.name}</Text>
       </ListItem>
     </TouchableOpacity>
   );
