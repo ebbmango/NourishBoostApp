@@ -35,8 +35,8 @@ export default function HomeScreen() {
 
   // Function that retrieves the picked date.
   const handleConfirm = (date) => {
-    setDate(date);
     hideDatePicker();
+    setDate(date);
   };
 
   // Retrieving the meals.
@@ -52,14 +52,13 @@ export default function HomeScreen() {
           flexDirection: "row",
           justifyContent: "space-between",
           width: screenWidth,
-          height: 88,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.green30,
           paddingHorizontal: 24,
-          paddingTop: 24,
           alignItems: "center",
+          paddingVertical: 16,
         }}
       >
-        <Text text60L color={Colors.green30} style={{ marginTop: 8 }}>
+        <Text text60L white style={{ marginTop: 8 }}>
           {date.toLocaleDateString("en-US", {
             weekday: "long",
             month: "long",
@@ -69,7 +68,7 @@ export default function HomeScreen() {
         </Text>
         <TouchableOpacity onPress={showDatePicker}>
           <CalendarDayIcon
-            color={Colors.green30}
+            color={Colors.white}
             style={{ width: 32, height: 32 }}
           />
         </TouchableOpacity>
@@ -77,12 +76,13 @@ export default function HomeScreen() {
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
+        date={date}
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
       <ScrollView contentContainerStyle={styles.container}>
         {meals.map((meal) => {
-          return <MealDrawer key={meal.id} meal={meal} />;
+          return <MealDrawer key={meal.id} meal={meal} date={date} />;
         })}
       </ScrollView>
     </>
