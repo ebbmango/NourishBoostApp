@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, Dimensions } from "react-native";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
 import {
@@ -16,6 +16,7 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 import FoodListItem from "../components/FoodListItem";
 import getFoods from "../queries/getFoods";
 import { useNavigation } from "@react-navigation/native";
+import FoodList from "../components/FoodList";
 
 export default function FoodsScreen() {
   // Retrieving the device's dimensions
@@ -30,13 +31,25 @@ export default function FoodsScreen() {
   // Retrieving all food items from the database.
   const [foods, setFoods] = useState(getFoods(database));
 
-  // Retrieving them once more every time an item is deleted.
-  addDatabaseChangeListener(() => {
-    setFoods(getFoods(database));
-  });
+  useEffect(() => {
+    // Retrieving them once more every time an item is deleted.
+    const listener = addDatabaseChangeListener(() => {
+      setFoods(getFoods(database));
+    });
+
+    // Removes listener once the component unmmounts.
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   // Creating stateful variable to hold the user's search string.
   const [searchParams, setSearchParams] = useState("");
+
+  // Returning only the foods that match the user's search string.
+  const searchResults = foods.filter((food) =>
+    food.name.toLowerCase().includes(searchParams.toLowerCase())
+  );
 
   return (
     <>
@@ -67,7 +80,7 @@ export default function FoodsScreen() {
             borderRadius: 100,
             borderWidth: 1,
             borderColor: Colors.grey60,
-            paddingHorizontal: 10,
+            paddingHorizontal: 15,
             justifyContent: "center",
           }}
         />
@@ -85,17 +98,7 @@ export default function FoodsScreen() {
         />
       </View>
       {/* Foods list */}
-      <ScrollView contentContainerStyle={styles.itemsList}>
-        {foods
-          .filter((food) => {
-            return food.name.toLowerCase().includes(searchParams.toLowerCase());
-          })
-          .map((food) => {
-            return (
-              <FoodListItem key={food.id} food={food} navigation={navigator} />
-            );
-          })}
-      </ScrollView>
+      <FoodList foods={searchResults} />
     </>
   );
 }
