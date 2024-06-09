@@ -12,6 +12,7 @@ import MealDrawer from "../components/MealDrawer";
 
 // Queries
 import getMeals from "../queries/getMeals";
+import { useQuery, useQueryClient } from "react-query";
 
 export default function HomeScreen() {
   // Extracting the device's dimensions.
@@ -19,6 +20,14 @@ export default function HomeScreen() {
 
   // Connecting to the database.
   const database = useSQLiteContext();
+
+  // Instantiating the query client.
+  const queryClient = useQueryClient();
+
+  // Retrieving the meals.
+  const { data: meals = [] } = useQuery("meals", () => getMeals(database), {
+    initialData: [],
+  });
 
   // Stateful variable for controling the display of the date picker.
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -38,9 +47,6 @@ export default function HomeScreen() {
     hideDatePicker();
     setDate(date);
   };
-
-  // Retrieving the meals.
-  const [meals, setMeals] = useState(getMeals(database));
 
   // Intantiating the initial date.
   const [date, setDate] = useState(new Date());
