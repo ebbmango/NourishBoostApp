@@ -18,19 +18,25 @@ import getFoods from "../queries/getFoods";
 import { useNavigation } from "@react-navigation/native";
 
 export default function FoodsScreen() {
+  // Retrieving the device's dimensions
   const screenWidth = Dimensions.get("window").width;
 
+  // Instantiating the navigator.
   const navigator = useNavigation();
 
+  // Connecting to the database.
   const database = useSQLiteContext();
 
+  // Retrieving all food items from the database.
   const [foods, setFoods] = useState(getFoods(database));
 
-  const [searchParams, setSearchParams] = useState("");
-
+  // Retrieving them once more every time an item is deleted.
   addDatabaseChangeListener(() => {
     setFoods(getFoods(database));
   });
+
+  // Creating stateful variable to hold the user's search string.
+  const [searchParams, setSearchParams] = useState("");
 
   return (
     <>

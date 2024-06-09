@@ -5,7 +5,7 @@ import { Text, Colors, ListItem } from "react-native-ui-lib";
 import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 
 export default function FoodListItem({ food, navigation }) {
-  // Get the screen width
+  // Retrieving the device's dimensions
   const screenWidth = Dimensions.get("window").width;
 
   // Instantating the navigator
