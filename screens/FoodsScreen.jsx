@@ -17,6 +17,7 @@ import FoodListItem from "../components/FoodListItem";
 import getFoods from "../queries/getFoods";
 import { useNavigation } from "@react-navigation/native";
 import FoodList from "../components/FoodList";
+import { useQuery, useQueryClient } from "react-query";
 
 export default function FoodsScreen() {
   // Retrieving the device's dimensions
@@ -28,13 +29,22 @@ export default function FoodsScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
-  // Retrieving all food items from the database.
-  const [foods, setFoods] = useState(getFoods(database));
+  const queryClient = useQueryClient();
+
+  // Fetching food items using react-query
+  const { data: foods = [] } = useQuery(
+    // Query key
+    "foods",
+    // Query function
+    () => getFoods(database),
+    // Query options
+    { initialData: [] }
+  );
 
   useEffect(() => {
     // Retrieving them once more every time an item is deleted.
-    const listener = addDatabaseChangeListener(() => {
-      setFoods(getFoods(database));
+    const listener = addDatabaseChangeListener((change) => {
+      if (change.tableName === "foods") queryClient.invalidateQueries("foods");
     });
 
     // Removes listener once the component unmmounts.
