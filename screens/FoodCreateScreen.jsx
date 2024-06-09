@@ -52,7 +52,7 @@ export default function FoodCreateScreen() {
   const [isNameEmpty, setIsNameEmpty] = useState(true);
   const [isNameUnique, setIsNameUnique] = useState(true);
 
-  const [unit, setUnit] = useState(measurementUnits[0].unit);
+  const [unit, setUnit] = useState(measurementUnits[0].symbol);
 
   const [baseMeasure, setBaseMeasure] = useState(0);
   const [measureValidity, setMeasureValidity] = useState(false);
@@ -233,8 +233,8 @@ export default function FoodCreateScreen() {
             {measurementUnits.map((unitObject) => (
               <Picker.Item
                 key={unitObject.id}
-                value={unitObject.unit}
-                label={unitObject.unit}
+                value={unitObject.symbol}
+                label={unitObject.symbol}
               />
             ))}
           </Picker>
@@ -459,10 +459,12 @@ export default function FoodCreateScreen() {
                 // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
                 if (!alertCalories || nutrientsValidity) {
                   // Run the query to insert the data into the database and redirect to the newly created food page
-                  const foodId = createFood(database, { foodName }).lastInsertRowId;
+                  const foodId = createFood(database, {
+                    foodName,
+                  }).lastInsertRowId;
 
                   const unitId = measurementUnits.filter((unitObject) => {
-                    return unitObject.unit === unit;
+                    return unitObject.symbol === unit;
                   })[0].id;
 
                   createNutritionalTable(database, {
