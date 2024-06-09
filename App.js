@@ -14,6 +14,9 @@ import databaseFile from "./assets/database.db";
 
 // Components
 import BottomTabsNavigator from "./navigation/BottomTabsNavigator";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 async function openDatabase() {
   // Checks whether an "SQLite" directory exists (within the app's file system!).
@@ -69,14 +72,16 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SQLiteProvider
-        databaseName="database.db"
-        options={{ enableChangeListener: true }}
-      >
-        <NavigationContainer>
-          <BottomTabsNavigator />
-        </NavigationContainer>
-      </SQLiteProvider>
+      <QueryClientProvider client={queryClient}>
+        <SQLiteProvider
+          databaseName="database.db"
+          options={{ enableChangeListener: true }}
+        >
+          <NavigationContainer>
+            <BottomTabsNavigator />
+          </NavigationContainer>
+        </SQLiteProvider>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }
