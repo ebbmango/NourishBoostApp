@@ -4,8 +4,9 @@ import { Dimensions, StyleSheet } from "react-native";
 
 import getFoods from "../queries/getFoods";
 import FoodList from "../components/FoodList";
-import { Colors, Text, TextField, View } from "react-native-ui-lib";
+import { Colors, TextField, View } from "react-native-ui-lib";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 
 export default function ChooseFoodScreen() {
   // Extracting the device's dimensions.
@@ -17,13 +18,18 @@ export default function ChooseFoodScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
-  // Retrieving all food items from the database.
-  const [foods, setFoods] = useState(getFoods(database));
+  // Initiating the query client.
+  const queryClient = useQueryClient();
+
+  // Fetching food items using react-query
+  const { data: foods = [] } = useQuery("foods", () => getFoods(database), {
+    initialData: [],
+  });
 
   useEffect(() => {
     // Retrieving them once more every time an item is deleted.
-    const listener = addDatabaseChangeListener(() => {
-      setFoods(getFoods(database));
+    const listener = addDatabaseChangeListener((change) => {
+      if (change.tableName === "foods") queryClient.invalidateQueries("foods");
     });
 
     // Removes listener once the component unmmounts.
@@ -35,12 +41,14 @@ export default function ChooseFoodScreen() {
   // Creating stateful variable to hold the user's search string.
   const [searchParams, setSearchParams] = useState("");
 
+  // Extracting the search results every time searchParams change.
   const searchResults = foods.filter((food) =>
     food.name.toLowerCase().includes(searchParams.toLowerCase())
   );
 
   return (
     <>
+      {/* Search bar */}
       <View
         centerH
         style={{ backgroundColor: Colors.green60, paddingVertical: 10 }}
@@ -62,6 +70,7 @@ export default function ChooseFoodScreen() {
           }}
         />
       </View>
+      {/* Food list */}
       <FoodList
         foods={searchResults}
         navigationProps={{ destination: "Create entry", params: { date } }}
