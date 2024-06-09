@@ -14,6 +14,7 @@ import ListIcon from "../components/icons/ListIcon";
 import UtensilsIcon from "../components/icons/UtensilsIcon";
 import ScaleIcon from "../components/icons/ScaleIcon";
 import ListClipboardIcon from "../components/icons/ListClipboardIcon";
+import MealsStackNavigator from "./MealsStackNavigator";
 
 // Initializing navigator
 const Tab = createBottomTabNavigator();
@@ -40,7 +41,7 @@ export default function BottomTabsNavigator() {
       />
       <Tab.Screen
         name="Diary"
-        component={HomeScreen}
+        component={MealsStackNavigator}
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (

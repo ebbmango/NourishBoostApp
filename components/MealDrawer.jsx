@@ -13,10 +13,14 @@ import {
 import Entry from "./Entry";
 import RotatingCaret from "./RotatingCaret";
 import PlusIcon from "./icons/PlusIcon";
+import { useNavigation } from "@react-navigation/native";
+import formatDate from "../functions/formatDate";
 
-export default function MealDrawer({ meal }) {
+export default function MealDrawer({ meal, date }) {
   // Extracting the device's dimensions.
   const screenWidth = Dimensions.get("window").width;
+
+  const navigator = useNavigation();
 
   // Setting up a state to handle the expandable section's expansion.
   const [expanded, setExpanded] = useState(false);
@@ -74,7 +78,10 @@ export default function MealDrawer({ meal }) {
             )}
             round
             onPress={() => {
-              console.log("AAA");
+              navigator.navigate("Register item", {
+                mealId: meal.id,
+                date: formatDate(date),
+              });
             }}
           />
         </View>
