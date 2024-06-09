@@ -26,6 +26,8 @@ export default function FoodsScreen() {
 
   const [foods, setFoods] = useState(getFoods(database));
 
+  const [searchParams, setSearchParams] = useState("");
+
   addDatabaseChangeListener(() => {
     setFoods(getFoods(database));
   });
@@ -48,7 +50,9 @@ export default function FoodsScreen() {
       >
         {/* Seatch Field */}
         <TextField
-          onChangeText={(text) => {}}
+          onChangeText={(text) => {
+            setSearchParams(text.trim());
+          }}
           placeholder={"Search"}
           containerStyle={{
             width: screenWidth - 60,
@@ -76,11 +80,15 @@ export default function FoodsScreen() {
       </View>
       {/* Foods list */}
       <ScrollView contentContainerStyle={styles.itemsList}>
-        {foods.map((food) => {
-          return (
-            <FoodListItem key={food.id} food={food} navigation={navigator} />
-          );
-        })}
+        {foods
+          .filter((food) => {
+            return food.name.toLowerCase().includes(searchParams.toLowerCase());
+          })
+          .map((food) => {
+            return (
+              <FoodListItem key={food.id} food={food} navigation={navigator} />
+            );
+          })}
       </ScrollView>
     </>
   );
