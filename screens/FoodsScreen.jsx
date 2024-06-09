@@ -1,23 +1,17 @@
+// External dependencies
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
-import {
-  View,
-  Assets,
-  Button,
-  Colors,
-  ListItem,
-  TextField,
-} from "react-native-ui-lib";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery, useQueryClient } from "react-query";
+import { View, Button, Colors, TextField } from "react-native-ui-lib";
 
+// Components
+import FoodList from "../components/FoodList";
 import PlusIcon from "../components/icons/PlusIcon";
 
-import { FlatList, ScrollView } from "react-native-gesture-handler";
-import FoodListItem from "../components/FoodListItem";
+// Queries
 import getFoods from "../queries/getFoods";
-import { useNavigation } from "@react-navigation/native";
-import FoodList from "../components/FoodList";
-import { useQuery, useQueryClient } from "react-query";
 
 export default function FoodsScreen() {
   // Retrieving the device's dimensions
@@ -29,17 +23,13 @@ export default function FoodsScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
+  // Initiating the query client.
   const queryClient = useQueryClient();
 
   // Fetching food items using react-query
-  const { data: foods = [] } = useQuery(
-    // Query key
-    "foods",
-    // Query function
-    () => getFoods(database),
-    // Query options
-    { initialData: [] }
-  );
+  const { data: foods = [] } = useQuery("foods", () => getFoods(database), {
+    initialData: [],
+  });
 
   useEffect(() => {
     // Retrieving them once more every time an item is deleted.
