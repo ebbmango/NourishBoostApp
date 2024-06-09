@@ -1,4 +1,4 @@
-const query = `UPDATE foods SET name = $newFoodName WHERE 1 = $foodId;`;
+const query = `UPDATE foods SET name = $newFoodName WHERE id = $foodId;`;
 
 export default function updateFoodName(database, { foodId, newFoodName }) {
   return database.runSync(query, {
