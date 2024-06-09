@@ -102,12 +102,3 @@ export default function FoodsScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  itemsList: {
-    flex: 1,
-    alignItems: "center",
-    gap: 4,
-    marginTop: 4,
-  },
-});

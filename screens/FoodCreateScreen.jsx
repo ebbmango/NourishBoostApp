@@ -1,7 +1,7 @@
 // External imports
 import { useRef, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite/next";
-import { Dimensions } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -24,29 +24,34 @@ import PencilIcon from "../components/icons/PencilIcon";
 // Components
 import AlertDialog from "../components/AlertDialog";
 import NutrientsDialog from "../components/NutrientsDialog";
+import MacrosGrid from "../components/MacrosGrid";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
 import validateString from "../functions/validateString";
 import validateNumericField from "../functions/validateNumericField";
 import createNutritionalTable from "../queries/createNutritionalTable";
+
+// Queries
 import createFood from "../queries/createFood";
+import getUnits from "../queries/getUnits";
+import getFoods from "../queries/getFoods";
+import tweakStyles from "../functions/tweakStyles";
+
+// Initializing variables
+const screenWidth = Dimensions.get("window").width;
 
 export default function FoodCreateScreen() {
   // Controllers & misc.
   const navigator = useNavigation();
   const database = useSQLiteContext();
-  const screenWidth = Dimensions.get("window").width;
   const scrollViewRef = useRef(null);
 
   // Data
-  const measurementUnits = database.getAllSync("SELECT * FROM units;");
-  const allFoodNames = database
-    .getAllSync("SELECT name FROM foods;")
-    .map((foodObject) => foodObject.name);
+  const measurementUnits = getUnits(database);
+  const allFoodNames = getFoods(database).map((food) => food.name);
 
   // Stateful variables: data, validation status & controllers.
-
   const [foodName, setFoodName] = useState("");
   const [nameValidity, setNameValidity] = useState(false);
   const [isNameEmpty, setIsNameEmpty] = useState(true);
@@ -121,21 +126,14 @@ export default function FoodCreateScreen() {
           text30
           style={{
             marginLeft: 16,
-            marginVertical: 20,
+            marginTop: 20,
             color: foodName.length === 0 ? Colors.grey40 : Colors.black,
           }}
         >
           {foodName.length === 0 ? "New food" : foodName}
         </Text>
         {/* Field that changes the food's name */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 15,
-            marginLeft: 16,
-          }}
-        >
+        <View style={styles.iconViews}>
           <View width={24} height={24}>
             <PencilIcon />
           </View>
@@ -153,31 +151,17 @@ export default function FoodCreateScreen() {
               // Checking overall validity.
               setNameValidity(isUnique && !isEmpty);
             }}
-            containerStyle={{
-              width: screenWidth - 64,
-              height: 36,
-              backgroundColor: Colors.grey60,
-              borderRadius: 5,
-              borderWidth: 1,
+            containerStyle={tweakStyles(styles.iconFields, {
               borderColor:
                 startValidating && !nameValidity
                   ? Colors.green30
                   : Colors.grey60,
-              paddingHorizontal: 10,
-              justifyContent: "center",
-            }}
+            })}
           />
         </View>
         {/* Field that changes the amount of food */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 15,
-            marginLeft: 16,
-          }}
-        >
-          <View width={24} height={24} style={{ marginTop: 12 }}>
+        <View style={styles.iconViews}>
+          <View width={24} height={24}>
             <GaugeIcon />
           </View>
           <NumberInput
@@ -188,32 +172,16 @@ export default function FoodCreateScreen() {
               const validity = number > 0;
               setMeasureValidity(validity);
             }}
-            containerStyle={{
-              width: screenWidth - 64,
-              height: 36,
-              backgroundColor: Colors.grey60,
-              borderRadius: 5,
-              borderWidth: 1,
+            containerStyle={tweakStyles(styles.iconFields, {
               borderColor:
                 startValidating && !measureValidity
                   ? Colors.green30
                   : Colors.grey60,
-              paddingHorizontal: 10,
-              marginTop: 12,
-              alignItems: "center",
-            }}
+            })}
           />
         </View>
         {/* Field that changes the currently selected measurement unit */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 15,
-            marginTop: 12,
-            marginLeft: 16,
-          }}
-        >
+        <View style={styles.iconViews}>
           <View width={24} height={24} style={{ marginBottom: 2 }}>
             <RulerVerticalIcon />
           </View>
@@ -222,13 +190,7 @@ export default function FoodCreateScreen() {
             onChange={(element) => {
               setUnit(element);
             }}
-            style={{
-              width: screenWidth - 64,
-              height: 36,
-              backgroundColor: Colors.grey60,
-              borderRadius: 5,
-              paddingHorizontal: 10,
-            }}
+            style={styles.iconFields}
           >
             {measurementUnits.map((unitObject) => (
               <Picker.Item
@@ -240,54 +202,13 @@ export default function FoodCreateScreen() {
           </Picker>
         </View>
         {/* Macronutrients grid */}
-        <GridView
-          numColumns={2}
-          items={[
-            {
-              title: "Calories",
-              value: calories,
-              macro: false,
-            },
-            {
-              title: "Carbohydrates",
-              value: carbs,
-              macro: true,
-            },
-            {
-              title: "Fats",
-              value: fats,
-              macro: true,
-            },
-            {
-              title: "Protein",
-              value: protein,
-              macro: true,
-            },
-          ]}
-          renderCustomItem={({ title, value, macro }) => {
-            return (
-              <View
-                key={title}
-                style={{
-                  width: screenWidth / 2 - 15, // Adjust the width for padding/margin
-                  padding: 10,
-                  justifyContent: "center",
-                  backgroundColor: Colors.green30,
-                  borderRadius: 5,
-                  marginLeft: 10,
-                  marginTop: 10,
-                  alignItems: "center",
-                }}
-              >
-                <Text text70>{title}</Text>
-                <Text text70BL>
-                  {value}
-                  {macro && "g"}
-                </Text>
-              </View>
-            );
-          }}
+        <MacrosGrid
+          calories={calories}
+          carbs={carbs}
+          fats={fats}
+          protein={protein}
         />
+        {/* Nutrients' fields list */}
         <View
           style={{
             justifyContent: "center",
@@ -307,19 +228,7 @@ export default function FoodCreateScreen() {
                 setCalories(number);
                 setCaloriesValidity(validity);
               }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !caloriesValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
+              containerStyle={styles.nutrientFields}
             />
           </View>
           {/* Carbohydrates input */}
@@ -333,19 +242,7 @@ export default function FoodCreateScreen() {
                 setCarbs(number);
                 setCarbsValidity(validity);
               }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !carbsValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
+              containerStyle={styles.nutrientFields}
             />
           </View>
           {/* Fats input */}
@@ -359,19 +256,7 @@ export default function FoodCreateScreen() {
                 setFats(number);
                 setFatsValidity(validity);
               }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !fatsValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
+              containerStyle={styles.nutrientFields}
             />
           </View>
           {/* Protein input */}
@@ -385,19 +270,7 @@ export default function FoodCreateScreen() {
                 setProtein(number);
                 setProteinValidity(validity);
               }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !proteinValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
+              containerStyle={styles.nutrientFields}
             />
           </View>
           {/* Confirm button */}
@@ -487,3 +360,35 @@ export default function FoodCreateScreen() {
     </>
   );
 }
+
+// Stylesheet
+const styles = StyleSheet.create({
+  iconViews: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+    marginTop: 12,
+    marginLeft: 16,
+  },
+  iconFields: {
+    flexDirection: "column",
+    width: screenWidth - 64,
+    height: 36,
+    backgroundColor: Colors.grey60,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: Colors.grey60,
+    paddingHorizontal: 10,
+    justifyContent: "center",
+  },
+  nutrientFields: {
+    width: screenWidth - 20,
+    height: 36,
+    backgroundColor: Colors.grey50,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.grey50,
+  },
+});
