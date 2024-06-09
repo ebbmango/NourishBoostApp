@@ -1,11 +1,12 @@
 import { useRoute } from "@react-navigation/native";
-import { useSQLiteContext } from "expo-sqlite";
+import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
 import { Dimensions, StyleSheet } from "react-native";
 
 import getFoods from "../queries/getFoods";
 import FoodList from "../components/FoodList";
 import { Colors, Text, TextField, View } from "react-native-ui-lib";
 import MagnifyingGlassIcon from "../components/icons/MagnifyingGlassIcon";
+import { useEffect, useState } from "react";
 
 export default function ChooseFoodScreen() {
   // Extracting the device's dimensions.
@@ -17,8 +18,27 @@ export default function ChooseFoodScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
-  // Retrieving the food objects from the database.
-  const foods = getFoods(database);
+  // Retrieving all food items from the database.
+  const [foods, setFoods] = useState(getFoods(database));
+
+  useEffect(() => {
+    // Retrieving them once more every time an item is deleted.
+    const listener = addDatabaseChangeListener(() => {
+      setFoods(getFoods(database));
+    });
+
+    // Removes listener once the component unmmounts.
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
+  // Creating stateful variable to hold the user's search string.
+  const [searchParams, setSearchParams] = useState("");
+
+  const searchResults = foods.filter((food) =>
+    food.name.toLowerCase().includes(searchParams.toLowerCase())
+  );
 
   return (
     <>
@@ -27,7 +47,10 @@ export default function ChooseFoodScreen() {
         style={{ backgroundColor: Colors.green60, paddingVertical: 10 }}
       >
         <TextField
-          onChangeText={(text) => {}}
+          placeholder={"Search"}
+          onChangeText={(text) => {
+            setSearchParams(text.trim());
+          }}
           containerStyle={{
             width: screenWidth * 0.95,
             height: 36,
@@ -35,19 +58,12 @@ export default function ChooseFoodScreen() {
             borderRadius: 100,
             borderWidth: 1,
             borderColor: Colors.grey60,
-            paddingHorizontal: 10,
+            paddingHorizontal: 15,
             justifyContent: "center",
           }}
-        >
-          <View
-            pointerEvents="none"
-            style={{ width: 20, height: 20, position: "absolute", right: 5 }}
-          >
-            <MagnifyingGlassIcon color={Colors.grey30} />
-          </View>
-        </TextField>
+        />
       </View>
-      <FoodList foods={foods} />
+      <FoodList foods={searchResults} />
     </>
   );
 }
