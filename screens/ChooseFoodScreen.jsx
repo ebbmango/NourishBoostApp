@@ -5,7 +5,6 @@ import { Dimensions, StyleSheet } from "react-native";
 import getFoods from "../queries/getFoods";
 import FoodList from "../components/FoodList";
 import { Colors, Text, TextField, View } from "react-native-ui-lib";
-import MagnifyingGlassIcon from "../components/icons/MagnifyingGlassIcon";
 import { useEffect, useState } from "react";
 
 export default function ChooseFoodScreen() {
@@ -63,7 +62,10 @@ export default function ChooseFoodScreen() {
           }}
         />
       </View>
-      <FoodList foods={searchResults} />
+      <FoodList
+        foods={searchResults}
+        navigationProps={{ destination: "Create entry", params: { date } }}
+      />
     </>
   );
 }

@@ -98,7 +98,10 @@ export default function FoodsScreen() {
         />
       </View>
       {/* Foods list */}
-      <FoodList foods={searchResults} />
+      <FoodList
+        foods={searchResults}
+        navigationProps={{ destination: "Details" }}
+      />
     </>
   );
 }

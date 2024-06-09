@@ -4,19 +4,12 @@ import { Dimensions } from "react-native";
 import { Text, Colors, ListItem } from "react-native-ui-lib";
 import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 
-export default function FoodListItem({ food, navigation }) {
+export default function FoodListItem({ food, handleNavigation }) {
   // Retrieving the device's dimensions
   const screenWidth = Dimensions.get("window").width;
 
-  // Instantating the navigator
-  const navigator = useNavigation();
-
   return (
-    <TouchableOpacity
-      onPress={() => {
-        navigator.navigate("Details", { food: food });
-      }}
-    >
+    <TouchableOpacity onPress={handleNavigation}>
       <ListItem
         style={{
           // Shape
