@@ -1,14 +1,11 @@
 // External dependencies
 import { useQuery, useQueryClient } from "react-query";
 import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native-ui-lib";
+import { Button, Colors, Text, View } from "react-native-ui-lib";
 
 // Components
-import QuantityField from "../components/FoodDetails/QuantityField";
-import UnitPicker from "../components/FoodDetails/UnitPicker";
-import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
 
 // Queries
 import getFood from "../queries/getFood";
@@ -17,8 +14,12 @@ import getUnits from "../queries/getUnits";
 
 // Stylesheets
 import styles from "../styles";
+import FoodDetails from "../components/FoodDetails/FoodDetails";
+import fixDecimals from "../functions/fixDecimals";
 
-export default function FoodDetailsScreen() {
+export default function RegisterItemScreen() {
+  const navigator = useNavigation();
+
   // Connecting to the database.
   const database = useSQLiteContext();
 
@@ -43,6 +44,21 @@ export default function FoodDetailsScreen() {
   );
 
   const [tableIndex, setTableIndex] = useState(0);
+  const [quantity, setQuantity] = useState(0);
+  const [tableId, setTableId] = useState(0);
+
+  useEffect(() => {
+    if (nutritionalTables) {
+      setQuantity(nutritionalTables[tableIndex].baseMeasure);
+      setTableId(nutritionalTables[tableIndex].id);
+    }
+  }, [nutritionalTables]);
+
+  const proportion = (number) => {
+    return number === 0
+      ? 0
+      : (number / nutritionalTables[tableIndex].baseMeasure) * quantity;
+  };
 
   // LISTENING FOR CHANGES: MIGHT HAVE TO CHANGE LATER
 
@@ -61,56 +77,65 @@ export default function FoodDetailsScreen() {
   //   };
   // }, []);
 
-  if (tablesLoaded && unitsLoaded)
+  if (tablesLoaded && unitsLoaded) {
     return (
       <>
-        <View>
-          <Text text30 style={styles.foodDetailsScreen.foodNameStyle}>
-            {foodName}
-          </Text>
-          {/* Field that changes the amount of food */}
-          <QuantityField
-            initialNumber={nutritionalTables[tableIndex].baseMeasure}
-          />
-          {/* Field that changes the currently selected measurement unit */}
-          <UnitPicker
-            value={measurementUnits[tableIndex].id}
-            options={measurementUnits}
-            onChange={(change) => {
+        <FoodDetails
+          foodName={foodName}
+          numberField={{
+            initialNumber: nutritionalTables[tableIndex].baseMeasure,
+            onChangeNumber: (inputObject) => setQuantity(inputObject.number),
+          }}
+          unitPicker={{
+            initialValue: measurementUnits[tableIndex].id,
+            options: measurementUnits,
+            onChange: (change) => {
               // Finding the index of the new table.
               const newTableIndex = nutritionalTables.findIndex(
                 (table) => table.unit.id === change
               );
               // Setting the index of the new table.
               setTableIndex(newTableIndex);
-            }}
-          />
-          {/* Macronutrients grid */}
-          <NutrientsGrid
-            items={[
+            },
+          }}
+          nutrientsGrid={{
+            items: [
               {
                 title: "Calories",
-                value: nutritionalTables[tableIndex]?.kcals,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex]?.kcals)
+                ),
                 trailing: "",
+                color: Colors.green40,
               },
               {
                 title: "Carbohydrates",
-                value: nutritionalTables[tableIndex].carbs,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex].carbs)
+                ),
                 trailing: "g",
+                color: Colors.green40,
               },
               {
                 title: "Fats",
-                value: nutritionalTables[tableIndex].fats,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex].fats)
+                ),
                 trailing: "g",
+                color: Colors.green40,
               },
               {
                 title: "Protein",
-                value: nutritionalTables[tableIndex].protein,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex].protein)
+                ),
                 trailing: "g",
+                color: Colors.green40,
               },
-            ]}
-          />
-        </View>
+            ],
+          }}
+        />
       </>
     );
+  }
 }
