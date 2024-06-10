@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
 
 // Components
-import QuantityField from "../components/FoodDetails/QuantityField";
-import UnitPicker from "../components/FoodDetails/UnitPicker";
-import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
+import CreateTableButton from "../components/FoodDetails/CreateTableButton";
+import EditTableButton from "../components/FoodDetails/EditTableButton";
+import DeleteTableButton from "../components/FoodDetails/DeleteTableButton";
+import DeleteFoodButton from "../components/FoodDetails/DeleteFoodButton";
 
 // Queries
 import getFood from "../queries/getFood";
@@ -17,10 +18,8 @@ import getUnits from "../queries/getUnits";
 
 // Stylesheets
 import styles from "../styles";
-import CreateTableButton from "../components/FoodDetails/CreateTableButton";
-import EditTableButton from "../components/FoodDetails/EditTableButton";
-import DeleteTableButton from "../components/FoodDetails/DeleteTableButton";
-import DeleteFoodButton from "../components/FoodDetails/DeleteFoodButton";
+import FoodDetails from "../components/FoodDetails/FoodDetails";
+import fixDecimals from "../functions/fixDecimals";
 
 export default function FoodDetailsScreen() {
   const navigator = useNavigation();
@@ -59,6 +58,12 @@ export default function FoodDetailsScreen() {
     }
   }, [nutritionalTables]);
 
+  const proportion = (number) => {
+    return number === 0
+      ? 0
+      : (number / nutritionalTables[tableIndex].baseMeasure) * quantity;
+  };
+
   // LISTENING FOR CHANGES: MIGHT HAVE TO CHANGE LATER
 
   // useEffect(() => {
@@ -80,81 +85,85 @@ export default function FoodDetailsScreen() {
     console.log(quantity);
     return (
       <>
-        <View>
-          <Text text30 style={styles.foodDetailsScreen.foodNameStyle}>
-            {foodName}
-          </Text>
-          {/* Field that changes the amount of food */}
-          <QuantityField
-            initialNumber={nutritionalTables[tableIndex].baseMeasure}
-            onChangeNumber={(inputObject) => setQuantity(inputObject.number)}
-          />
-          {/* Field that changes the currently selected measurement unit */}
-          <UnitPicker
-            value={measurementUnits[tableIndex].id}
-            options={measurementUnits}
-            onChange={(change) => {
+        <FoodDetails
+          foodName={foodName}
+          numberField={{
+            initialNumber: nutritionalTables[tableIndex].baseMeasure,
+            onChangeNumber: (inputObject) => setQuantity(inputObject.number),
+          }}
+          unitPicker={{
+            initialValue: measurementUnits[tableIndex].id,
+            options: measurementUnits,
+            onChange: (change) => {
               // Finding the index of the new table.
               const newTableIndex = nutritionalTables.findIndex(
                 (table) => table.unit.id === change
               );
               // Setting the index of the new table.
               setTableIndex(newTableIndex);
-            }}
-          />
-          {/* Macronutrients grid */}
-          <NutrientsGrid
-            items={[
+            },
+          }}
+          nutrientsGrid={{
+            items: [
               {
                 title: "Calories",
-                value: nutritionalTables[tableIndex]?.kcals,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex]?.kcals)
+                ),
                 trailing: "",
                 color: Colors.green40,
               },
               {
                 title: "Carbohydrates",
-                value: nutritionalTables[tableIndex].carbs,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex].carbs)
+                ),
                 trailing: "g",
                 color: Colors.green40,
               },
               {
                 title: "Fats",
-                value: nutritionalTables[tableIndex].fats,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex].fats)
+                ),
                 trailing: "g",
                 color: Colors.green40,
               },
               {
                 title: "Protein",
-                value: nutritionalTables[tableIndex].protein,
+                value: fixDecimals(
+                  proportion(nutritionalTables[tableIndex].protein)
+                ),
                 trailing: "g",
                 color: Colors.green40,
               },
-            ]}
+            ],
+          }}
+        />
+
+        <View style={styles.foodDetailsScreen.buttonsView}>
+          <CreateTableButton
+            onPress={() => {
+              console.log("create table!");
+              // navigator.navigate("Create", { tableId, foodId });
+            }}
           />
-          <View style={styles.foodDetailsScreen.buttonsView}>
-            <CreateTableButton
-              onPress={() => {
-                console.log("create table!");
-                // navigator.navigate("Create", { tableId, foodId });
-              }}
-            />
-            <EditTableButton
-              onPress={() => {
-                console.log("edit table!");
-                // navigator.navigate("Edit", { tableId, foodId });
-              }}
-            />
-            <DeleteTableButton
-              onPress={() => {
-                console.log("delete table!");
-              }}
-            />
-            <DeleteFoodButton
-              onPress={() => {
-                console.log("delete food!");
-              }}
-            />
-          </View>
+          <EditTableButton
+            onPress={() => {
+              console.log("edit table!");
+              // navigator.navigate("Edit", { tableId, foodId });
+            }}
+          />
+          <DeleteTableButton
+            onPress={() => {
+              console.log("delete table!");
+            }}
+          />
+          <DeleteFoodButton
+            onPress={() => {
+              console.log("delete food!");
+            }}
+          />
         </View>
       </>
     );
