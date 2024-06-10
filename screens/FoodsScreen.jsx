@@ -12,32 +12,28 @@ import PlusIcon from "../components/icons/PlusIcon";
 
 // Queries
 import getFoods from "../queries/getFoods";
+import getUnits from "../queries/getUnits";
+
+// Retrieving the device's dimensions
+const screenWidth = Dimensions.get("window").width;
 
 export default function FoodsScreen() {
-  // Retrieving the device's dimensions
-  const screenWidth = Dimensions.get("window").width;
-
-  // Instantiating the navigator.
+  // Instantiating functionalities.
   const navigator = useNavigation();
-
-  // Connecting to the database.
   const database = useSQLiteContext();
-
-  // Initiating the query client.
   const queryClient = useQueryClient();
 
-  // Fetching food items using react-query
+  // Fetching food items using react-query.
   const { data: foods = [] } = useQuery("foods", () => getFoods(database), {
     initialData: [],
   });
 
+  // Retrieving them once more every time a change is detected in the foods table.
   useEffect(() => {
-    // Retrieving them once more every time an item is deleted.
     const listener = addDatabaseChangeListener((change) => {
       if (change.tableName === "foods") queryClient.invalidateQueries("foods");
     });
 
-    // Removes listener once the component unmmounts.
     return () => {
       listener.remove();
     };
@@ -54,35 +50,14 @@ export default function FoodsScreen() {
   return (
     <>
       {/* Top bar */}
-      <View
-        centerV
-        style={{
-          flexDirection: "row",
-          height: 54,
-          width: "100%",
-          backgroundColor: Colors.green60,
-          display: "flex",
-          padding: 10,
-          gap: 8,
-          marginBottom: 4,
-        }}
-      >
+      <View style={styles.searchBarStyle}>
         {/* Seatch Field */}
         <TextField
           onChangeText={(text) => {
             setSearchParams(text.trim());
           }}
           placeholder={"Search"}
-          containerStyle={{
-            width: screenWidth - 60,
-            height: 36,
-            backgroundColor: Colors.white,
-            borderRadius: 100,
-            borderWidth: 1,
-            borderColor: Colors.grey60,
-            paddingHorizontal: 15,
-            justifyContent: "center",
-          }}
+          containerStyle={styles.searchFieldStyle}
         />
         {/* Add food button */}
         <Button
@@ -105,3 +80,27 @@ export default function FoodsScreen() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  searchBarStyle: {
+    justifyContent: "center",
+    flexDirection: "row",
+    height: 54,
+    width: "100%",
+    backgroundColor: Colors.green60,
+    display: "flex",
+    padding: 10,
+    gap: 8,
+    marginBottom: 4,
+  },
+  searchFieldStyle: {
+    width: screenWidth - 60,
+    height: 36,
+    backgroundColor: Colors.white,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: Colors.grey60,
+    paddingHorizontal: 15,
+    justifyContent: "center",
+  },
+});
