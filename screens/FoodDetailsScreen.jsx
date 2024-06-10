@@ -82,7 +82,6 @@ export default function FoodDetailsScreen() {
   // }, []);
 
   if (tablesLoaded && unitsLoaded) {
-    console.log(quantity);
     return (
       <>
         <FoodDetails
