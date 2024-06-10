@@ -11,10 +11,8 @@ export default function QuantityField({ initialNumber, onChangeNumber }) {
         <GaugeIcon width={24} height={24} />
       </View>
       <NumberInput
-        initialNumber={0}
-        onChangeNumber={(numberInput) => {
-          // code here
-        }}
+        initialNumber={initialNumber}
+        onChangeNumber={onChangeNumber}
         containerStyle={styles.foodDetailsScreen.inputFieldStyle}
       />
     </View>

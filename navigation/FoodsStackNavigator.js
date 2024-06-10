@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import FoodsScreen from "../screens/FoodsScreen";
-import FoodDetailsScreen from "../screens/FoodDetailsScreen";
 import FoodEditScreen from "../screens/FoodEditScreen";
 import FoodCreateScreen from "../screens/FoodCreateScreen";
 import NutriTableCreateScreen from "../screens/NutriTableCreateScreen";
+import FoodDetailsScreen from "../screens/FoodDetailsScreen";
 
 const FoodsStack = createNativeStackNavigator();
 

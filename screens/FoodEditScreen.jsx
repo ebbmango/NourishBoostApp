@@ -469,14 +469,22 @@ export default function FoodCreateScreen() {
                       updateFoodName(database, { foodId, newFoodName });
                     }
                     // If it was to anything else:
-                    updateNutritionalTable(database, {
-                      tableId: nutritionalTable.tableId,
-                      baseMeasure,
-                      kcals,
-                      carbs,
-                      fats,
-                      protein,
-                    });
+                    if (
+                      baseMeasure !== originalMeasure ||
+                      kcals !== originalKcals ||
+                      carbs !== originalCarbs ||
+                      fats !== originalFats ||
+                      protein !== originalProtein
+                    ) {
+                      updateNutritionalTable(database, {
+                        tableId: nutritionalTable.tableId,
+                        baseMeasure,
+                        kcals,
+                        carbs,
+                        fats,
+                        protein,
+                      });
+                    }
                   }
 
                   // Notwithstanding what happened:

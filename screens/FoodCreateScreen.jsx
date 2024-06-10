@@ -34,7 +34,7 @@ import createNutritionalTable from "../queries/createNutritionalTable";
 
 // Queries
 import createFood from "../queries/createFood";
-import getUnits from "../queries/getUnits";
+import getAllUnits from "../queries/getAllUnits";
 import getFoods from "../queries/getFoods";
 import tweakStyles from "../functions/tweakStyles";
 
@@ -48,7 +48,7 @@ export default function FoodCreateScreen() {
   const scrollViewRef = useRef(null);
 
   // Data
-  const measurementUnits = getUnits(database);
+  const measurementUnits = getAllUnits(database);
   const allFoodNames = getFoods(database).map((food) => food.name);
 
   // Stateful variables: data, validation status & controllers.
@@ -84,6 +84,8 @@ export default function FoodCreateScreen() {
 
   // Deactivates once the "proceed anyway" button is pressed.
   const [alertCalories, setAlertCalories] = useState(true);
+
+  return <></>
 
   return (
     <>

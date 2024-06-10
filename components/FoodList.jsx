@@ -15,7 +15,7 @@ export default function FoodList({ foods, navigationProps }) {
       // Parameters
       {
         ...navigationProps.params, // Receive them from above.
-        food: food, // And add the food item's information.
+        foodId: food.id, // And add the food item's information.
       }
     );
   };

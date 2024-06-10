@@ -30,7 +30,7 @@ import getNutritionalTables from "../queries/getNutritionalTables";
 import validateNutrients from "../functions/validateNutrients";
 import validateNumericField from "../functions/validateNumericField";
 import createNutritionalTable from "../queries/createNutritionalTable";
-import getUnits from "../queries/getUnits";
+import getAllUnits from "../queries/getAllUnits";
 import getDifference from "../functions/getDifference";
 
 export default function FoodCreateScreen() {
@@ -53,7 +53,7 @@ export default function FoodCreateScreen() {
   const nutritionalTables = getNutritionalTables(database, { foodId });
 
   // Retrieving all measurement units.
-  const measurementUnits = getUnits(database);
+  const measurementUnits = getAllUnits(database);
 
   // Retrieving all measurement units used by the food object's nutritional tables.
   const alreadyUsedUnits = nutritionalTables.map((table) => table.unit);

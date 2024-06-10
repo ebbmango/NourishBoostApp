@@ -34,5 +34,15 @@ export default StyleSheet.create({
       marginBottom: 10,
       alignItems: "center",
     },
+    buttonsView: {
+      marginTop: 10,
+      height: 280,
+      // flexDirection: "row",
+      width: screenWidth,
+      justifyContent: "space-between",
+      alignItems: "flex-end",
+      paddingHorizontal: 16,
+    },
+    buttonStyle: { width: 48, height: 48, padding: 6, marginTop: 2 },
   },
 });
