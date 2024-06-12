@@ -28,7 +28,7 @@ export default StyleSheet.create({
       width: screenWidth / 2 - 15,
       padding: 10,
       justifyContent: "center",
-      backgroundColor: Colors.grey50,
+      backgroundColor: Colors.green40,
       borderRadius: 5,
       marginLeft: 10,
       marginBottom: 10,

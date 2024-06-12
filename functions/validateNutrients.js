@@ -1,6 +1,6 @@
-export default function validateNutrients({ calories, carbs, fats, protein }) {
+export default function validateNutrients({ kcals, carbs, fats, protein }) {
   // Ensures that no nutrients have been input if the total calories are zero.
-  if (calories === 0 && (carbs !== 0 || fats !== 0 || protein !== 0)) {
+  if (kcals === 0 && (carbs !== 0 || fats !== 0 || protein !== 0)) {
     return false;
   }
 
@@ -11,7 +11,7 @@ export default function validateNutrients({ calories, carbs, fats, protein }) {
   const marginOfError = expectedCalories * 0.1;
 
   // Checks if the provided calories match the expected calories (given the margin of error).
-  if (Math.abs(calories - expectedCalories) > marginOfError) {
+  if (Math.abs(kcals - expectedCalories) > marginOfError) {
     return false;
   }
 

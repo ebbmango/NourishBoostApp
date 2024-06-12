@@ -5,16 +5,11 @@ import tweakStyles from "../../functions/tweakStyles";
 export default function NutrientsGrid({ items }) {
   const renderCustomItem = ({ title, value, trailing, color }) => {
     return (
-      <View
-        key={title}
-        style={tweakStyles(styles.foodDetailsScreen.nutrientsBoxStyle, {
-          backgroundColor: color,
-        })}
-      >
+      <View key={title} style={styles.foodDetailsScreen.nutrientsBoxStyle}>
         <Text text70>{title}</Text>
         <Text text70BL>
           {value}
-          {trailing}
+          {title !== "Calories" && "g"}
         </Text>
       </View>
     );

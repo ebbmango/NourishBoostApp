@@ -48,18 +48,10 @@ export default function FoodCreateScreen() {
   const [fats, setFats] = useState(0);
   const [protein, setProtein] = useState(0);
 
-  // Creating stateful variables to validate all of the above data.
-  const [measureValidity, setMeasureValidity] = useState(false);
-  const [kcalsValidity, setKcalsValidity] = useState(true);
-  const [carbsValidity, setCarbsValidity] = useState(true);
-  const [fatsValidity, setFatsValidity] = useState(true);
-  const [proteinValidity, setProteinValidity] = useState(true);
-
   // Creating stateful variables to control the visibility of the alerts and dialogs.
   const [showMeasureAlert, setShowMeasureAlert] = useState(false);
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
   const [showKcalsDialog, setShowKcalsDialog] = useState(false);
-  const [startValidating, setStartValidating] = useState(false); // (Activates once the submit button is pressed.)
   const [alertKcals, setAlertKcals] = useState(true); // (Deactivates once the "proceed anyway" button is pressed.)
 
   return (
@@ -102,12 +94,7 @@ export default function FoodCreateScreen() {
         {/* Field that changes the amount of food */}
         <QuantityField
           initialNumber={baseMeasure}
-          onChangeNumber={(numberInput) => {
-            const number = numberInput.number;
-            setBaseMeasure(number);
-            const validity = number > 0;
-            setMeasureValidity(validity);
-          }}
+          onChangeNumber={(numberInput) => setBaseMeasure(numberInput.number)}
         />
 
         {/* Field that changes the currently selected measurement unit */}
@@ -127,26 +114,18 @@ export default function FoodCreateScreen() {
             {
               title: "Calories",
               value: kcals,
-              trailing: "",
-              color: Colors.green40,
             },
             {
               title: "Carbohydrates",
               value: carbs,
-              trailing: "g",
-              color: Colors.green40,
             },
             {
               title: "Fats",
               value: fats,
-              trailing: "g",
-              color: Colors.green40,
             },
             {
               title: "Protein",
               value: protein,
-              trailing: "g",
-              color: Colors.green40,
             },
           ]}
         />
@@ -163,25 +142,25 @@ export default function FoodCreateScreen() {
           <NutrientsInputField
             title={"Calories"}
             initialNumber={kcals}
-            setters={{ nutrient: setKcals, validity: setKcalsValidity }}
+            setNutrient={setKcals}
           />
           {/* Carbohydrates input */}
           <NutrientsInputField
             title={"Carbohydrates"}
             initialNumber={carbs}
-            setters={{ nutrient: setCarbs, validity: setCarbsValidity }}
+            setNutrient={setCarbs}
           />
           {/* Fats input */}
           <NutrientsInputField
             title={"Fats"}
             initialNumber={fats}
-            setters={{ nutrient: setFats, validity: setFatsValidity }}
+            setNutrient={setFats}
           />
           {/* Protein input */}
           <NutrientsInputField
             title={"Protein"}
             initialNumber={protein}
-            setters={{ nutrient: setProtein, validity: setProteinValidity }}
+            setNutrient={setProtein}
           />
 
           {/* Confirm button */}
@@ -196,25 +175,20 @@ export default function FoodCreateScreen() {
             }}
             style={styles.foodDetailsScreen.addButton}
             onPress={() => {
-              setStartValidating(true);
+              let issuesUp = false;
+              let issuesDown = false;
 
-              // First, show the data type errors:
-              // Scroll up if the issues are in the first fields.
-              if (!measureValidity) {
+              if (baseMeasure <= 0) {
                 scrollViewRef.current.scrollTo({ y: 0, animated: true });
-                // Show each of the issues in the first fields:
                 setShowMeasureAlert(true);
+                issuesUp = true;
               }
 
-              // Show the issues in the last fields.
-              setShowNutrientsAlert(
-                !kcalsValidity ||
-                  !carbsValidity ||
-                  !fatsValidity ||
-                  !proteinValidity
-              );
+              if ([kcals, carbs, fats, protein].some((macro) => macro < 0)) {
+                setShowNutrientsAlert(true);
+                issuesDown = true;
+              }
 
-              // Second, show the unwanted but manageable errors:
               const nutrientsValidity = validateNutrients({
                 kcals,
                 carbs,
@@ -222,17 +196,13 @@ export default function FoodCreateScreen() {
                 protein,
               });
 
-              // Only show the dialog if...
-              setShowKcalsDialog(
-                // The user has not dismissed it previously.
-                alertKcals &&
-                  // There is something amiss with the nutrients' count.
-                  !nutrientsValidity
-              );
+              setShowKcalsDialog(alertKcals && !nutrientsValidity);
 
-              // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
-              if (measureValidity && (!alertKcals || nutrientsValidity)) {
-                // Run the query to insert the data into the database and redirect to the newly created food page
+              if (
+                !issuesUp &&
+                !issuesDown &&
+                (!alertKcals || nutrientsValidity)
+              ) {
                 createNutritionalTable(database, {
                   foodId,
                   unitId: unit.id,

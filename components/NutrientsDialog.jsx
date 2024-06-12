@@ -7,9 +7,9 @@ import AlertTriangleIcon from "./icons/AlertTriangleIcon";
 export default function NutrientsDialog({
   visibility,
   setVisibility,
-  expectedCalories,
-  informedCalories,
-  setAlertCalories,
+  expectedKcals,
+  informedKcals,
+  setAlertKcals,
 }) {
   function dismiss() {
     setVisibility(false);
@@ -43,14 +43,14 @@ export default function NutrientsDialog({
       <Text text70L>
         Expected calories: ±{" "}
         <Text text70BL color={Colors.green10}>
-          {expectedCalories}
+          {expectedKcals}
         </Text>{" "}
         kcal
       </Text>
       <Text text70L>
         Informed calories:{" "}
         <Text text70BL color={Colors.green10}>
-          {informedCalories}
+          {informedKcals}
         </Text>{" "}
         kcal
       </Text>
@@ -58,7 +58,7 @@ export default function NutrientsDialog({
         <Button
           onPress={() => {
             dismiss();
-            setAlertCalories(false);
+            setAlertKcals(false);
           }}
           style={{
             display: "flex",
