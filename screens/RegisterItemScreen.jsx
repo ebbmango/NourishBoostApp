@@ -16,6 +16,9 @@ import getUnits from "../queries/getUnits";
 import styles from "../styles";
 import FoodDetails from "../components/FoodDetails/FoodDetails";
 import fixDecimals from "../functions/fixDecimals";
+import QuantityField from "../components/FoodDetails/QuantityField";
+import UnitPicker from "../components/FoodDetails/UnitPicker";
+import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
 
 export default function RegisterItemScreen() {
   const navigator = useNavigation();
@@ -32,16 +35,20 @@ export default function RegisterItemScreen() {
   );
 
   // Getting the food's nutritional tables from the database.
-  const { data: nutritionalTables, isSuccess: tablesLoaded } = useQuery(
-    `nutritionalTables${foodId}`,
-    () => getNutritionalTables(database, { foodId })
+  const {
+    data: nutritionalTables,
+    refetch: refetchTables,
+    isSuccess: tablesLoaded,
+  } = useQuery(`nutritionalTables${foodId}`, () =>
+    getNutritionalTables(database, { foodId })
   );
 
   // Getting the food's measurement units from the database.
-  const { data: measurementUnits, isSuccess: unitsLoaded } = useQuery(
-    `availableUnits${foodId}`,
-    () => getUnits(database, { foodId })
-  );
+  const {
+    data: measurementUnits,
+    refetch: refetchUnits,
+    isSuccess: unitsLoaded,
+  } = useQuery(`availableUnits${foodId}`, () => getUnits(database, { foodId }));
 
   const [tableIndex, setTableIndex] = useState(0);
   const [quantity, setQuantity] = useState(0);
@@ -54,52 +61,57 @@ export default function RegisterItemScreen() {
     }
   }, [nutritionalTables]);
 
+  useEffect(() => {
+    const listener = addDatabaseChangeListener((change) => {
+      console.log(change);
+      refetchTables();
+      refetchUnits();
+      setPickerKey(Date.now());
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   const proportion = (number) => {
     return number === 0
       ? 0
       : (number / nutritionalTables[tableIndex].baseMeasure) * quantity;
   };
 
-  // LISTENING FOR CHANGES: MIGHT HAVE TO CHANGE LATER
-
-  // useEffect(() => {
-  //   const listener = addDatabaseChangeListener((change) => {
-  //     // If the change happened to the food.
-  //     if (change.tableName === "foods" && change.rowId === foodId)
-  //       queryClient.invalidateQueries("foodName");
-  //     // If the change happened to a nutritional table:
-  //     if (change.tableName === "foodNutritionalTables")
-  //       queryClient.invalidateQueries("nutritionalTables");
-  //   });
-  //   //   Remove the listener when the component unmounts.
-  //   return () => {
-  //     listener.remove();
-  //   };
-  // }, []);
+  const [pickerKey, setPickerKey] = useState(Date.now());
 
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
-        <FoodDetails
-          foodName={foodName}
-          numberField={{
-            initialNumber: nutritionalTables[tableIndex].baseMeasure,
-            onChangeNumber: (inputObject) => setQuantity(inputObject.number),
-          }}
-          unitPicker={{
-            initialValue: measurementUnits[tableIndex].id,
-            options: measurementUnits,
-            onChange: (change) => {
+        <View>
+          <Text text30 style={styles.foodDetailsScreen.foodNameStyle}>
+            {foodName}
+          </Text>
+          {/* Field that changes the amount of food */}
+          <QuantityField
+            initialNumber={nutritionalTables[tableIndex].baseMeasure}
+            onChangeNumber={(inputObject) => setQuantity(inputObject.number)}
+          />
+          {/* Field that changes the currently selected measurement unit */}
+          <UnitPicker
+            pickerKey={pickerKey}
+            value={measurementUnits[tableIndex].id}
+            options={measurementUnits}
+            onChange={(change) => {
+              console.log(change);
               // Finding the index of the new table.
               const newTableIndex = nutritionalTables.findIndex(
                 (table) => table.unit.id === change
               );
               // Setting the index of the new table.
               setTableIndex(newTableIndex);
-            },
-          }}
-          nutrientsGrid={{
-            items: [
+            }}
+          />
+          {/* Macronutrients grid */}
+          <NutrientsGrid
+            items={[
               {
                 title: "Calories",
                 value: fixDecimals(
@@ -132,9 +144,9 @@ export default function RegisterItemScreen() {
                 trailing: "g",
                 color: Colors.green40,
               },
-            ],
-          }}
-        />
+            ]}
+          />
+        </View>
       </>
     );
   }

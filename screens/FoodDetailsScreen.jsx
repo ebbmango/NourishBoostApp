@@ -26,6 +26,7 @@ export default function FoodDetailsScreen() {
 
   // Connecting to the database.
   const database = useSQLiteContext();
+  const queryClient = useQueryClient();
 
   const { foodId } = useRoute().params;
 
@@ -61,23 +62,6 @@ export default function FoodDetailsScreen() {
       ? 0
       : (number / nutritionalTables[tableIndex].baseMeasure) * quantity;
   };
-
-  // LISTENING FOR CHANGES: MIGHT HAVE TO CHANGE LATER
-
-  // useEffect(() => {
-  //   const listener = addDatabaseChangeListener((change) => {
-  //     // If the change happened to the food.
-  //     if (change.tableName === "foods" && change.rowId === foodId)
-  //       queryClient.invalidateQueries("foodName");
-  //     // If the change happened to a nutritional table:
-  //     if (change.tableName === "foodNutritionalTables")
-  //       queryClient.invalidateQueries("nutritionalTables");
-  //   });
-  //   //   Remove the listener when the component unmounts.
-  //   return () => {
-  //     listener.remove();
-  //   };
-  // }, []);
 
   if (tablesLoaded && unitsLoaded) {
     return (

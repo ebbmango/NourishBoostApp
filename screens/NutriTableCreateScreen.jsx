@@ -24,6 +24,7 @@ import createNutritionalTable from "../queries/createNutritionalTable";
 // Functions
 import validateNutrients from "../functions/validateNutrients";
 import styles from "../styles";
+import { useQueryClient } from "react-query";
 
 export default function FoodCreateScreen() {
   // Instantiating the navigator.
@@ -53,6 +54,8 @@ export default function FoodCreateScreen() {
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
   const [showKcalsDialog, setShowKcalsDialog] = useState(false);
   const [alertKcals, setAlertKcals] = useState(true); // (Deactivates once the "proceed anyway" button is pressed.)
+
+  const queryClient = useQueryClient();
 
   return (
     <>
@@ -175,6 +178,7 @@ export default function FoodCreateScreen() {
             }}
             style={styles.foodDetailsScreen.addButton}
             onPress={() => {
+              // Validates data, shows relevant alerts and dialogues & creates a new nutritional table.
               let issuesUp = false;
               let issuesDown = false;
 
@@ -212,6 +216,9 @@ export default function FoodCreateScreen() {
                   carbs,
                   fats,
                 });
+                // Invalidates queries to force the refetching of data on the FoodDetailsScreen component.
+                queryClient.refetchQueries(`nutritionalTables${foodId}`)
+                queryClient.refetchQueries(`availableUnits${foodId}`)
                 navigator.navigate("List");
               }
             }}
