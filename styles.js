@@ -44,5 +44,22 @@ export default StyleSheet.create({
       paddingHorizontal: 16,
     },
     buttonStyle: { width: 48, height: 48, padding: 6, marginTop: 2 },
+    nutrientsInputFieldStyle: {
+      width: screenWidth - 20,
+      height: 36,
+      backgroundColor: Colors.grey50,
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: Colors.grey50,
+    },
+    addButton: {
+      padding: 6,
+      borderRadius: 10,
+      backgroundColor: Colors.green30,
+      marginTop: 10,
+      marginBottom: 20,
+    }
   },
 });

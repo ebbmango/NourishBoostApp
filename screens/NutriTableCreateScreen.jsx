@@ -4,39 +4,28 @@ import { useSQLiteContext } from "expo-sqlite/next";
 import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import {
-  Button,
-  Colors,
-  GridView,
-  NumberInput,
-  Picker,
-  Text,
-  View,
-} from "react-native-ui-lib";
+import { Button, Colors, Text, View } from "react-native-ui-lib";
 
 // Icons
-import GaugeIcon from "../components/icons/GaugeIcon";
-import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
 import EditIcon from "../components/icons/EditIcon";
 
 // Components
 import AlertDialog from "../components/AlertDialog";
 import NutrientsDialog from "../components/NutrientsDialog";
+import QuantityField from "../components/FoodDetails/QuantityField";
+import UnitPicker from "../components/FoodDetails/UnitPicker";
+import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
+import NutrientsInputField from "../components/NutrientsInputField";
 
 // Queries
-import getNutritionalTables from "../queries/getNutritionalTables";
+import getAvailableUnits from "../queries/getAvailableUnits";
+import createNutritionalTable from "../queries/createNutritionalTable";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
-import validateNumericField from "../functions/validateNumericField";
-import createNutritionalTable from "../queries/createNutritionalTable";
-import getAllUnits from "../queries/getAllUnits";
-import getDifference from "../functions/getDifference";
+import styles from "../styles";
 
 export default function FoodCreateScreen() {
-  // Extracting the device's dimensions
-  const screenWidth = Dimensions.get("window").width;
-
   // Instantiating the navigator.
   const navigator = useNavigation();
 
@@ -49,17 +38,7 @@ export default function FoodCreateScreen() {
   // Extracting the food's ID and name from the parameters.
   const { foodId, foodName } = useRoute().params;
 
-  // Retrieving all the nutritional tables already present for the relevant food item.
-  const nutritionalTables = getNutritionalTables(database, { foodId });
-
-  // Retrieving all measurement units.
-  const measurementUnits = getAllUnits(database);
-
-  // Retrieving all measurement units used by the food object's nutritional tables.
-  const alreadyUsedUnits = nutritionalTables.map((table) => table.unit);
-
-  // Figuring out what measurement units have not been used by the object's nutritional tables yet.
-  const availableUnits = getDifference(measurementUnits, alreadyUsedUnits);
+  const availableUnits = getAvailableUnits(database, { foodId });
 
   // Creating stateful variables to hold all data that concerns the food.
   const [unit, setUnit] = useState(availableUnits[0]);
@@ -121,129 +100,57 @@ export default function FoodCreateScreen() {
           {foodName}
         </Text>
         {/* Field that changes the amount of food */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 15,
-            marginLeft: 16,
+        <QuantityField
+          initialNumber={baseMeasure}
+          onChangeNumber={(numberInput) => {
+            const number = numberInput.number;
+            setBaseMeasure(number);
+            const validity = number > 0;
+            setMeasureValidity(validity);
           }}
-        >
-          <View width={24} height={24} style={{ marginTop: 12 }}>
-            <GaugeIcon />
-          </View>
-          <NumberInput
-            initialNumber={baseMeasure}
-            onChangeNumber={(numberInput) => {
-              const number = numberInput.number;
-              setBaseMeasure(number);
-              const validity = number > 0;
-              setMeasureValidity(validity);
-            }}
-            containerStyle={{
-              width: screenWidth - 64,
-              height: 36,
-              backgroundColor: Colors.grey60,
-              borderRadius: 5,
-              borderWidth: 1,
-              borderColor:
-                startValidating && !measureValidity
-                  ? Colors.green30
-                  : Colors.grey60,
-              paddingHorizontal: 10,
-              alignItems: "center",
-            }}
-          />
-        </View>
+        />
+
         {/* Field that changes the currently selected measurement unit */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 15,
-            marginTop: 12,
-            marginLeft: 16,
+        <UnitPicker
+          value={unit.id}
+          options={availableUnits}
+          onChange={(value) => {
+            // Retrieves the measurement unit object whose symbol equals the one chosen by the user.
+            const userChoice = availableUnits.find((unit) => unit.id === value);
+            // Updates the currently selected measurement unit.
+            setUnit(userChoice);
           }}
-        >
-          <View width={24} height={24} style={{ marginBottom: 2 }}>
-            <RulerVerticalIcon />
-          </View>
-          <Picker
-            value={unit.symbol}
-            onChange={(value) => {
-              // Retrieves the measurement unit object whose symbol equals the one chosen by the user.
-              const userChoice = availableUnits.filter(
-                (unit) => unit.symbol === value
-              )[0];
-              // Updates the currently selected measurement unit.
-              setUnit(userChoice);
-            }}
-            style={{
-              width: screenWidth - 64,
-              height: 36,
-              backgroundColor: Colors.grey60,
-              borderRadius: 5,
-              paddingHorizontal: 10,
-            }}
-          >
-            {availableUnits.map((unit) => (
-              <Picker.Item
-                key={unit.id}
-                value={unit.symbol}
-                label={unit.symbol}
-              />
-            ))}
-          </Picker>
-        </View>
+        />
         {/* Macronutrients grid */}
-        <GridView
-          numColumns={2}
+        <NutrientsGrid
           items={[
             {
               title: "Calories",
               value: kcals,
-              macro: false,
+              trailing: "",
+              color: Colors.green40,
             },
             {
               title: "Carbohydrates",
               value: carbs,
-              macro: true,
+              trailing: "g",
+              color: Colors.green40,
             },
             {
               title: "Fats",
               value: fats,
-              macro: true,
+              trailing: "g",
+              color: Colors.green40,
             },
             {
               title: "Protein",
               value: protein,
-              macro: true,
+              trailing: "g",
+              color: Colors.green40,
             },
           ]}
-          renderCustomItem={({ title, value, macro }) => {
-            return (
-              <View
-                key={title}
-                style={{
-                  width: screenWidth / 2 - 15, // Adjust the width for padding/margin
-                  padding: 10,
-                  justifyContent: "center",
-                  backgroundColor: Colors.green30,
-                  borderRadius: 5,
-                  marginLeft: 10,
-                  marginTop: 10,
-                  alignItems: "center",
-                }}
-              >
-                <Text text70>{title}</Text>
-                <Text text70BL>
-                  {value}
-                  {macro && "g"}
-                </Text>
-              </View>
-            );
-          }}
         />
+
         <View
           style={{
             justifyContent: "center",
@@ -253,109 +160,30 @@ export default function FoodCreateScreen() {
           }}
         >
           {/* Kcals input */}
-          <View style={{ gap: 5 }}>
-            <Text text70>Calories:</Text>
-            <NumberInput
-              initialNumber={kcals}
-              onChangeNumber={(numberInput) => {
-                const number = numberInput.number;
-                const validity = validateNumericField(number);
-                setKcals(number);
-                setKcalsValidity(validity);
-              }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !kcalsValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
-            />
-          </View>
+          <NutrientsInputField
+            title={"Calories"}
+            initialNumber={kcals}
+            setters={{ nutrient: setKcals, validity: setKcalsValidity }}
+          />
           {/* Carbohydrates input */}
-          <View style={{ gap: 5 }}>
-            <Text text70>Carbohydrates:</Text>
-            <NumberInput
-              initialNumber={carbs}
-              onChangeNumber={(numberInput) => {
-                const number = numberInput.number;
-                const validity = validateNumericField(number);
-                setCarbs(number);
-                setCarbsValidity(validity);
-              }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !carbsValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
-            />
-          </View>
+          <NutrientsInputField
+            title={"Carbohydrates"}
+            initialNumber={carbs}
+            setters={{ nutrient: setCarbs, validity: setCarbsValidity }}
+          />
           {/* Fats input */}
-          <View style={{ gap: 5 }}>
-            <Text text70>Fats:</Text>
-            <NumberInput
-              initialNumber={fats}
-              onChangeNumber={(numberInput) => {
-                const number = numberInput.number;
-                const validity = validateNumericField(number);
-                setFats(number);
-                setFatsValidity(validity);
-              }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !fatsValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
-            />
-          </View>
+          <NutrientsInputField
+            title={"Fats"}
+            initialNumber={fats}
+            setters={{ nutrient: setFats, validity: setFatsValidity }}
+          />
           {/* Protein input */}
-          <View style={{ gap: 5 }}>
-            <Text text70>Protein:</Text>
-            <NumberInput
-              initialNumber={protein}
-              onChangeNumber={(numberInput) => {
-                const number = numberInput.number;
-                const validity = validateNumericField(number);
-                setProtein(number);
-                setProteinValidity(validity);
-              }}
-              containerStyle={{
-                width: screenWidth - 20,
-                height: 36,
-                backgroundColor: Colors.grey50,
-                borderRadius: 5,
-                paddingHorizontal: 10,
-                alignItems: "center",
-                borderWidth: 1,
-                borderColor:
-                  startValidating && !proteinValidity
-                    ? Colors.green30
-                    : Colors.grey60,
-              }}
-            />
-          </View>
+          <NutrientsInputField
+            title={"Protein"}
+            initialNumber={protein}
+            setters={{ nutrient: setProtein, validity: setProteinValidity }}
+          />
+
           {/* Confirm button */}
           <Button
             label="Add nutritional table"
@@ -366,14 +194,7 @@ export default function FoodCreateScreen() {
                 </View>
               );
             }}
-            style={{
-              width: screenWidth / 2,
-              padding: 6,
-              borderRadius: 10,
-              backgroundColor: Colors.green30,
-              marginTop: 10,
-              marginBottom: 20,
-            }}
+            style={styles.foodDetailsScreen.addButton}
             onPress={() => {
               setStartValidating(true);
 
@@ -410,9 +231,8 @@ export default function FoodCreateScreen() {
               );
 
               // If the user has dismissed the alert or if there is nothing amiss with the nutrients' count
-              if (!alertKcals || nutrientsValidity) {
+              if (measureValidity && (!alertKcals || nutrientsValidity)) {
                 // Run the query to insert the data into the database and redirect to the newly created food page
-
                 createNutritionalTable(database, {
                   foodId,
                   unitId: unit.id,
@@ -422,7 +242,6 @@ export default function FoodCreateScreen() {
                   carbs,
                   fats,
                 });
-
                 navigator.navigate("List");
               }
             }}

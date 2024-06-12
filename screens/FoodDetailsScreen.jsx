@@ -49,12 +49,10 @@ export default function FoodDetailsScreen() {
 
   const [tableIndex, setTableIndex] = useState(0);
   const [quantity, setQuantity] = useState(0);
-  const [tableId, setTableId] = useState(0);
 
   useEffect(() => {
     if (nutritionalTables) {
       setQuantity(nutritionalTables[tableIndex].baseMeasure);
-      setTableId(nutritionalTables[tableIndex].id);
     }
   }, [nutritionalTables]);
 
@@ -144,7 +142,10 @@ export default function FoodDetailsScreen() {
           <CreateTableButton
             onPress={() => {
               console.log("create table!");
-              // navigator.navigate("Create", { tableId, foodId });
+              navigator.navigate("Add Nutritional Table", {
+                foodId,
+                foodName,
+              });
             }}
           />
           <EditTableButton
