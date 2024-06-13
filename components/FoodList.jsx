@@ -5,20 +5,10 @@ import { useNavigation } from "@react-navigation/native";
 import FoodListItem from "../components/FoodListItem";
 
 // Renders a list of food items.
-export default function FoodList({ foods, navigationProps }) {
+export default function FoodList({ foods, date, mealId }) {
   const navigator = useNavigation();
 
-  const handleNavigation = (food) => {
-    navigator.navigate(
-      // Destination
-      navigationProps.destination,
-      // Parameters
-      {
-        ...navigationProps.params, // Receive them from above.
-        foodId: food.id, // And add the food item's information.
-      }
-    );
-  };
+  console.log("FoodList", date, mealId);
 
   return (
     <ScrollView contentContainerStyle={styles.itemsList}>
@@ -26,11 +16,7 @@ export default function FoodList({ foods, navigationProps }) {
       {foods.map((food) => {
         return (
           // Render a touchable rectangle that redirects to the relevant page
-          <FoodListItem
-            key={food.id}
-            food={food}
-            handleNavigation={() => handleNavigation(food)}
-          />
+          <FoodListItem key={food.id} food={food} date={date} mealId={mealId} />
         );
       })}
     </ScrollView>

@@ -28,7 +28,9 @@ export default function FoodDetailsScreen() {
   const database = useSQLiteContext();
   const queryClient = useQueryClient();
 
-  const { foodId } = useRoute().params;
+  const { foodId, mealId, date } = useRoute().params;
+
+  console.log(foodId, mealId, date);
 
   // Getting the food's name from the database.
   const { data: foodName = "" } = useQuery(

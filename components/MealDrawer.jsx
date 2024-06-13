@@ -78,7 +78,7 @@ export default function MealDrawer({ meal, date }) {
             )}
             round
             onPress={() => {
-              navigator.navigate("Register item", {
+              navigator.navigate("List", {
                 mealId: meal.id,
                 date: formatDate(date),
               });

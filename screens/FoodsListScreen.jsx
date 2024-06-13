@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Dimensions } from "react-native";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "react-query";
 import { View, Button, Colors, TextField } from "react-native-ui-lib";
 
@@ -12,7 +12,6 @@ import PlusIcon from "../components/icons/PlusIcon";
 
 // Queries
 import getFoods from "../queries/getFoods";
-import getUnits from "../queries/getUnits";
 
 // Retrieving the device's dimensions
 const screenWidth = Dimensions.get("window").width;
@@ -22,6 +21,11 @@ export default function FoodsScreen() {
   const navigator = useNavigation();
   const database = useSQLiteContext();
   const queryClient = useQueryClient();
+
+  // Destructuring params from the route.
+  const { date, mealId } = useRoute().params;
+
+  console.log("List", date, mealId);
 
   // Fetching food items using react-query.
   const { data: foods = [] } = useQuery("foods", () => getFoods(database), {
@@ -73,10 +77,7 @@ export default function FoodsScreen() {
         />
       </View>
       {/* Foods list */}
-      <FoodList
-        foods={searchResults}
-        navigationProps={{ destination: "Details" }}
-      />
+      <FoodList foods={searchResults} date={date} mealId={mealId} />
     </>
   );
 }

@@ -7,9 +7,21 @@ import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 const screenWidth = Dimensions.get("window").width;
 
 // Render a touchable rectangle that redirects to the relevant page
-export default function FoodListItem({ food, handleNavigation }) {
+export default function FoodListItem({ food, date, mealId }) {
+  const navigator = useNavigation();
+
+  console.log("FoodListItem", date, mealId);
+
   return (
-    <TouchableOpacity onPress={handleNavigation}>
+    <TouchableOpacity
+      onPress={() => {
+        navigator.navigate("Details", {
+          foodId: food.id,
+          date: date,
+          mealId: mealId,
+        });
+      }}
+    >
       <ListItem style={styles.foodListItem}>
         <Text text60L>{food.name}</Text>
       </ListItem>
