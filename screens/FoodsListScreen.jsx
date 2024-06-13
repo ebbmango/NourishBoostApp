@@ -20,14 +20,14 @@ export default function FoodsScreen() {
   // Instantiating functionalities.
   const navigator = useNavigation();
 
+  // Connecting to the database.
   const database = useSQLiteContext();
 
+  // Instantiating the queries' client.
   const queryClient = useQueryClient();
 
   // Destructuring params from the route.
   const { date, mealId } = useRoute().params;
-
-  console.log("List", date, mealId);
 
   // Fetching food items using react-query.
   const { data: foods = [] } = useQuery("foods", () => getFoods(database), {
@@ -83,7 +83,7 @@ export default function FoodsScreen() {
         {/* For each food item */}
         {searchResults.map((food) => {
           return (
-            // Render a touchable rectangle that redirects to the relevant page
+            // Render a touchable rectangle that redirects to the relevant food's page.
             <FoodListItem
               key={food.id}
               foodName={food.name}

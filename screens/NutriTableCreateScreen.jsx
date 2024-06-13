@@ -1,10 +1,10 @@
 // External imports
 import { useRef, useState } from "react";
+import { useQueryClient } from "react-query";
 import { useSQLiteContext } from "expo-sqlite/next";
-import { Dimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 // Icons
 import EditIcon from "../components/icons/EditIcon";
@@ -12,8 +12,8 @@ import EditIcon from "../components/icons/EditIcon";
 // Components
 import AlertDialog from "../components/AlertDialog";
 import NutrientsDialog from "../components/NutrientsDialog";
-import QuantityField from "../components/FoodDetails/QuantityField";
 import UnitPicker from "../components/FoodDetails/UnitPicker";
+import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
 import NutrientsInputField from "../components/NutrientsInputField";
 
@@ -23,8 +23,9 @@ import createNutritionalTable from "../queries/createNutritionalTable";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
+
+// Stylesheets
 import styles from "../styles/styles";
-import { useQueryClient } from "react-query";
 
 export default function FoodCreateScreen() {
   // Instantiating the navigator.
@@ -33,12 +34,16 @@ export default function FoodCreateScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
+  // Instantiating the queries' client.
+  const queryClient = useQueryClient();
+
   // Creating a reference to the scrollView (to be able to use scroll functions).
   const scrollViewRef = useRef(null);
 
   // Extracting the food's ID and name from the parameters.
   const { foodId, foodName } = useRoute().params;
 
+  // Retrieving the available measurement units from the database.
   const availableUnits = getAvailableUnits(database, { foodId });
 
   // Creating stateful variables to hold all data that concerns the food.
@@ -54,8 +59,6 @@ export default function FoodCreateScreen() {
   const [showNutrientsAlert, setShowNutrientsAlert] = useState(false);
   const [showKcalsDialog, setShowKcalsDialog] = useState(false);
   const [alertKcals, setAlertKcals] = useState(true); // (Deactivates once the "proceed anyway" button is pressed.)
-
-  const queryClient = useQueryClient();
 
   return (
     <>
@@ -132,7 +135,6 @@ export default function FoodCreateScreen() {
             },
           ]}
         />
-
         <View
           style={{
             justifyContent: "center",
@@ -219,6 +221,7 @@ export default function FoodCreateScreen() {
                 // Invalidates queries to force the refetching of data on the FoodDetailsScreen component.
                 queryClient.refetchQueries(`nutritionalTables${foodId}`);
                 queryClient.refetchQueries(`availableUnits${foodId}`);
+                // Popping this page from the stack navigator and returning to the previous one.
                 navigator.pop();
               }
             }}
