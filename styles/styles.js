@@ -34,9 +34,12 @@ export default StyleSheet.create({
     },
   },
   foodDetailsScreen: {
-    foodNameStyle: {
-      marginLeft: 16,
+    foodNameView: {
+      flexDirection: "row",
+      justifyContent: "center",
+      paddingHorizontal: 24,
       marginVertical: 20,
+      alignItems: "center",
     },
     fieldViewStyle: {
       flexDirection: "row",

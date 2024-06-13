@@ -2,7 +2,7 @@
 import { Dimensions } from "react-native";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { Colors, Text, View } from "react-native-ui-lib";
+import { Colors, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
 
@@ -28,6 +28,7 @@ import UnitPicker from "../components/FoodDetails/UnitPicker";
 import FileDeleteIcon from "../components/icons/FileDeleteIcon";
 import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
+import PencilIcon from "../components/icons/PencilIcon";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -95,9 +96,13 @@ export default function FoodDetailsScreen() {
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
-        <Text text30 style={styles.foodDetailsScreen.foodNameStyle}>
-          {foodName}
-        </Text>
+        <View style={styles.foodDetailsScreen.foodNameView}>
+          <Text text30>{foodName}</Text>
+          <TouchableOpacity style={{ position: "absolute", right: 16 }}>
+            <PencilIcon width={24} height={24} color={Colors.grey10} />
+          </TouchableOpacity>
+        </View>
+
         {/* Field that changes the amount of food */}
         <QuantityField
           initialNumber={nutritionalTables[tableIndex].baseMeasure}
@@ -174,6 +179,12 @@ export default function FoodDetailsScreen() {
                 style={{ marginLeft: 6 }}
               />
             )}
+            onPress={() => {
+              navigator.navigate("Edit", {
+                foodId,
+                foodName,
+              });
+            }}
           />
           {/* Delete Nutritional Table */}
           <FoodOptionButton
