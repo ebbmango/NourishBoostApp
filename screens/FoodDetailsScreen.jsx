@@ -1,32 +1,31 @@
 // External dependencies
 import { Dimensions } from "react-native";
-import { useQuery, useQueryClient } from "react-query";
-import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
 
 // Components
-import CreateTableButton from "../components/FoodDetails/CreateTableButton";
-import EditTableButton from "../components/FoodDetails/EditTableButton";
-import DeleteTableButton from "../components/FoodDetails/DeleteTableButton";
+import FoodDetails from "../components/FoodDetails/FoodDetails";
+import FoodOptionButton from "../components/FoodDetails/FoodOptionButton";
 
 // Queries
 import getFood from "../queries/getFood";
-import getNutritionalTables from "../queries/getNutritionalTables";
 import getUnits from "../queries/getUnits";
+import getNutritionalTables from "../queries/getNutritionalTables";
+
+// Functions
+import fixDecimals from "../functions/fixDecimals";
 
 // Stylesheets
 import styles from "../styles/styles";
-import FoodDetails from "../components/FoodDetails/FoodDetails";
-import fixDecimals from "../functions/fixDecimals";
-import EditIcon from "../components/icons/EditIcon";
-import FoodBowlIcon from "../components/icons/FoodBowlIcon";
+
+// Assets
 import UtensilsIcon from "../components/icons/UtensilsIcon";
-import FoodOptionButton from "../components/FoodDetails/FoodOptionButton";
-import FileDeleteIcon from "../components/icons/FileDeleteIcon";
-import FileWriteIcon from "../components/icons/FileWriteIcon";
 import FilePlusIcon from "../components/icons/FilePlusIcon";
+import FileWriteIcon from "../components/icons/FileWriteIcon";
+import FileDeleteIcon from "../components/icons/FileDeleteIcon";
 
 const screenWidth = Dimensions.get("window").width;
 
