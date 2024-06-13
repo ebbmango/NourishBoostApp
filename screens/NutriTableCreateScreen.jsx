@@ -89,8 +89,8 @@ export default function FoodCreateScreen() {
       <ScrollView ref={scrollViewRef}>
         <Text
           text30
+          center
           style={{
-            marginLeft: 16,
             marginVertical: 20,
             color: Colors.black,
           }}
