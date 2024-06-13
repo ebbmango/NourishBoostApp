@@ -1,5 +1,5 @@
 import { Button, Colors } from "react-native-ui-lib";
-import styles from "../../styles";
+import styles from "../../styles/styles";
 import FileWriteIcon from "../icons/FileWriteIcon";
 import { useNavigation } from "@react-navigation/native";
 

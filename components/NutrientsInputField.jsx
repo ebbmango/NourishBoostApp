@@ -1,5 +1,5 @@
 import { NumberInput, Text, View } from "react-native-ui-lib";
-import styles from "../styles";
+import styles from "../styles/styles";
 
 export default function NutrientsInputField({
   title,

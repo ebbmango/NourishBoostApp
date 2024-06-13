@@ -4,6 +4,35 @@ import { Colors } from "react-native-ui-lib";
 const screenWidth = Dimensions.get("window").width;
 
 export default StyleSheet.create({
+  listScreen: {
+    itemsList: {
+      flex: 1,
+      alignItems: "center",
+      gap: 4,
+      marginTop: 4,
+    },
+    greenBar: {
+      justifyContent: "center",
+      flexDirection: "row",
+      height: 54,
+      width: "100%",
+      backgroundColor: Colors.green60,
+      display: "flex",
+      padding: 10,
+      gap: 8,
+      marginBottom: 4,
+    },
+    searchField: {
+      width: screenWidth - 60,
+      height: 36,
+      backgroundColor: Colors.white,
+      borderRadius: 100,
+      borderWidth: 1,
+      borderColor: Colors.grey60,
+      paddingHorizontal: 15,
+      justifyContent: "center",
+    },
+  },
   foodDetailsScreen: {
     foodNameStyle: {
       marginLeft: 16,
@@ -35,8 +64,8 @@ export default StyleSheet.create({
       alignItems: "center",
     },
     buttonsView: {
-      marginTop: 10,
-      height: 280,
+      marginTop: 24,
+      height: 260,
       // flexDirection: "row",
       width: screenWidth,
       justifyContent: "space-between",
@@ -60,6 +89,6 @@ export default StyleSheet.create({
       backgroundColor: Colors.green30,
       marginTop: 10,
       marginBottom: 20,
-    }
+    },
   },
 });

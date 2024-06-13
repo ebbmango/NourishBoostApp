@@ -2,7 +2,7 @@ import { NumberInput, Picker, View } from "react-native-ui-lib";
 
 import RulerVerticalIcon from "../icons/RulerVerticalIcon";
 
-import styles from "../../styles";
+import styles from "../../styles/styles";
 
 export default function UnitPicker({ pickerKey, value, onChange, options }) {
   return (

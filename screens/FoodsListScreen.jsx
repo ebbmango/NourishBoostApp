@@ -1,25 +1,27 @@
 // External dependencies
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Dimensions } from "react-native";
-import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "react-query";
+import { ScrollView } from "react-native-gesture-handler";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { View, Button, Colors, TextField } from "react-native-ui-lib";
+import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
 
 // Components
-import FoodList from "../components/FoodList";
 import PlusIcon from "../components/icons/PlusIcon";
+import FoodListItem from "../components/FoodListItem";
 
 // Queries
 import getFoods from "../queries/getFoods";
 
-// Retrieving the device's dimensions
-const screenWidth = Dimensions.get("window").width;
+// Styles
+import styles from "../styles/FoodsListStyles";
 
 export default function FoodsScreen() {
   // Instantiating functionalities.
   const navigator = useNavigation();
+
   const database = useSQLiteContext();
+
   const queryClient = useQueryClient();
 
   // Destructuring params from the route.
@@ -54,14 +56,14 @@ export default function FoodsScreen() {
   return (
     <>
       {/* Top bar */}
-      <View style={styles.searchBarStyle}>
+      <View style={styles.greenBar}>
         {/* Seatch Field */}
         <TextField
           onChangeText={(text) => {
             setSearchParams(text.trim());
           }}
           placeholder={"Search"}
-          containerStyle={styles.searchFieldStyle}
+          containerStyle={styles.searchField}
         />
         {/* Add food button */}
         <Button
@@ -77,31 +79,21 @@ export default function FoodsScreen() {
         />
       </View>
       {/* Foods list */}
-      <FoodList foods={searchResults} date={date} mealId={mealId} />
+      <ScrollView contentContainerStyle={styles.itemsList}>
+        {/* For each food item */}
+        {searchResults.map((food) => {
+          return (
+            // Render a touchable rectangle that redirects to the relevant page
+            <FoodListItem
+              key={food.id}
+              foodName={food.name}
+              navigate={() =>
+                navigator.navigate("Details", { foodId: food.id, mealId, date })
+              }
+            />
+          );
+        })}
+      </ScrollView>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  searchBarStyle: {
-    justifyContent: "center",
-    flexDirection: "row",
-    height: 54,
-    width: "100%",
-    backgroundColor: Colors.green60,
-    display: "flex",
-    padding: 10,
-    gap: 8,
-    marginBottom: 4,
-  },
-  searchFieldStyle: {
-    width: screenWidth - 60,
-    height: 36,
-    backgroundColor: Colors.white,
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: Colors.grey60,
-    paddingHorizontal: 15,
-    justifyContent: "center",
-  },
-});

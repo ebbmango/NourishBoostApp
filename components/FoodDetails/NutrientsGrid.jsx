@@ -1,5 +1,5 @@
 import { GridView, Text, View } from "react-native-ui-lib";
-import styles from "../../styles";
+import styles from "../../styles/styles";
 import tweakStyles from "../../functions/tweakStyles";
 
 export default function NutrientsGrid({ items }) {

@@ -5,7 +5,7 @@ import { Text, View } from "react-native-ui-lib";
 import QuantityField from "./QuantityField";
 import UnitPicker from "./UnitPicker";
 import NutrientsGrid from "./NutrientsGrid";
-import styles from "../../styles";
+import styles from "../../styles/styles";
 
 export default function FoodDetails({
   foodName,

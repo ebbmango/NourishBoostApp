@@ -1,5 +1,5 @@
 import { Button, Colors } from "react-native-ui-lib";
-import styles from "../../styles";
+import styles from "../../styles/styles";
 import FilePlusIcon from "../icons/FilePlusIcon";
 
 export default function CreateTableButton({ onPress }) {

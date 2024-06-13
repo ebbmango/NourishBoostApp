@@ -1,4 +1,5 @@
 // External dependencies
+import { Dimensions } from "react-native";
 import { useQuery, useQueryClient } from "react-query";
 import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -9,7 +10,6 @@ import { Button, Colors, Text, View } from "react-native-ui-lib";
 import CreateTableButton from "../components/FoodDetails/CreateTableButton";
 import EditTableButton from "../components/FoodDetails/EditTableButton";
 import DeleteTableButton from "../components/FoodDetails/DeleteTableButton";
-import DeleteFoodButton from "../components/FoodDetails/DeleteFoodButton";
 
 // Queries
 import getFood from "../queries/getFood";
@@ -17,9 +17,18 @@ import getNutritionalTables from "../queries/getNutritionalTables";
 import getUnits from "../queries/getUnits";
 
 // Stylesheets
-import styles from "../styles";
+import styles from "../styles/styles";
 import FoodDetails from "../components/FoodDetails/FoodDetails";
 import fixDecimals from "../functions/fixDecimals";
+import EditIcon from "../components/icons/EditIcon";
+import FoodBowlIcon from "../components/icons/FoodBowlIcon";
+import UtensilsIcon from "../components/icons/UtensilsIcon";
+import FoodOptionButton from "../components/FoodDetails/FoodOptionButton";
+import FileDeleteIcon from "../components/icons/FileDeleteIcon";
+import FileWriteIcon from "../components/icons/FileWriteIcon";
+import FilePlusIcon from "../components/icons/FilePlusIcon";
+
+const screenWidth = Dimensions.get("window").width;
 
 export default function FoodDetailsScreen() {
   const navigator = useNavigation();
@@ -123,32 +132,56 @@ export default function FoodDetailsScreen() {
             ],
           }}
         />
-
         <View style={styles.foodDetailsScreen.buttonsView}>
-          <CreateTableButton
+          {/* Add Nutritional Table */}
+          <FoodOptionButton
+            iconSource={() => (
+              <FilePlusIcon
+                color={Colors.white}
+                width={28}
+                height={28}
+                style={{ marginLeft: 6 }}
+              />
+            )}
             onPress={() => {
-              console.log("create table!");
               navigator.navigate("Add Nutritional Table", {
                 foodId,
                 foodName,
               });
             }}
           />
-          <EditTableButton
-            onPress={() => {
-              console.log("edit table!");
-              // navigator.navigate("Edit", { tableId, foodId });
-            }}
+          {/* Edit Food and/or Nutritional Table */}
+          <FoodOptionButton
+            iconSource={() => (
+              <FileWriteIcon
+                color={Colors.white}
+                width={28}
+                height={28}
+                style={{ marginLeft: 6 }}
+              />
+            )}
           />
-          <DeleteTableButton
-            onPress={() => {
-              console.log("delete table!");
-            }}
+          {/* Delete Nutritional Table */}
+          <FoodOptionButton
+            iconSource={() => (
+              <FileDeleteIcon
+                color={Colors.white}
+                width={28}
+                height={28}
+                style={{ marginLeft: 6 }}
+              />
+            )}
           />
-          <DeleteFoodButton
-            onPress={() => {
-              console.log("delete food!");
-            }}
+          {/* Add to Meal */}
+          <FoodOptionButton
+            iconSource={() => (
+              <UtensilsIcon
+                width={28}
+                height={28}
+                style={{ marginRight: 1 }}
+                color={Colors.white}
+              />
+            )}
           />
         </View>
       </>

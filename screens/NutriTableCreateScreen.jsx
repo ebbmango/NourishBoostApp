@@ -23,7 +23,7 @@ import createNutritionalTable from "../queries/createNutritionalTable";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
-import styles from "../styles";
+import styles from "../styles/styles";
 import { useQueryClient } from "react-query";
 
 export default function FoodCreateScreen() {
@@ -217,9 +217,9 @@ export default function FoodCreateScreen() {
                   fats,
                 });
                 // Invalidates queries to force the refetching of data on the FoodDetailsScreen component.
-                queryClient.refetchQueries(`nutritionalTables${foodId}`)
-                queryClient.refetchQueries(`availableUnits${foodId}`)
-                navigator.navigate("List");
+                queryClient.refetchQueries(`nutritionalTables${foodId}`);
+                queryClient.refetchQueries(`availableUnits${foodId}`);
+                navigator.pop();
               }
             }}
           />

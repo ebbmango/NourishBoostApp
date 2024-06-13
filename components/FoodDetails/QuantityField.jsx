@@ -2,7 +2,7 @@ import { NumberInput, View } from "react-native-ui-lib";
 
 import GaugeIcon from "../icons/GaugeIcon";
 
-import styles from "../../styles";
+import styles from "../../styles/styles";
 
 export default function QuantityField({ initialNumber, onChangeNumber }) {
   return (
