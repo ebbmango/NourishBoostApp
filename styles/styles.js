@@ -55,6 +55,8 @@ export default StyleSheet.create({
       borderRadius: 5,
       paddingHorizontal: 10,
       alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "flex-start",
     },
     nutrientsBoxStyle: {
       width: screenWidth / 2 - 15,

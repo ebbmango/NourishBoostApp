@@ -27,7 +27,7 @@ import validateNutrients from "../functions/validateNutrients";
 // Stylesheets
 import styles from "../styles/styles";
 
-export default function FoodCreateScreen() {
+export default function NutriTableCreateScreen() {
   // Instantiating the navigator.
   const navigator = useNavigation();
 

@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FoodsScreen from "../screens/FoodsListScreen";
 import HomeScreen from "../screens/HomeScreen";
 import FoodDetailsScreen from "../screens/FoodDetailsScreen";
-import FoodEditScreen from "../screens/FoodEditScreen";
+import NutriTableEditScreen from "../screens/NutriTableEditScreen";
 import FoodCreateScreen from "../screens/FoodCreateScreen";
 import NutriTableCreateScreen from "../screens/NutriTableCreateScreen";
 
@@ -15,7 +15,7 @@ export default function MealsStackNavigator() {
       <MealsStack.Screen name="Home" component={HomeScreen} />
       <MealsStack.Screen name="List" component={FoodsScreen} />
       <MealsStack.Screen name="Details" component={FoodDetailsScreen} />
-      <MealsStack.Screen name="Edit" component={FoodEditScreen} />
+      <MealsStack.Screen name="Edit" component={NutriTableEditScreen} />
       <MealsStack.Screen name="Add Food Item" component={FoodCreateScreen} />
       <MealsStack.Screen
         name="Add Nutritional Table"

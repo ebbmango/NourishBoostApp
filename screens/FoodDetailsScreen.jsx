@@ -183,6 +183,7 @@ export default function FoodDetailsScreen() {
               navigator.navigate("Edit", {
                 foodId,
                 foodName,
+                nutritionalTable: nutritionalTables[tableIndex],
               });
             }}
           />
