@@ -22,7 +22,7 @@ import EditIcon from "../components/icons/EditIcon";
 import PencilIcon from "../components/icons/PencilIcon";
 
 // Components
-import AlertDialog from "../components/AlertDialog";
+// import AlertDialog from "../components/AlertDialog";
 import NutrientsDialog from "../components/NutrientsDialog";
 import MacrosGrid from "../components/MacrosGrid";
 

@@ -32,7 +32,8 @@ import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
 import deleteNutritionalTable from "../queries/deleteNutritionalTable";
 import getAllUnits from "../queries/getAllUnits";
-import AlertDialog from "../components/AlertDialog";
+import GreenDialogue from "../components/GreenDialogue";
+import RedConfirmationDialog from "../components/RedConfirmationDialogue";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -119,14 +120,45 @@ export default function FoodDetailsScreen() {
   // Alerts
 
   const [showTablesAlert, setShowTablesAlert] = useState(false);
+  const [show, setShow] = useState(false);
 
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
-        <AlertDialog
-          alertContent={"There exists already a nutritional table for each measurement unit."}
-          visibility={showTablesAlert}
-          setVisibility={setShowTablesAlert}
+        <RedConfirmationDialog
+          visible={show}
+          setVisible={setShow}
+          content={{
+            confirmText: "Delete",
+            alertContent: (
+              <View text70L center gap={8}>
+                <Text text70 center>
+                  This action will permanently delete the food{" "}
+                  <Text text70BL>{foodName}</Text> from the database.
+                </Text>
+                <Text red10 text70BL center>
+                  This action cannot be undone.
+                </Text>
+              </View>
+            ),
+          }}
+          onConfirm={() => {
+            deleteFood(database, { foodId });
+            navigator.pop();
+          }}
+        />
+        <GreenDialogue
+          visible={showTablesAlert}
+          setVisible={setShowTablesAlert}
+          content={{
+            confirmText: "I understand.",
+            alertContent: (
+              <Text text70>
+                "There exists already a nutritional table for each measurement
+                unit."
+              </Text>
+            ),
+          }}
         />
         <View style={styles.foodDetailsScreen.foodNameView}>
           <Text text30>{foodName}</Text>
@@ -234,17 +266,12 @@ export default function FoodDetailsScreen() {
               />
             )}
             onPress={() => {
-              const tablesLeft = nutritionalTables.length;
-              const tableId = nutritionalTables[tableIndex].tableId;
-              // Deleting the nutritional table
-              deleteNutritionalTable(database, { tableId });
-              // If it was the last one available for this food item:
-              if (tablesLeft === 1) {
-                // We delete the food item as well.
-                deleteFood(database, { foodId });
-                navigator.pop();
+              // If the currently selected nutritional table is the last one left, ask for confirmation:
+              if (nutritionalTables.length === 1) {
+                setShow(true);
               } else {
-                // We reset the current table index to 0 and refetch tables and units.
+                const tableId = nutritionalTables[tableIndex].tableId;
+                deleteNutritionalTable(database, { tableId });
                 setTableIndex(tableIndex === 0 ? 0 : tableIndex - 1);
               }
             }}

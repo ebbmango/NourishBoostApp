@@ -10,8 +10,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import EditIcon from "../components/icons/EditIcon";
 
 // Components
-import AlertDialog from "../components/AlertDialog";
 import NutrientsDialog from "../components/NutrientsDialog";
+import GreenDialogue from "../components/GreenDialogue";
 import UnitPicker from "../components/FoodDetails/UnitPicker";
 import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
@@ -86,20 +86,30 @@ export default function NutriTableEditScreen() {
         setAlertKcals={setAlertKcals}
       />
       {/* Total kcals validity alert */}
-      <AlertDialog
-        alertContent={"Nutrients and calories cannot be negative!"}
-        visibility={showNutrientsAlert}
-        setVisibility={setShowNutrientsAlert}
+      <GreenDialogue
+        visible={showNutrientsAlert}
+        setVisible={setShowNutrientsAlert}
+        content={{
+          confirmText: "I understand.",
+          alertContent: (
+            <Text text70>Nutrients and calories cannot be negative!</Text>
+          ),
+        }}
       />
       {/* Base measure validity alert */}
-      <AlertDialog
-        alertContent={
-          baseMeasure === 0
-            ? "The base measure cannot be zero!"
-            : "The base measure cannot be negative!"
-        }
-        visibility={showMeasureAlert}
-        setVisibility={setShowMeasureAlert}
+      <GreenDialogue
+        visible={showMeasureAlert}
+        setVisible={setShowMeasureAlert}
+        content={{
+          confirmText: "I understand.",
+          alertContent: (
+            <Text text70>
+              {baseMeasure === 0
+                ? "The base measure cannot be zero!"
+                : "The base measure cannot be negative!"}
+            </Text>
+          ),
+        }}
       />
       <ScrollView ref={scrollViewRef}>
         <Text

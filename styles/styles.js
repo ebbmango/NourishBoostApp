@@ -4,6 +4,45 @@ import { Colors } from "react-native-ui-lib";
 const screenWidth = Dimensions.get("window").width;
 
 export default StyleSheet.create({
+  dialogues: {
+    container: {
+      alignItems: "center",
+      backgroundColor: Colors.white,
+      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      gap: 5,
+      marginBottom: 11,
+    },
+    buttons: {
+      view: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        width: "100%",
+        marginTop: 15,
+        gap: 32,
+      },
+      greenConfirm: {
+        display: "flex",
+        borderRadius: 5,
+        backgroundColor: Colors.green10,
+        marginVertical: 10,
+      },
+      redConfirm: {
+        display: "flex",
+        borderRadius: 5,
+        backgroundColor: Colors.red20,
+        marginBottom: 10,
+      },
+      redCancel: {
+        display: "flex",
+        borderRadius: 5,
+        backgroundColor: Colors.red50,
+        marginBottom: 10,
+      },
+    },
+  },
   listScreen: {
     itemsList: {
       flex: 1,
