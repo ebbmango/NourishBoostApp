@@ -120,15 +120,15 @@ export default function FoodDetailsScreen() {
   // Alerts
 
   const [showTablesAlert, setShowTablesAlert] = useState(false);
-  const [show, setShow] = useState(true);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
         <ConfirmationDialogue
           red
-          visible={show}
-          setVisible={setShow}
+          visible={showDeleteAlert}
+          setVisible={setShowDeleteAlert}
           content={{
             confirmText: "Delete",
             cancelText: "Cancel",
@@ -270,7 +270,7 @@ export default function FoodDetailsScreen() {
             onPress={() => {
               // If the currently selected nutritional table is the last one left, ask for confirmation:
               if (nutritionalTables.length === 1) {
-                setShow(true);
+                setShowDeleteAlert(true);
               } else {
                 const tableId = nutritionalTables[tableIndex].tableId;
                 deleteNutritionalTable(database, { tableId });
