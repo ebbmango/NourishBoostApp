@@ -30,14 +30,18 @@ export default function FoodsScreen() {
   const { date, mealId } = useRoute().params;
 
   // Fetching food items using react-query.
-  const { data: foods = [] } = useQuery("foods", () => getFoods(database), {
-    initialData: [],
-  });
+  const { data: foods = [], refetch: refetchFoods } = useQuery(
+    "foods",
+    () => getFoods(database),
+    {
+      initialData: [],
+    }
+  );
 
   // Retrieving them once more every time a change is detected in the foods table.
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
-      if (change.tableName === "foods") queryClient.invalidateQueries("foods");
+      if (change.tableName === "foods") refetchFoods();
     });
 
     return () => {

@@ -218,9 +218,7 @@ export default function NutriTableCreateScreen() {
                   carbs,
                   fats,
                 });
-                // Invalidates queries to force the refetching of data on the FoodDetailsScreen component.
-                queryClient.refetchQueries(`nutritionalTables${foodId}`);
-                queryClient.refetchQueries(`availableUnits${foodId}`);
+
                 // Popping this page from the stack navigator and returning to the previous one.
                 navigator.pop();
               }

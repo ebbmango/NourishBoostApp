@@ -29,6 +29,8 @@ import FileDeleteIcon from "../components/icons/FileDeleteIcon";
 import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
 import PencilIcon from "../components/icons/PencilIcon";
+import deleteNutritionalTable from "../queries/deleteNutritionalTable";
+import deleteFood from "../queries/deleteFood";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -38,6 +40,9 @@ export default function FoodDetailsScreen() {
 
   // Connecting to the database.
   const database = useSQLiteContext();
+
+  // Instantiating the query client.
+  const queryClient = useQueryClient();
 
   // Extracting the relevant data from the router's parameters.
   const { foodId, mealId, date } = useRoute().params;
@@ -49,16 +54,20 @@ export default function FoodDetailsScreen() {
   );
 
   // Getting the food's nutritional tables from the database.
-  const { data: nutritionalTables, isSuccess: tablesLoaded } = useQuery(
-    `nutritionalTables${foodId}`,
-    () => getNutritionalTables(database, { foodId })
+  const {
+    data: nutritionalTables,
+    refetch: refetchTables,
+    isSuccess: tablesLoaded,
+  } = useQuery("nutritionalTables", () =>
+    getNutritionalTables(database, { foodId })
   );
 
   // Getting the food's measurement units from the database.
-  const { data: measurementUnits, isSuccess: unitsLoaded } = useQuery(
-    `availableUnits${foodId}`,
-    () => getUnits(database, { foodId })
-  );
+  const {
+    data: measurementUnits,
+    refetch: refetchUnits,
+    isSuccess: unitsLoaded,
+  } = useQuery("availableUnits", () => getUnits(database, { foodId }));
 
   // Resetting the quantity field back to the currently selected nutritional table's base measure.
   useEffect(() => {
@@ -81,17 +90,28 @@ export default function FoodDetailsScreen() {
   // Setting up a stateful variable to hold the unit picker's key in order to manually re-render it at will.
   const [pickerKey, setPickerKey] = useState(Date.now());
 
-  // Re-rendering the unit picker component every time a change happens in the nutritional tables' row in the database.
+  // Function that manually rerenders it.
+  function rerenderPicker() {
+    setPickerKey(Date.now());
+  }
+
+  // Every time a change happens in the nutritional tables' row in the database...
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
-      if (change.tableName === "foodNutritionalTables")
-        setPickerKey(Date.now());
+      if (change.tableName === "foodNutritionalTables") {
+        refetchTables();
+        refetchUnits();
+      }
     });
 
     return () => {
       listener.remove();
     };
   }, []);
+
+  useEffect(() => {
+    rerenderPicker();
+  }, [measurementUnits]);
 
   if (tablesLoaded && unitsLoaded) {
     return (
@@ -197,6 +217,21 @@ export default function FoodDetailsScreen() {
                 style={{ marginLeft: 6 }}
               />
             )}
+            onPress={() => {
+              const tablesLeft = nutritionalTables.length;
+              const tableId = nutritionalTables[tableIndex].tableId;
+              // Deleting the nutritional table
+              deleteNutritionalTable(database, { tableId });
+              // If it was the last one available for this food item:
+              if (tablesLeft === 1) {
+                // We delete the food item as well.
+                deleteFood(database, { foodId });
+                navigator.pop();
+              } else {
+                // We reset the current table index to 0 and refetch tables and units.
+                setTableIndex(tableIndex === 0 ? 0 : tableIndex - 1);
+              }
+            }}
           />
           {/* Add to Meal */}
           <FoodOptionButton
