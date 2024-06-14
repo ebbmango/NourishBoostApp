@@ -12,6 +12,7 @@ import FoodOptionButton from "../components/FoodDetails/FoodOptionButton";
 // Queries
 import getFood from "../queries/getFood";
 import getUnits from "../queries/getUnits";
+import deleteFood from "../queries/deleteFood";
 import getNutritionalTables from "../queries/getNutritionalTables";
 
 // Functions
@@ -21,6 +22,7 @@ import fixDecimals from "../functions/fixDecimals";
 import styles from "../styles/styles";
 
 // Assets
+import PencilIcon from "../components/icons/PencilIcon";
 import UtensilsIcon from "../components/icons/UtensilsIcon";
 import FilePlusIcon from "../components/icons/FilePlusIcon";
 import FileWriteIcon from "../components/icons/FileWriteIcon";
@@ -28,9 +30,9 @@ import UnitPicker from "../components/FoodDetails/UnitPicker";
 import FileDeleteIcon from "../components/icons/FileDeleteIcon";
 import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
-import PencilIcon from "../components/icons/PencilIcon";
 import deleteNutritionalTable from "../queries/deleteNutritionalTable";
-import deleteFood from "../queries/deleteFood";
+import getAllUnits from "../queries/getAllUnits";
+import AlertDialog from "../components/AlertDialog";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -41,11 +43,11 @@ export default function FoodDetailsScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
-  // Instantiating the query client.
-  const queryClient = useQueryClient();
-
   // Extracting the relevant data from the router's parameters.
   const { foodId, mealId, date } = useRoute().params;
+
+  // Retrieving all units from the database.
+  const allUnits = getAllUnits(database);
 
   // Getting the food's name from the database.
   const { data: foodName = "" } = useQuery(
@@ -95,7 +97,7 @@ export default function FoodDetailsScreen() {
     setPickerKey(Date.now());
   }
 
-  // Every time a change happens in the nutritional tables' row in the database...
+  // Refetching the tables and units every time a change happens in the nutritional tables' row in the database.
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
       if (change.tableName === "foodNutritionalTables") {
@@ -109,13 +111,23 @@ export default function FoodDetailsScreen() {
     };
   }, []);
 
+  // Re-rendering the unit picker every time the available measurement units change.
   useEffect(() => {
     rerenderPicker();
   }, [measurementUnits]);
 
+  // Alerts
+
+  const [showTablesAlert, setShowTablesAlert] = useState(false);
+
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
+        <AlertDialog
+          alertContent={"There exists already a nutritional table for each measurement unit."}
+          visibility={showTablesAlert}
+          setVisibility={setShowTablesAlert}
+        />
         <View style={styles.foodDetailsScreen.foodNameView}>
           <Text text30>{foodName}</Text>
           <TouchableOpacity style={{ position: "absolute", right: 16 }}>
@@ -183,10 +195,14 @@ export default function FoodDetailsScreen() {
               />
             )}
             onPress={() => {
-              navigator.navigate("Add Nutritional Table", {
-                foodId,
-                foodName,
-              });
+              if (measurementUnits.length === allUnits.length) {
+                setShowTablesAlert(true);
+              } else {
+                navigator.navigate("Add Nutritional Table", {
+                  foodId,
+                  foodName,
+                });
+              }
             }}
           />
           {/* Edit Food and/or Nutritional Table */}

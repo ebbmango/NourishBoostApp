@@ -22,7 +22,8 @@ export default function AlertDialog({
         alignItems: "center",
         backgroundColor: Colors.white,
         borderRadius: 10,
-        padding: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
         gap: 5,
         marginBottom: 10,
         // height: 100,
@@ -34,8 +35,9 @@ export default function AlertDialog({
       <Text text70BL color={Colors.green10}>
         ALERT
       </Text>
-      <Text text70L center
-      >{alertContent}</Text>
+      <Text text70L center>
+        {alertContent}
+      </Text>
       <Button
         onPress={dismiss}
         style={{
