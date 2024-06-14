@@ -10,7 +10,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import EditIcon from "../components/icons/EditIcon";
 
 // Components
-import GreenDialogue from "../components/GreenDialogue";
+import AlertDialogue from "../components/AlertDialogue";
 import NutrientsDialog from "../components/NutrientsDialog";
 import UnitPicker from "../components/FoodDetails/UnitPicker";
 import QuantityField from "../components/FoodDetails/QuantityField";
@@ -71,7 +71,7 @@ export default function NutriTableCreateScreen() {
         setAlertKcals={setAlertKcals}
       />
       {/* Total kcals validity alert */}
-      <GreenDialogue
+      <AlertDialogue
         visible={showNutrientsAlert}
         setVisible={setShowNutrientsAlert}
         content={{
@@ -82,7 +82,7 @@ export default function NutriTableCreateScreen() {
         }}
       />
       {/* Base measure validity alert */}
-      <GreenDialogue
+      <AlertDialogue
         visible={showMeasureAlert}
         setVisible={setShowMeasureAlert}
         content={{

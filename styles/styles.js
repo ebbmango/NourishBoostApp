@@ -3,6 +3,12 @@ import { Colors } from "react-native-ui-lib";
 
 const screenWidth = Dimensions.get("window").width;
 
+const button = StyleSheet.create({
+  display: "flex",
+  borderRadius: 5,
+  marginVertical: 10,
+});
+
 export default StyleSheet.create({
   dialogues: {
     container: {
@@ -14,32 +20,29 @@ export default StyleSheet.create({
       gap: 5,
       marginBottom: 11,
     },
-    buttons: {
-      view: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        width: "100%",
-        marginTop: 15,
-        gap: 32,
+    buttonsView: {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      width: "100%",
+      gap: 32,
+    },
+    button: {
+      red: {
+        ...button,
+        backgroundColor: Colors.red10,
       },
-      greenConfirm: {
-        display: "flex",
-        borderRadius: 5,
+      green: {
+        ...button,
         backgroundColor: Colors.green10,
-        marginVertical: 10,
       },
-      redConfirm: {
-        display: "flex",
-        borderRadius: 5,
-        backgroundColor: Colors.red20,
-        marginBottom: 10,
-      },
-      redCancel: {
-        display: "flex",
-        borderRadius: 5,
+      lightRed: {
+        ...button,
         backgroundColor: Colors.red50,
-        marginBottom: 10,
+      },
+      lightGreen: {
+        ...button,
+        backgroundColor: Colors.green40,
       },
     },
   },

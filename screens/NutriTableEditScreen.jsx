@@ -11,7 +11,7 @@ import EditIcon from "../components/icons/EditIcon";
 
 // Components
 import NutrientsDialog from "../components/NutrientsDialog";
-import GreenDialogue from "../components/GreenDialogue";
+import AlertDialogue from "../components/AlertDialogue";
 import UnitPicker from "../components/FoodDetails/UnitPicker";
 import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
@@ -86,7 +86,7 @@ export default function NutriTableEditScreen() {
         setAlertKcals={setAlertKcals}
       />
       {/* Total kcals validity alert */}
-      <GreenDialogue
+      <AlertDialogue
         visible={showNutrientsAlert}
         setVisible={setShowNutrientsAlert}
         content={{
@@ -97,7 +97,7 @@ export default function NutriTableEditScreen() {
         }}
       />
       {/* Base measure validity alert */}
-      <GreenDialogue
+      <AlertDialogue
         visible={showMeasureAlert}
         setVisible={setShowMeasureAlert}
         content={{

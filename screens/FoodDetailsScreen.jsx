@@ -32,8 +32,8 @@ import QuantityField from "../components/FoodDetails/QuantityField";
 import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
 import deleteNutritionalTable from "../queries/deleteNutritionalTable";
 import getAllUnits from "../queries/getAllUnits";
-import GreenDialogue from "../components/GreenDialogue";
-import RedConfirmationDialog from "../components/RedConfirmationDialogue";
+import AlertDialogue from "../components/AlertDialogue";
+import ConfirmationDialogue from "../components/ConfirmationDialogue";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -120,16 +120,18 @@ export default function FoodDetailsScreen() {
   // Alerts
 
   const [showTablesAlert, setShowTablesAlert] = useState(false);
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
 
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
-        <RedConfirmationDialog
+        <ConfirmationDialogue
+          red
           visible={show}
           setVisible={setShow}
           content={{
             confirmText: "Delete",
+            cancelText: "Cancel",
             alertContent: (
               <View text70L center gap={8}>
                 <Text text70 center>
@@ -147,7 +149,7 @@ export default function FoodDetailsScreen() {
             navigator.pop();
           }}
         />
-        <GreenDialogue
+        <AlertDialogue
           visible={showTablesAlert}
           setVisible={setShowTablesAlert}
           content={{

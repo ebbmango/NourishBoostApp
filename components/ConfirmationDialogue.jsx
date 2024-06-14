@@ -6,14 +6,17 @@ import AlertTriangleIcon from "./icons/AlertTriangleIcon";
 
 // Stylesheets
 import styles from "../styles/styles";
+import tweakStyles from "../functions/tweakStyles";
 
-export default function ConfirmationDialog({
+export default function ConfirmationDialogue({
+  red,
   content,
   visible,
   setVisible,
   onConfirm,
 }) {
-  //
+  const color = red ? Colors.red10 : Colors.green10;
+
   const dismissDialogue = () => {
     setVisible(false);
   };
@@ -25,21 +28,22 @@ export default function ConfirmationDialog({
       containerStyle={styles.dialogues.container}
       onDismiss={dismissDialogue}
     >
-      <AlertTriangleIcon width={30} height={30} color={Colors.red10} />
-      <Text text70BL color={Colors.red10}>
+      <AlertTriangleIcon width={30} height={30} color={color} />
+      <Text text70BL color={color}>
         ALERT
       </Text>
-      <View>
-        {content.alertContent}
-      </View>
-      <View style={styles.dialogues.buttons.view}>
+      <View>{content.alertContent}</View>
+      <View style={styles.dialogues.buttonsView}>
         <Button
-          style={styles.dialogues.buttons.redCancel}
+          style={styles.dialogues.button[red ? "lightRed" : "lightGreen"]}
           onPress={dismissDialogue}
         >
-          <Text white>Cancel</Text>
+          <Text white>{content.cancelText}</Text>
         </Button>
-        <Button style={styles.dialogues.buttons.redConfirm} onPress={onConfirm}>
+        <Button
+          style={styles.dialogues.button[red ? "red" : "green"]}
+          onPress={onConfirm}
+        >
           <Text color={Colors.white}>{content.confirmText}</Text>
         </Button>
       </View>

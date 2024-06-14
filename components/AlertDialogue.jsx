@@ -7,8 +7,8 @@ import AlertTriangleIcon from "./icons/AlertTriangleIcon";
 // Stylesheets
 import styles from "../styles/styles";
 
-export default function GreenDialogue({ visible, setVisible, content }) {
-  //
+export default function AlertDialogue({ visible, setVisible, content}) {
+  
   const dismissDialogue = () => {
     setVisible(false);
   };
@@ -27,7 +27,8 @@ export default function GreenDialogue({ visible, setVisible, content }) {
       <View>{content.alertContent}</View>
       <Button
         onPress={dismissDialogue}
-        style={styles.dialogues.buttons.greenConfirm}
+        color={Colors.green10}
+        style={styles.dialogues.button.green}
       >
         <Text color={Colors.white}>{content.confirmText}</Text>
       </Button>
