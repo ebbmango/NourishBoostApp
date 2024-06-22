@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { ScrollView } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { View, Button, Colors, TextField } from "react-native-ui-lib";
+import { View, Button, Colors, TextField, Text } from "react-native-ui-lib";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite";
 
 // Components
@@ -14,7 +14,10 @@ import FoodListItem from "../components/FoodListItem";
 import getFoods from "../queries/getFoods";
 
 // Styles
-import styles from "../styles/FoodsListStyles";
+import styles from "../styles/styles";
+
+import TextFieldDialogue from "../components/TextFieldDialogue";
+import AlertDialogue from "../components/AlertDialogue";
 
 export default function FoodsScreen() {
   // Instantiating functionalities.
@@ -23,9 +26,6 @@ export default function FoodsScreen() {
   // Connecting to the database.
   const database = useSQLiteContext();
 
-  // Instantiating the queries' client.
-  const queryClient = useQueryClient();
-
   // Destructuring params from the route.
   const { date, mealId } = useRoute().params;
 
@@ -33,9 +33,7 @@ export default function FoodsScreen() {
   const { data: foods = [], refetch: refetchFoods } = useQuery(
     "foods",
     () => getFoods(database),
-    {
-      initialData: [],
-    }
+    { initialData: [] }
   );
 
   // Retrieving them once more every time a change is detected in the foods table.
@@ -57,17 +55,59 @@ export default function FoodsScreen() {
     food.name.toLowerCase().includes(searchParams.toLowerCase())
   );
 
+  const [showTextDialogue, setShowTextDialogue] = useState(false);
+  const [showNameAlert, setShowNameAlert] = useState(false);
+
+  const [newFoodName, setNewFoodName] = useState("");
+
   return (
     <>
+      <AlertDialogue
+        visible={showNameAlert}
+        setVisible={setShowNameAlert}
+        content={{
+          alertContent: <Text>The food's name must be unique!</Text>,
+          confirmText: "I understand",
+        }}
+      />
+      <TextFieldDialogue
+        visible={showTextDialogue}
+        setVisible={setShowTextDialogue}
+        onConfirm={() => {
+          if (
+            foods.some(
+              (food) => food.name.toLowerCase() === newFoodName.toLowerCase().trim()
+            )
+          ) {
+            setShowNameAlert(true);
+          } else {
+            setShowTextDialogue(false);
+            navigator.navigate("Add Food Item", { foodName: newFoodName.trim() });
+          }
+        }}
+        content={{
+          alertContent: (
+            <TextField
+              containerStyle={styles.dialogues.textField}
+              placeholder={"Food name"}
+              onChangeText={(text) => {
+                setNewFoodName(text);
+              }}
+            />
+          ),
+          confirmText: "Proceed",
+          cancelText: "Cancel",
+        }}
+      />
       {/* Top bar */}
-      <View style={styles.greenBar}>
+      <View style={styles.foodList.greenBar}>
         {/* Seatch Field */}
         <TextField
           onChangeText={(text) => {
             setSearchParams(text.trim());
           }}
           placeholder={"Search"}
-          containerStyle={styles.searchField}
+          containerStyle={styles.foodList.searchField}
         />
         {/* Add food button */}
         <Button
@@ -78,12 +118,12 @@ export default function FoodsScreen() {
           round
           style={{ width: 30, height: 30, padding: 6, marginTop: 2 }}
           onPress={() => {
-            navigator.navigate("Create");
+            setShowTextDialogue(true);
           }}
         />
       </View>
       {/* Foods list */}
-      <ScrollView contentContainerStyle={styles.itemsList}>
+      <ScrollView contentContainerStyle={styles.foodList.itemsList}>
         {/* For each food item */}
         {searchResults.map((food) => {
           return (
