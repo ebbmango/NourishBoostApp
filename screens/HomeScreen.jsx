@@ -1,5 +1,5 @@
 // External dependencies
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite/next";
 import { Dimensions, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,8 +13,13 @@ import MealDrawer from "../components/MealDrawer";
 // Queries
 import getMeals from "../queries/getMeals";
 import { useQuery, useQueryClient } from "react-query";
+import getEntries from "../queries/getEntries";
+import formatDate from "../functions/formatDate";
 
 export default function HomeScreen() {
+  // Intantiating the initial date.
+  const [date, setDate] = useState(new Date());
+
   // Extracting the device's dimensions.
   const screenWidth = Dimensions.get("window").width;
 
@@ -28,6 +33,25 @@ export default function HomeScreen() {
   const { data: meals = [] } = useQuery("meals", () => getMeals(database), {
     initialData: [],
   });
+
+  const { data: entries = [], refetch: refetchEntries } = useQuery(
+    "entries",
+    () => getEntries(database, { date: formatDate(date) }),
+    { initialData: [] }
+  );
+
+  useEffect(() => {
+    const listener = addDatabaseChangeListener((change) => {
+      if (change.tableName === "entries") {
+        refetchEntries();
+        setMealsKey(Date.now());
+      }
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
 
   // Stateful variable for controling the display of the date picker.
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -48,8 +72,10 @@ export default function HomeScreen() {
     setDate(date);
   };
 
-  // Intantiating the initial date.
-  const [date, setDate] = useState(new Date());
+  // console.log("penes");
+  // console.log(entries);
+
+  const [mealsKey, setMealsKey] = useState(Date.now());
 
   return (
     <>
@@ -86,9 +112,16 @@ export default function HomeScreen() {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView key={mealsKey} contentContainerStyle={styles.container}>
         {meals.map((meal) => {
-          return <MealDrawer key={meal.id} meal={meal} date={date} />;
+          return (
+            <MealDrawer
+              key={meal.id}
+              meal={meal}
+              date={date}
+              entries={entries.filter((entry) => entry.mealId === meal.id)}
+            />
+          );
         })}
       </ScrollView>
     </>

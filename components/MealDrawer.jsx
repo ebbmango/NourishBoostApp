@@ -15,15 +15,21 @@ import RotatingCaret from "./RotatingCaret";
 import PlusIcon from "./icons/PlusIcon";
 import { useNavigation } from "@react-navigation/native";
 import formatDate from "../functions/formatDate";
+import { useSQLiteContext } from "expo-sqlite";
+import getNutritionalTable from "../queries/getNutritionalTable";
 
-export default function MealDrawer({ meal, date }) {
+export default function MealDrawer({ meal, date, entries }) {
   // Extracting the device's dimensions.
   const screenWidth = Dimensions.get("window").width;
+
+  const database = useSQLiteContext();
 
   const navigator = useNavigation();
 
   // Setting up a state to handle the expandable section's expansion.
   const [expanded, setExpanded] = useState(false);
+
+  // console.log(meal.name, meal.id, entries);
 
   return (
     <>
@@ -64,9 +70,20 @@ export default function MealDrawer({ meal, date }) {
             borderBottomRightRadius: 10,
           }}
         >
-          {/* <Entry name={"food"} kcals={106} />
-          <Entry name={"food 2"} kcals={80} />
-          <Entry name={"food 3"} kcals={42} /> */}
+          {entries.map((entry) => {
+            const { foodId, unitId } = entry;
+
+            const nutriTable = getNutritionalTable(database, {
+              foodId,
+              unitId,
+            });
+
+            const kcals =
+              (nutriTable.kcals * entry.amount) / nutriTable.baseMeasure;
+
+            return <Entry key={entry.id} name={entry.foodName} kcals={kcals} />;
+          })}
+
           <Button
             backgroundColor={Colors.green70}
             style={{ padding: 9 }}

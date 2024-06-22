@@ -34,6 +34,7 @@ import deleteNutritionalTable from "../queries/deleteNutritionalTable";
 import getAllUnits from "../queries/getAllUnits";
 import AlertDialogue from "../components/AlertDialogue";
 import ConfirmationDialogue from "../components/ConfirmationDialogue";
+import createEntry from "../queries/createEntry";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -122,6 +123,8 @@ export default function FoodDetailsScreen() {
   const [showTablesAlert, setShowTablesAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
+  const [unitId, setUnitId] = useState(null);
+
   if (tablesLoaded && unitsLoaded) {
     return (
       <>
@@ -184,6 +187,9 @@ export default function FoodDetailsScreen() {
             const newTableIndex = nutritionalTables.findIndex(
               (table) => table.unit.id === change
             );
+
+            setUnitId(change);
+
             // Setting the index of the new table.
             setTableIndex(newTableIndex);
           }}
@@ -288,6 +294,16 @@ export default function FoodDetailsScreen() {
                 color={Colors.white}
               />
             )}
+            onPress={() => {
+              createEntry(database, {
+                foodId,
+                date,
+                amount: quantity,
+                unitId: unitId ? unitId : measurementUnits[0].id,
+                mealId,
+              });
+              navigator.pop(2);
+            }}
           />
         </View>
       </>
