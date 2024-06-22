@@ -53,6 +53,10 @@ export default function HomeScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    refetchEntries();
+  }, [date]);
+
   // Stateful variable for controling the display of the date picker.
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
@@ -71,9 +75,6 @@ export default function HomeScreen() {
     hideDatePicker();
     setDate(date);
   };
-
-  // console.log("penes");
-  // console.log(entries);
 
   const [mealsKey, setMealsKey] = useState(Date.now());
 
