@@ -11,10 +11,8 @@ const RotatingCaret = ({ rotated, ...props }) => {
   const rotation = useSharedValue(0);
 
   const animatedStyles = useAnimatedStyle(() => ({
-    position: "absolute",
     width: 24,
     height: 24,
-    right: 15,
     transform: [{ rotate: `${rotation.value}deg` }],
   }));
 
@@ -26,7 +24,7 @@ const RotatingCaret = ({ rotated, ...props }) => {
 
   return (
     <Animated.View style={animatedStyles}>
-      <AngleDownIcon color="black" style={{ marginBottom: 20 }} />
+      <AngleDownIcon color="black" />
     </Animated.View>
   );
 };

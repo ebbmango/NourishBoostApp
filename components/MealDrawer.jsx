@@ -28,6 +28,8 @@ export default function MealDrawer({ meal, date, entries }) {
   // Setting up a state to handle the expandable section's expansion.
   const [expanded, setExpanded] = useState(false);
 
+  const kcals = entries.reduce((acc, val) => acc + val.kcals, 0);
+
   // console.log(meal.name, meal.id, entries);
 
   return (
@@ -39,6 +41,8 @@ export default function MealDrawer({ meal, date, entries }) {
           <View
             centerH
             centerV
+            row
+            spread
             style={{
               width: screenWidth * 0.8,
               height: "auto",
@@ -50,6 +54,23 @@ export default function MealDrawer({ meal, date, entries }) {
               borderBottomRightRadius: expanded ? 0 : 10,
             }}
           >
+            {kcals !== 0 ? (
+              <View
+                style={{
+                  backgroundColor: Colors.green70,
+                  paddingHorizontal: 8,
+                  paddingVertical: 4,
+                  borderRadius: 100,
+                }}
+              >
+                <Text tec green10>
+                  {kcals}
+                </Text>
+              </View>
+            ) : (
+              <View />
+            )}
+
             <Text grey10 text70>
               {meal.name}
             </Text>
