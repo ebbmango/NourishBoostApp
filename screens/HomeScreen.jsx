@@ -29,7 +29,8 @@ import getEntriesByDate from "../queries/getEntriesByDate";
 import getNutrientsById from "../queries/getNutrientsById";
 
 // Stylesheets
-import styles from "../styles/styles";
+import NutrientOverview from "../components/NutrientOverview";
+import homeScreenStyles from "../styles/homeScreenStyles";
 
 export default function HomeScreen() {
   // Intantiating the initial date.
@@ -104,11 +105,13 @@ export default function HomeScreen() {
     setDate(date);
   };
 
+  // Setting up stateful variables to keep track of the macronutrients' totals
   const [totalFats, setTotalFats] = useState(0);
   const [totalCarbs, setTotalCarbs] = useState(0);
   const [totalKcals, setTotalKcals] = useState(0);
   const [totalProtein, setTotalProtein] = useState(0);
 
+  // Updating the macronutrients' totals every time the entries are updated
   useEffect(() => {
     setTotalCarbs(entries.reduce((acc, val) => acc + val.carbs, 0));
     setTotalFats(entries.reduce((acc, val) => acc + val.fats, 0));
@@ -116,9 +119,9 @@ export default function HomeScreen() {
     setTotalKcals(entries.reduce((acc, val) => acc + val.kcals, 0));
   }, [entries]);
 
+  // Setting up the Pie Chart's variables
   const widthAndHeight = 140;
-
-  const series = [totalProtein, totalFats, totalCarbs];
+  const series = [totalProtein, totalFats, totalCarbs]; // the values
   const sliceColor = [
     Colors.green50, // protein
     Colors.green30, // fats
@@ -128,17 +131,7 @@ export default function HomeScreen() {
   return (
     <>
       {/* Date banner */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: screenWidth,
-          backgroundColor: Colors.green30,
-          paddingHorizontal: 24,
-          alignItems: "center",
-          paddingVertical: 16,
-        }}
-      >
+      <View style={homeScreenStyles.dateBanner}>
         <Text text60L white style={{ marginTop: 8 }}>
           {date.toLocaleDateString("en-US", {
             weekday: "long",
@@ -164,46 +157,28 @@ export default function HomeScreen() {
       {/* Homepage */}
       <ScrollView
         fillViewport={true}
-        contentContainerStyle={styles.homeScreen.scrollView}
+        contentContainerStyle={homeScreenStyles.scrollView}
       >
-        {/* Overview */}
-        <View
-          row
-          style={{
-            position: "absolute",
-            top: 0,
-            width: screenWidth,
-            justifyContent: "space-around",
-            marginBottom: 4,
-            backgroundColor: Colors.green10,
-            paddingVertical: 12,
-          }}
-        >
-          <View row style={{ alignItems: "center", gap: 8 }}>
-            <WheatIcon color={Colors.green70} width={24} height={24} />
-            <Text text70BL green70>
-              {fixDecimals(totalCarbs)}g
-            </Text>
-          </View>
-          <View row style={{ alignItems: "center", gap: 8 }}>
-            <BaconIcon color={Colors.green70} width={24} height={24} />
-            <Text text70BL green70>
-              {fixDecimals(totalFats)}g
-            </Text>
-          </View>
-          <View row style={{ alignItems: "center", gap: 8 }}>
-            <DrumstickIcon color={Colors.green70} width={24} height={24} />
-            <Text text70BL green70>
-              {fixDecimals(totalProtein)}g
-            </Text>
-          </View>
-          <View row style={{ alignItems: "center", gap: 8 }}>
-            <CaloriesIcon color={Colors.green70} width={24} height={24} />
-            <Text text70BL green70>
-              {Math.round(totalKcals)}
-            </Text>
-          </View>
+        {/* Nutrients' Overview */}
+        <View style={homeScreenStyles.macrosOverview.banner}>
+          <NutrientOverview
+            Icon={<WheatIcon />}
+            text={fixDecimals(totalCarbs) + "g"}
+          />
+          <NutrientOverview
+            Icon={<BaconIcon />}
+            text={fixDecimals(totalFats) + "g"}
+          />
+          <NutrientOverview
+            Icon={<DrumstickIcon />}
+            text={fixDecimals(totalProtein) + "g"}
+          />
+          <NutrientOverview
+            Icon={<CaloriesIcon />}
+            text={Math.round(totalKcals)}
+          />
         </View>
+        {/* Workaround to achieve position-sticky for nutrients' overview banner */}
         <View style={{ height: 36, marginBottom: 20 }} />
         {/* Graph chart */}
         {totalProtein + totalCarbs + totalFats !== 0 && (
@@ -223,36 +198,15 @@ export default function HomeScreen() {
             />
             <View style={{ gap: 4 }}>
               <View row style={{ alignItems: "center", gap: 6 }}>
-                <View
-                  style={{
-                    width: 16,
-                    height: 16,
-                    backgroundColor: Colors.green10,
-                    borderRadius: 3,
-                  }}
-                />
+                <View style={homeScreenStyles.pieChartCaptions.carbs} />
                 <Text text70>Carbohydrates</Text>
               </View>
               <View row style={{ alignItems: "center", gap: 6 }}>
-                <View
-                  style={{
-                    width: 16,
-                    height: 16,
-                    backgroundColor: Colors.green30,
-                    borderRadius: 3,
-                  }}
-                />
+                <View style={homeScreenStyles.pieChartCaptions.fats} />
                 <Text text70>Fats</Text>
               </View>
               <View row style={{ alignItems: "center", gap: 6 }}>
-                <View
-                  style={{
-                    width: 16,
-                    height: 16,
-                    backgroundColor: Colors.green50,
-                    borderRadius: 3,
-                  }}
-                />
+                <View style={homeScreenStyles.pieChartCaptions.protein} />
                 <Text text70>Protein</Text>
               </View>
             </View>
