@@ -104,8 +104,8 @@ export default function FoodDetailsScreen() {
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
       if (change.tableName === "nutrients") {
-        refetchTables();
-        refetchUnits();
+      refetchTables();
+      refetchUnits();
       }
     });
 
@@ -114,7 +114,13 @@ export default function FoodDetailsScreen() {
     };
   }, []);
 
+  // Re-rendering the unit picker every time the available measurement units change.
+  useEffect(() => {
+    rerenderPicker();
+  }, [measurementUnits]);
+
   // Alerts
+
   const [showTablesAlert, setShowTablesAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 

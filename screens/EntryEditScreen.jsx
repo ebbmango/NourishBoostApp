@@ -52,9 +52,6 @@ export default function EntryEditScreen() {
     entry: { unitId, foodId, id: entryId, amount },
   } = useRoute().params;
 
-  //   console.log(amount);
-  //   console.log(selectedUnitId);
-
   // Retrieving all units from the database.
   const allUnits = getAllUnits(database);
 
@@ -113,7 +110,10 @@ export default function EntryEditScreen() {
     };
   }, []);
 
-  //   console.log(selectedUnitId);
+  // Re-rendering the unit picker every time the available measurement units change.
+  useEffect(() => {
+    rerenderPicker();
+  }, [measurementUnits]);
 
   const [showTablesAlert, setShowTablesAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
