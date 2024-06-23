@@ -1,5 +1,7 @@
 const query = "SELECT * FROM meals;";
 
-export default function getMeals(database) {
+const getMeals = (database) => {
   return database.getAllSync(query);
-}
+};
+
+export default getMeals;

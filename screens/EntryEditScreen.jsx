@@ -7,13 +7,22 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
 
 // Components
+import AlertDialogue from "../components/AlertDialogue";
+import UnitPicker from "../components/FoodDetails/UnitPicker";
+import QuantityField from "../components/FoodDetails/QuantityField";
+import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
+import ConfirmationDialogue from "../components/ConfirmationDialogue";
 import FoodOptionButton from "../components/FoodDetails/FoodOptionButton";
 
 // Queries
-import getFood from "../queries/getFood";
-import getUnits from "../queries/getUnits";
+import getFoodById from "../queries/getFoodById";
+import getUnitsByFood from "../queries/getUnitsByFood";
 import deleteFood from "../queries/deleteFood";
-import getNutritionalTables from "../queries/getNutritionalTables";
+import getAllUnits from "../queries/getAllUnits";
+import deleteEntry from "../queries/deleteEntry";
+import updateEntry from "../queries/updateEntry";
+import getNutrientsByFood from "../queries/getNutrientsByFood";
+import deleteNutrients from "../queries/deleteNutrients";
 
 // Functions
 import fixDecimals from "../functions/fixDecimals";
@@ -21,26 +30,15 @@ import fixDecimals from "../functions/fixDecimals";
 // Stylesheets
 import styles from "../styles/styles";
 
-// Assets
+// Icons
+import PenIcon from "../components/icons/PenIcon";
+import TrashIcon from "../components/icons/TrashIcon";
 import PencilIcon from "../components/icons/PencilIcon";
-import UtensilsIcon from "../components/icons/UtensilsIcon";
 import FilePlusIcon from "../components/icons/FilePlusIcon";
 import FileWriteIcon from "../components/icons/FileWriteIcon";
-import UnitPicker from "../components/FoodDetails/UnitPicker";
 import FileDeleteIcon from "../components/icons/FileDeleteIcon";
-import QuantityField from "../components/FoodDetails/QuantityField";
-import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
-import deleteNutritionalTable from "../queries/deleteNutritionalTable";
-import getAllUnits from "../queries/getAllUnits";
-import AlertDialogue from "../components/AlertDialogue";
-import ConfirmationDialogue from "../components/ConfirmationDialogue";
-import createEntry from "../queries/createEntry";
-import TrashIcon from "../components/icons/TrashIcon";
-import PenIcon from "../components/icons/PenIcon";
-import deleteEntry from "../queries/deleteEntry";
-import updateEntry from "../queries/updateEntry";
 
-const screenWidth = Dimensions.get("window").width;
+// const screenWidth = Dimensions.get("window").width;
 
 export default function EntryEditScreen() {
   // Instantiating the navigator.
@@ -63,7 +61,7 @@ export default function EntryEditScreen() {
   // Getting the food's name from the database.
   const { data: foodName = "" } = useQuery(
     "foodName",
-    () => getFood(database, { foodId: foodId }).name
+    () => getFoodById(database, { foodId: foodId }).name
   );
 
   // Getting the food's nutritional tables from the database.
@@ -72,7 +70,7 @@ export default function EntryEditScreen() {
     refetch: refetchTables,
     isSuccess: tablesLoaded,
   } = useQuery("nutritionalTables", () =>
-    getNutritionalTables(database, { foodId })
+    getNutrientsByFood(database, { foodId })
   );
 
   // Getting the food's measurement units from the database.
@@ -80,7 +78,7 @@ export default function EntryEditScreen() {
     data: measurementUnits,
     refetch: refetchUnits,
     isSuccess: unitsLoaded,
-  } = useQuery("availableUnits", () => getUnits(database, { foodId }));
+  } = useQuery("availableUnits", () => getUnitsByFood(database, { foodId }));
 
   // Function that calculates the amount of calories and macronutrients per portion of the selected food.
   const proportion = (number) => {
@@ -104,7 +102,7 @@ export default function EntryEditScreen() {
   // Refetching the tables and units every time a change happens in the nutritional tables' row in the database.
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
-      if (change.tableName === "foodNutritionalTables") {
+      if (change.tableName === "nutrients") {
         refetchTables();
         refetchUnits();
       }
@@ -114,11 +112,6 @@ export default function EntryEditScreen() {
       listener.remove();
     };
   }, []);
-
-  // Re-rendering the unit picker every time the available measurement units change.
-  useEffect(() => {
-    rerenderPicker();
-  }, [measurementUnits]);
 
   //   console.log(selectedUnitId);
 
@@ -190,12 +183,12 @@ export default function EntryEditScreen() {
               (table) => table.unit.id === change
             );
 
-            console.log(change);
-
             setSelectedUnitId(change);
 
             // Setting the index of the new table.
             setTableIndex(newTableIndex);
+
+            rerenderPicker();
           }}
         />
         {/* Macronutrients grid */}
@@ -282,8 +275,8 @@ export default function EntryEditScreen() {
               if (nutritionalTables.length === 1) {
                 setShowDeleteAlert(true);
               } else {
-                const tableId = nutritionalTables[tableIndex].tableId;
-                deleteNutritionalTable(database, { tableId });
+                const nutrientsId = nutritionalTables[tableIndex].id;
+                deleteNutrients(database, { nutrientsId });
                 setTableIndex(tableIndex === 0 ? 0 : tableIndex - 1);
               }
             }}

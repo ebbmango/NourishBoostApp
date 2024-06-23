@@ -1,8 +1,7 @@
+import toSQLiteParameters from "../functions/toSQLiteParameters";
+
 const query = `UPDATE foods SET name = $newFoodName WHERE id = $foodId;`;
 
-export default function updateFoodName(database, { foodId, newFoodName }) {
-  return database.runSync(query, {
-    $foodId: foodId,
-    $newFoodName: newFoodName,
-  });
+export default function updateFoodName(database, params) {
+  return database.runSync(query, toSQLiteParameters(params));
 }

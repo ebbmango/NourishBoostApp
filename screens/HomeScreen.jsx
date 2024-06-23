@@ -1,32 +1,35 @@
 // External dependencies
+import { Dimensions } from "react-native";
+import PieChart from "react-native-pie-chart";
 import React, { useEffect, useState } from "react";
-import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite/next";
-import { Dimensions, StyleSheet } from "react-native";
+import { useQuery, useQueryClient } from "react-query";
 import { ScrollView } from "react-native-gesture-handler";
-import { Colors, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { Colors, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { useSQLiteContext, addDatabaseChangeListener } from "expo-sqlite/next";
 
 // Components
-import CalendarDayIcon from "../components/icons/CalendarDayIcon";
 import MealDrawer from "../components/MealDrawer";
+
+// Icons
+import WheatIcon from "../components/icons/WheatIcon";
+import BaconIcon from "../components/icons/BaconIcon";
+import CaloriesIcon from "../components/icons/CaloriesIcon";
+import DrumstickIcon from "../components/icons/DrumstickIcon";
+import CalendarDayIcon from "../components/icons/CalendarDayIcon";
+
+// Functions
+import proportion from "../functions/proportion";
+import fixDecimals from "../functions/fixDecimals";
+import dateToString from "../functions/dateToString";
 
 // Queries
 import getMeals from "../queries/getMeals";
-import { useQuery, useQueryClient } from "react-query";
-import getEntries from "../queries/getEntries";
-import formatDate from "../functions/formatDate";
-import PieChart from "react-native-pie-chart";
-import CircleIcon from "../components/icons/CircleIcon";
-import SquareIcon from "../components/icons/SquareIcon";
-import CaloriesIcon from "../components/icons/CaloriesIcon";
-import DrumstickIcon from "../components/icons/DrumstickIcon";
-import BaconIcon from "../components/icons/BaconIcon";
-import WheatIcon from "../components/icons/WheatIcon";
+import getEntriesByDate from "../queries/getEntriesByDate";
+import getNutrientsById from "../queries/getNutrientsById";
+
+// Stylesheets
 import styles from "../styles/styles";
-import proportion from "../functions/proportion";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import getNutritionalTable from "../queries/getNutritionalTable";
-import fixDecimals from "../functions/fixDecimals";
 
 export default function HomeScreen() {
   // Intantiating the initial date.
@@ -45,17 +48,15 @@ export default function HomeScreen() {
   const { data: meals = [] } = useQuery("meals", () => getMeals(database), {
     initialData: [],
   });
+
+  // Retrieving the entries.
   const { data: entries = [], refetch: refetchEntries } = useQuery(
     "entries",
     () =>
-      getEntries(database, { date: formatDate(date) }).map((entry) => {
+      getEntriesByDate(database, { date: dateToString(date) }).map((entry) => {
         // Reformulating each entry to contain its macronutrients' information
-        const { foodId, unitId } = entry;
-        const table = getNutritionalTable(database, {
-          foodId,
-          unitId,
-        });
-
+        const { nutrientsId } = entry;
+        const table = getNutrientsById(database, { nutrientsId });
         return {
           ...entry,
           fats: proportion(table.fats, entry.amount, table.baseMeasure),
@@ -67,9 +68,10 @@ export default function HomeScreen() {
     { initialData: [] }
   );
 
+  // Refetching the entries in case of any relevant change in the database.
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
-      if (change.tableName === "entries") {
+      if (["entries", "foods", "nutrients"].includes(change.tableName)) {
         refetchEntries();
       }
     });
@@ -102,21 +104,21 @@ export default function HomeScreen() {
     setDate(date);
   };
 
-  const [fats, setFats] = useState(0);
-  const [carbs, setCarbs] = useState(0);
-  const [kcals, setKcals] = useState(0);
-  const [protein, setProtein] = useState(0);
+  const [totalFats, setTotalFats] = useState(0);
+  const [totalCarbs, setTotalCarbs] = useState(0);
+  const [totalKcals, setTotalKcals] = useState(0);
+  const [totalProtein, setTotalProtein] = useState(0);
 
   useEffect(() => {
-    setCarbs(entries.reduce((acc, val) => acc + val.carbs, 0));
-    setFats(entries.reduce((acc, val) => acc + val.fats, 0));
-    setProtein(entries.reduce((acc, val) => acc + val.protein, 0));
-    setKcals(entries.reduce((acc, val) => acc + val.kcals, 0));
+    setTotalCarbs(entries.reduce((acc, val) => acc + val.carbs, 0));
+    setTotalFats(entries.reduce((acc, val) => acc + val.fats, 0));
+    setTotalProtein(entries.reduce((acc, val) => acc + val.protein, 0));
+    setTotalKcals(entries.reduce((acc, val) => acc + val.kcals, 0));
   }, [entries]);
 
   const widthAndHeight = 140;
 
-  const series = [protein, fats, carbs];
+  const series = [totalProtein, totalFats, totalCarbs];
   const sliceColor = [
     Colors.green50, // protein
     Colors.green30, // fats
@@ -180,31 +182,31 @@ export default function HomeScreen() {
           <View row style={{ alignItems: "center", gap: 8 }}>
             <WheatIcon color={Colors.green70} width={24} height={24} />
             <Text text70BL green70>
-              {fixDecimals(carbs)}g
+              {fixDecimals(totalCarbs)}g
             </Text>
           </View>
           <View row style={{ alignItems: "center", gap: 8 }}>
             <BaconIcon color={Colors.green70} width={24} height={24} />
             <Text text70BL green70>
-              {fixDecimals(fats)}g
+              {fixDecimals(totalFats)}g
             </Text>
           </View>
           <View row style={{ alignItems: "center", gap: 8 }}>
             <DrumstickIcon color={Colors.green70} width={24} height={24} />
             <Text text70BL green70>
-              {fixDecimals(protein)}g
+              {fixDecimals(totalProtein)}g
             </Text>
           </View>
           <View row style={{ alignItems: "center", gap: 8 }}>
             <CaloriesIcon color={Colors.green70} width={24} height={24} />
             <Text text70BL green70>
-              {Math.round(kcals)}
+              {Math.round(totalKcals)}
             </Text>
           </View>
         </View>
         <View style={{ height: 36, marginBottom: 20 }} />
         {/* Graph chart */}
-        {protein + carbs + fats !== 0 && (
+        {totalProtein + totalCarbs + totalFats !== 0 && (
           <View
             row
             style={{

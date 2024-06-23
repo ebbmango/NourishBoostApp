@@ -1,10 +1,14 @@
+import toSQLiteParameters from "../functions/toSQLiteParameters";
+
 const query = `
 SELECT units.id, units.symbol
 FROM units
-LEFT JOIN foodNutritionalTables ON units.id = foodNutritionalTables.unitId AND foodNutritionalTables.foodId = $foodId
-WHERE foodNutritionalTables.unitId IS NULL;
+LEFT JOIN nutrients ON units.id = nutrients.unitId AND nutrients.foodId = $foodId
+WHERE nutrients.unitId IS NULL;
 `;
 
-export default function getAvailableUnits(database, { foodId }) {
-  return database.getAllSync(query, { $foodId: foodId });
-}
+const getAvailableUnits = (database, params) => {
+  return database.getAllSync(query, toSQLiteParameters(params));
+};
+
+export default getAvailableUnits;

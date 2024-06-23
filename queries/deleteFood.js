@@ -1,5 +1,9 @@
+import toSQLiteParameters from "../functions/toSQLiteParameters";
+
 const query = "DELETE FROM foods WHERE id = $foodId;";
 
-export default function deleteFood(database, { foodId }) {
-  return database.runSync(query, { $foodId: foodId });
-}
+const deleteFood = (database, params) => {
+  return database.runSync(query, toSQLiteParameters(params));
+};
+
+export default deleteFood;

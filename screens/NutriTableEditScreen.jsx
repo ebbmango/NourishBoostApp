@@ -19,7 +19,6 @@ import NutrientsInputField from "../components/NutrientsInputField";
 
 // Queries
 import getAvailableUnits from "../queries/getAvailableUnits";
-import createNutritionalTable from "../queries/createNutritionalTable";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
@@ -27,7 +26,7 @@ import validateNutrients from "../functions/validateNutrients";
 // Stylesheets
 import styles from "../styles/styles";
 import RulerVerticalIcon from "../components/icons/RulerVerticalIcon";
-import updateNutritionalTable from "../queries/updateNutritionalTable";
+import updateNutrients from "../queries/updateNutrients";
 
 export default function NutriTableEditScreen() {
   // Instantiating the navigator.
@@ -47,7 +46,7 @@ export default function NutriTableEditScreen() {
     foodId,
     foodName,
     nutritionalTable: {
-      tableId,
+      id: nutrientsId,
       unit,
       baseMeasure: originalBaseMeasure,
       kcals: originalKcals,
@@ -241,8 +240,8 @@ export default function NutriTableEditScreen() {
                   fats !== originalFats ||
                   protein !== originalProtein
                 ) {
-                  updateNutritionalTable(database, {
-                    tableId,
+                  updateNutrients(database, {
+                    nutrientsId,
                     baseMeasure,
                     kcals,
                     carbs,

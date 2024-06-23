@@ -19,7 +19,7 @@ import NutrientsInputField from "../components/NutrientsInputField";
 
 // Queries
 import getAvailableUnits from "../queries/getAvailableUnits";
-import createNutritionalTable from "../queries/createNutritionalTable";
+import createNutrients from "../queries/createNutrients";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
@@ -219,7 +219,7 @@ export default function NutriTableCreateScreen() {
                 !issuesDown &&
                 (!alertKcals || nutrientsValidity)
               ) {
-                createNutritionalTable(database, {
+                createNutrients(database, {
                   foodId,
                   unitId: unit.id,
                   baseMeasure,

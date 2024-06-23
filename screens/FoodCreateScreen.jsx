@@ -1,6 +1,5 @@
 // External imports
 import { useRef, useState } from "react";
-import { useQueryClient } from "react-query";
 import { useSQLiteContext } from "expo-sqlite/next";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
@@ -19,7 +18,7 @@ import NutrientsInputField from "../components/NutrientsInputField";
 
 // Queries
 import getAllUnits from "../queries/getAllUnits";
-import createNutritionalTable from "../queries/createNutritionalTable";
+import createNutrients from "../queries/createNutrients";
 
 // Functions
 import validateNutrients from "../functions/validateNutrients";
@@ -223,7 +222,7 @@ export default function FoodCreateScreen() {
                   foodName,
                 }).lastInsertRowId;
 
-                createNutritionalTable(database, {
+                createNutrients(database, {
                   foodId,
                   unitId: unit.id,
                   baseMeasure,

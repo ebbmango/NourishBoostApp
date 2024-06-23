@@ -7,13 +7,21 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { addDatabaseChangeListener, useSQLiteContext } from "expo-sqlite";
 
 // Components
+import AlertDialogue from "../components/AlertDialogue";
+import UnitPicker from "../components/FoodDetails/UnitPicker";
+import QuantityField from "../components/FoodDetails/QuantityField";
+import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
+import ConfirmationDialogue from "../components/ConfirmationDialogue";
 import FoodOptionButton from "../components/FoodDetails/FoodOptionButton";
 
 // Queries
-import getFood from "../queries/getFood";
-import getUnits from "../queries/getUnits";
+import getFoodById from "../queries/getFoodById";
+import getUnitsByFood from "../queries/getUnitsByFood";
 import deleteFood from "../queries/deleteFood";
-import getNutritionalTables from "../queries/getNutritionalTables";
+import createFoodEntry from "../queries/createFoodEntry";
+import getNutrientsByFood from "../queries/getNutrientsByFood";
+import deleteNutrients from "../queries/deleteNutrients";
+import getAllUnits from "../queries/getAllUnits";
 
 // Functions
 import fixDecimals from "../functions/fixDecimals";
@@ -21,20 +29,12 @@ import fixDecimals from "../functions/fixDecimals";
 // Stylesheets
 import styles from "../styles/styles";
 
-// Assets
+// Icons
 import PencilIcon from "../components/icons/PencilIcon";
 import UtensilsIcon from "../components/icons/UtensilsIcon";
 import FilePlusIcon from "../components/icons/FilePlusIcon";
 import FileWriteIcon from "../components/icons/FileWriteIcon";
-import UnitPicker from "../components/FoodDetails/UnitPicker";
 import FileDeleteIcon from "../components/icons/FileDeleteIcon";
-import QuantityField from "../components/FoodDetails/QuantityField";
-import NutrientsGrid from "../components/FoodDetails/NutrientsGrid";
-import deleteNutritionalTable from "../queries/deleteNutritionalTable";
-import getAllUnits from "../queries/getAllUnits";
-import AlertDialogue from "../components/AlertDialogue";
-import ConfirmationDialogue from "../components/ConfirmationDialogue";
-import createEntry from "../queries/createEntry";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -54,7 +54,7 @@ export default function FoodDetailsScreen() {
   // Getting the food's name from the database.
   const { data: foodName = "" } = useQuery(
     "foodName",
-    () => getFood(database, { foodId }).name
+    () => getFoodById(database, { foodId }).name
   );
 
   // Getting the food's nutritional tables from the database.
@@ -63,7 +63,7 @@ export default function FoodDetailsScreen() {
     refetch: refetchTables,
     isSuccess: tablesLoaded,
   } = useQuery("nutritionalTables", () =>
-    getNutritionalTables(database, { foodId })
+    getNutrientsByFood(database, { foodId })
   );
 
   // Getting the food's measurement units from the database.
@@ -71,7 +71,7 @@ export default function FoodDetailsScreen() {
     data: measurementUnits,
     refetch: refetchUnits,
     isSuccess: unitsLoaded,
-  } = useQuery("availableUnits", () => getUnits(database, { foodId }));
+  } = useQuery("availableUnits", () => getUnitsByFood(database, { foodId }));
 
   // Resetting the quantity field back to the currently selected nutritional table's base measure.
   useEffect(() => {
@@ -90,6 +90,7 @@ export default function FoodDetailsScreen() {
   // Setting up stateful variables to keep track of the currently selected nutritional table and amount of food.
   const [tableIndex, setTableIndex] = useState(0);
   const [quantity, setQuantity] = useState(0);
+  const [unitId, setUnitId] = useState(null);
 
   // Setting up a stateful variable to hold the unit picker's key in order to manually re-render it at will.
   const [pickerKey, setPickerKey] = useState(Date.now());
@@ -102,7 +103,7 @@ export default function FoodDetailsScreen() {
   // Refetching the tables and units every time a change happens in the nutritional tables' row in the database.
   useEffect(() => {
     const listener = addDatabaseChangeListener((change) => {
-      if (change.tableName === "foodNutritionalTables") {
+      if (change.tableName === "nutrients") {
         refetchTables();
         refetchUnits();
       }
@@ -113,17 +114,9 @@ export default function FoodDetailsScreen() {
     };
   }, []);
 
-  // Re-rendering the unit picker every time the available measurement units change.
-  useEffect(() => {
-    rerenderPicker();
-  }, [measurementUnits]);
-
   // Alerts
-
   const [showTablesAlert, setShowTablesAlert] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-
-  const [unitId, setUnitId] = useState(null);
 
   if (tablesLoaded && unitsLoaded) {
     return (
@@ -192,6 +185,8 @@ export default function FoodDetailsScreen() {
 
             // Setting the index of the new table.
             setTableIndex(newTableIndex);
+
+            rerenderPicker();
           }}
         />
         {/* Macronutrients grid */}
@@ -278,8 +273,8 @@ export default function FoodDetailsScreen() {
               if (nutritionalTables.length === 1) {
                 setShowDeleteAlert(true);
               } else {
-                const tableId = nutritionalTables[tableIndex].tableId;
-                deleteNutritionalTable(database, { tableId });
+                const nutrientsId = nutritionalTables[tableIndex].id;
+                deleteNutrients(database, { nutrientsId });
                 setTableIndex(tableIndex === 0 ? 0 : tableIndex - 1);
               }
             }}
@@ -295,13 +290,15 @@ export default function FoodDetailsScreen() {
               />
             )}
             onPress={() => {
-              createEntry(database, {
+              const queryReturn = createFoodEntry(database, {
                 foodId,
                 date,
                 amount: quantity,
                 unitId: unitId ? unitId : measurementUnits[0].id,
+                nutrientsId: nutritionalTables[tableIndex].id,
                 mealId,
               });
+              console.log(queryReturn);
               navigator.pop(2);
             }}
           />

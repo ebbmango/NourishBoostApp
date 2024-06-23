@@ -1,3 +1,5 @@
+import toSQLiteParameters from "../functions/toSQLiteParameters";
+
 const query = ` 
 SELECT 
     t.id AS tableId,
@@ -13,13 +15,16 @@ FROM
 INNER JOIN 
     units AS u ON t.unitId = u.id
 WHERE 
-    t.foodId = $foodId;
+    t.foodId = $foodId
+AND
+    u.id = $unitId;
 `;
 
-// This query gets all the nutritional tables for a particular food item.
-export default function getNutritionalTables(database, { foodId }) {
-  const tables = database.getAllSync(query, { $foodId: foodId });
-  return tables.map((table) => ({
+// This query a specific nutritional table for a particular food item.
+const getNutritionalTableByUnit = (database, params) => {
+  const table = database.getFirstSync(query, toSQLiteParameters(params));
+
+  return {
     baseMeasure: table.baseMeasure,
     carbs: table.carbs,
     fats: table.fats,
@@ -30,5 +35,7 @@ export default function getNutritionalTables(database, { foodId }) {
       id: table.unitId,
       symbol: table.unitSymbol,
     },
-  }));
-}
+  };
+};
+
+export default getNutritionalTableByUnit;

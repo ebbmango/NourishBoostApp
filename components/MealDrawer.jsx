@@ -14,9 +14,8 @@ import Entry from "./Entry";
 import RotatingCaret from "./RotatingCaret";
 import PlusIcon from "./icons/PlusIcon";
 import { useNavigation } from "@react-navigation/native";
-import formatDate from "../functions/formatDate";
+import dateToString from "../functions/dateToString";
 import { useSQLiteContext } from "expo-sqlite";
-import getNutritionalTable from "../queries/getNutritionalTable";
 
 export default function MealDrawer({ meal, date, entries }) {
   // Extracting the device's dimensions.
@@ -87,7 +86,7 @@ export default function MealDrawer({ meal, date, entries }) {
             onPress={() => {
               navigator.navigate("List", {
                 mealId: meal.id,
-                date: formatDate(date),
+                date: dateToString(date),
               });
             }}
           />

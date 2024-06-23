@@ -1,5 +1,9 @@
+import toSQLiteParameters from "../functions/toSQLiteParameters";
+
 const query = "INSERT INTO foods (name) VALUES ($foodName);";
 
-export default function createFood(database, { foodName }) {
-  return database.runSync(query, { $foodName: foodName });
-}
+const createFood = (database, params) => {
+  return database.runSync(query, toSQLiteParameters(params));
+};
+
+export default createFood;

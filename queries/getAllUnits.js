@@ -1,5 +1,7 @@
 const query = "SELECT * FROM units;";
 
-export default function getAllUnits(database) {
+const getAllUnits = (database) => {
   return database.getAllSync(query);
-}
+};
+
+export default getAllUnits;
