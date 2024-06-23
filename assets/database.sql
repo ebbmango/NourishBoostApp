@@ -1,10 +1,34 @@
-CREATE TABLE IF NOT EXISTS "foods" (
+-- MEALS
+CREATE TABLE IF NOT EXISTS "meals" (
   "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
   "name" TEXT,
   "isDeleted" INTEGER
 );
-
-CREATE TABLE IF NOT EXISTS "foodNutritionalTables" (
+-- FOODS
+CREATE TABLE IF NOT EXISTS "foods" (
+  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
+  "name" TEXT,
+  "type" TEXT CHECK(type IN ('food', 'recipe')),
+  "isDeleted" INTEGER
+);
+-- RECIPE'S INGREDIENTS
+CREATE TABLE IF NOT EXISTS "ingredients" (
+  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
+  "recipeId" INTEGER,
+  "ingredientId" INTEGER,
+  "amount" REAL,
+  "unitId" INTEGER,
+  -- One recipe can have multiple ingredients and a single ingredient can appear in many recipes.
+  FOREIGN KEY ("recipeId") REFERENCES "foods" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("ingredientId") REFERENCES "foods" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- MEASUREMENT UNITS
+CREATE TABLE IF NOT EXISTS "units" (
+  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
+  "symbol" TEXT
+);
+-- NUTRITIONAL TABLES
+CREATE TABLE IF NOT EXISTS "nutrients" (
   "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
   "foodId" INTEGER,
   "unitId" INTEGER,
@@ -13,36 +37,17 @@ CREATE TABLE IF NOT EXISTS "foodNutritionalTables" (
   "carbs" REAL,
   "fats" REAL,
   "protein" REAL,
+  "isDeleted" INTEGER,
   -- A (food's) nutritional table belongs to a food. One food can have many nutritional tables.
   FOREIGN KEY ("foodId") REFERENCES "foods" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   -- A (food's) nutritional table "belongs" to a unit. One unit can have many nutritional tables.
   FOREIGN KEY ("unitId") REFERENCES "units" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-CREATE TABLE IF NOT EXISTS "recipeNutritionalTables" (
-  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
-  "recipeId" INTEGER,
-  "unitId" INTEGER,
-  "baseMeasure" REAL,
-  "kcals" REAL,
-  "protein" REAL,
-  "carbs" REAL,
-  "fats" REAL,
-  -- A (recipe's) nutritional table belongs to a recipe. One recipe can have many nutritional tables.
-  FOREIGN KEY ("recipeId") REFERENCES "recipes" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  -- A (recipe's) nutritional table "belongs" to a unit. One unit can have many nutritional tables.
-  FOREIGN KEY ("unitId") REFERENCES "units" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS "units" (
-  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
-  "symbol" TEXT
-);
-
+-- ENTRIES
 CREATE TABLE IF NOT EXISTS "entries" (
   "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
   "foodId" INTEGER,
-  "recipeId" INTEGER,
+  "nutrientsId" INTEGER,
   "date" TEXT,
   "amount" REAL,
   "unitId" INTEGER,
@@ -51,69 +56,50 @@ CREATE TABLE IF NOT EXISTS "entries" (
   FOREIGN KEY ("mealId") REFERENCES "meals" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
   -- An entry belongs to a food. One food can have many entries.
   FOREIGN KEY ("foodId") REFERENCES "foods" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  -- An entry belongs to a recipe. One recipe can have many entries.
-  FOREIGN KEY ("recipeId") REFERENCES "recipes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  -- An entry belongs to a nutritional table. One nutritional table can have many entries.
+  FOREIGN KEY ("nutrientsId") REFERENCES "nutrients" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-CREATE TABLE IF NOT EXISTS "meals" (
-  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
-  "name" TEXT,
-  "isDeleted" INTEGER
-);
-
+-- WEIGHTINGS
 CREATE TABLE IF NOT EXISTS "weightings" (
   "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
   "date" TEXT,
   "weight" REAL
 );
-
-CREATE TABLE IF NOT EXISTS "recipes" (
-  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
-  "name" TEXT,
-  "isDeleted" INTEGER
-);
-
-CREATE TABLE IF NOT EXISTS "recipeIngredients" (
-  "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
-  "foodId" INTEGER,
-  "recipeId" INTEGER,
-  "amount" REAL,
-  "unitId" INTEGER,
-  -- An ingredient belongs to a recipe. One recipe can have many ingredients.
-  FOREIGN KEY ("recipeId") REFERENCES "recipes" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 -- Inserts initial ("out-of-the-box") units.
 INSERT INTO units (symbol)
-VALUES
-    ('g'),
-    ('ml'),
-    ('lb'),
-    ('tsp'),
-    ('tbsp'),
-    ('cup'),
-    ('oz');
-    
+VALUES ('g'),
+  ('ml'),
+  ('lb'),
+  ('tsp'),
+  ('tbsp'),
+  ('cup'),
+  ('oz');
 -- Inserts initial ("out-of-the-box") meals.
 INSERT INTO meals (name, isDeleted)
-VALUES
-    ('breakfast', 0),
-    ('morning snack', 0),
-    ('lunch', 0),
-    ('afternoon snack', 0),
-    ('dinner', 0);
-
+VALUES ('breakfast', 0),
+  ('morning snack', 0),
+  ('lunch', 0),
+  ('afternoon snack', 0),
+  ('dinner', 0);
 -- Inserts initial foods (for ease of development only - DELETE FOR PRODUCTION)
-INSERT INTO foods (id, name) VALUES (1, 'Milk');
-INSERT INTO foodNutritionalTables (foodId, unitId, baseMeasure, kcals, carbs, fats, protein)
-VALUES (1, 2, 100, 60, 4.7, 3.2, 4.2);
-
-INSERT INTO foods (id, name) VALUES (2, 'Egg');
-INSERT INTO foodNutritionalTables (foodId, unitId, baseMeasure, kcals, carbs, fats, protein)
-VALUES (2, 1, 100, 147, 0.77, 9.94, 12.58);
-
-INSERT INTO foods (id, name) VALUES (3, 'Banana');
-INSERT INTO foodNutritionalTables (foodId, unitId, baseMeasure, kcals, carbs, fats, protein)
-VALUES (3, 1, 100, 89, 22.84, 0.33, 1.09);
-
-
+INSERT INTO foods (id, name, type, isDeleted)
+VALUES (1, 'Milk', 'food', 0),
+  (2, 'Egg', 'food', 0),
+  (3, 'Banana', 'food', 0);
+-- Inserts initial nutritional tables (for ease of development only - DELETE FOR PRODUCTION)
+INSERT INTO nutrients (
+    foodId,
+    unitId,
+    baseMeasure,
+    kcals,
+    carbs,
+    fats,
+    protein,
+    isDeleted
+  )
+VALUES -- Milk
+  (1, 2, 100, 60, 4.7, 3.2, 4.2, 0),
+  -- Egg
+  (2, 1, 100, 147, 0.77, 9.94, 12.58, 0),
+  -- Banana
+  (3, 1, 100, 89, 22.84, 0.33, 1.09, 0);
