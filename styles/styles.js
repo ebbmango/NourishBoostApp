@@ -10,6 +10,16 @@ const button = StyleSheet.create({
 });
 
 export default StyleSheet.create({
+  homeScreen: {
+    scrollView: {
+      flexGrow: 1,
+      // paddingVertical: 20,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 12,
+      paddingBottom: 20,
+    },
+  },
   foodList: {
     itemsList: {
       flex: 1,

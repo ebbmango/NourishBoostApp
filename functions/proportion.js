@@ -1,5 +1,3 @@
-// export default function proportion(quantity, base) {
-//   return number === 0
-//     ? 0
-//     : (number / nutritionalTables[tableIndex].baseMeasure) * quantity;
-// }
+export default function proportion(tableMacro, entryAmount, tableAmount) {
+  return (tableMacro * entryAmount) / tableAmount;
+}

@@ -15,6 +15,18 @@ import getMeals from "../queries/getMeals";
 import { useQuery, useQueryClient } from "react-query";
 import getEntries from "../queries/getEntries";
 import formatDate from "../functions/formatDate";
+import PieChart from "react-native-pie-chart";
+import CircleIcon from "../components/icons/CircleIcon";
+import SquareIcon from "../components/icons/SquareIcon";
+import CaloriesIcon from "../components/icons/CaloriesIcon";
+import DrumstickIcon from "../components/icons/DrumstickIcon";
+import BaconIcon from "../components/icons/BaconIcon";
+import WheatIcon from "../components/icons/WheatIcon";
+import styles from "../styles/styles";
+import proportion from "../functions/proportion";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import getNutritionalTable from "../queries/getNutritionalTable";
+import fixDecimals from "../functions/fixDecimals";
 
 export default function HomeScreen() {
   // Intantiating the initial date.
@@ -33,10 +45,25 @@ export default function HomeScreen() {
   const { data: meals = [] } = useQuery("meals", () => getMeals(database), {
     initialData: [],
   });
-
   const { data: entries = [], refetch: refetchEntries } = useQuery(
     "entries",
-    () => getEntries(database, { date: formatDate(date) }),
+    () =>
+      getEntries(database, { date: formatDate(date) }).map((entry) => {
+        // Reformulating each entry to contain its macronutrients' information
+        const { foodId, unitId } = entry;
+        const table = getNutritionalTable(database, {
+          foodId,
+          unitId,
+        });
+
+        return {
+          ...entry,
+          fats: proportion(table.fats, entry.amount, table.baseMeasure),
+          kcals: proportion(table.kcals, entry.amount, table.baseMeasure),
+          carbs: proportion(table.carbs, entry.amount, table.baseMeasure),
+          protein: proportion(table.protein, entry.amount, table.baseMeasure),
+        };
+      }),
     { initialData: [] }
   );
 
@@ -44,7 +71,6 @@ export default function HomeScreen() {
     const listener = addDatabaseChangeListener((change) => {
       if (change.tableName === "entries") {
         refetchEntries();
-        setMealsKey(Date.now());
       }
     });
 
@@ -76,10 +102,30 @@ export default function HomeScreen() {
     setDate(date);
   };
 
-  const [mealsKey, setMealsKey] = useState(Date.now());
+  const [fats, setFats] = useState(0);
+  const [carbs, setCarbs] = useState(0);
+  const [kcals, setKcals] = useState(0);
+  const [protein, setProtein] = useState(0);
+
+  useEffect(() => {
+    setCarbs(entries.reduce((acc, val) => acc + val.carbs, 0));
+    setFats(entries.reduce((acc, val) => acc + val.fats, 0));
+    setProtein(entries.reduce((acc, val) => acc + val.protein, 0));
+    setKcals(entries.reduce((acc, val) => acc + val.kcals, 0));
+  }, [entries]);
+
+  const widthAndHeight = 140;
+
+  const series = [protein, fats, carbs];
+  const sliceColor = [
+    Colors.green50, // protein
+    Colors.green30, // fats
+    Colors.green10, // carbs
+  ];
 
   return (
     <>
+      {/* Date banner */}
       <View
         style={{
           flexDirection: "row",
@@ -113,7 +159,104 @@ export default function HomeScreen() {
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
       />
-      <ScrollView key={mealsKey} contentContainerStyle={styles.container}>
+      {/* Homepage */}
+      <ScrollView
+        fillViewport={true}
+        contentContainerStyle={styles.homeScreen.scrollView}
+      >
+        {/* Overview */}
+        <View
+          row
+          style={{
+            position: "absolute",
+            top: 0,
+            width: screenWidth,
+            justifyContent: "space-around",
+            marginBottom: 4,
+            backgroundColor: Colors.green10,
+            paddingVertical: 12,
+          }}
+        >
+          <View row style={{ alignItems: "center", gap: 8 }}>
+            <WheatIcon color={Colors.green70} width={24} height={24} />
+            <Text text70BL green70>
+              {fixDecimals(carbs)}g
+            </Text>
+          </View>
+          <View row style={{ alignItems: "center", gap: 8 }}>
+            <BaconIcon color={Colors.green70} width={24} height={24} />
+            <Text text70BL green70>
+              {fixDecimals(fats)}g
+            </Text>
+          </View>
+          <View row style={{ alignItems: "center", gap: 8 }}>
+            <DrumstickIcon color={Colors.green70} width={24} height={24} />
+            <Text text70BL green70>
+              {fixDecimals(protein)}g
+            </Text>
+          </View>
+          <View row style={{ alignItems: "center", gap: 8 }}>
+            <CaloriesIcon color={Colors.green70} width={24} height={24} />
+            <Text text70BL green70>
+              {Math.round(kcals)}
+            </Text>
+          </View>
+        </View>
+        <View style={{ height: 36, marginBottom: 20 }} />
+        {/* Graph chart */}
+        {protein + carbs + fats !== 0 && (
+          <View
+            row
+            style={{
+              marginVertical: 12,
+              gap: 24,
+              alignItems: "center",
+            }}
+          >
+            <PieChart
+              widthAndHeight={widthAndHeight}
+              series={series}
+              sliceColor={sliceColor}
+              coverRadius={0.45}
+            />
+            <View style={{ gap: 4 }}>
+              <View row style={{ alignItems: "center", gap: 6 }}>
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    backgroundColor: Colors.green10,
+                    borderRadius: 3,
+                  }}
+                />
+                <Text text70>Carbohydrates</Text>
+              </View>
+              <View row style={{ alignItems: "center", gap: 6 }}>
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    backgroundColor: Colors.green30,
+                    borderRadius: 3,
+                  }}
+                />
+                <Text text70>Fats</Text>
+              </View>
+              <View row style={{ alignItems: "center", gap: 6 }}>
+                <View
+                  style={{
+                    width: 16,
+                    height: 16,
+                    backgroundColor: Colors.green50,
+                    borderRadius: 3,
+                  }}
+                />
+                <Text text70>Protein</Text>
+              </View>
+            </View>
+          </View>
+        )}
+
         {meals.map((meal) => {
           return (
             <MealDrawer
@@ -128,13 +271,3 @@ export default function HomeScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 10,
-    gap: 10,
-  },
-});

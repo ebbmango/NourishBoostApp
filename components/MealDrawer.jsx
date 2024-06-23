@@ -71,17 +71,9 @@ export default function MealDrawer({ meal, date, entries }) {
           }}
         >
           {entries.map((entry) => {
-            const { foodId, unitId } = entry;
-
-            const nutriTable = getNutritionalTable(database, {
-              foodId,
-              unitId,
-            });
-
-            const kcals =
-              (nutriTable.kcals * entry.amount) / nutriTable.baseMeasure;
-
-            return <Entry key={entry.id} name={entry.foodName} kcals={kcals} />;
+            return (
+              <Entry key={entry.id} name={entry.foodName} kcals={entry.kcals} />
+            );
           })}
 
           <Button
