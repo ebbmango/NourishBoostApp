@@ -6,6 +6,7 @@ import FoodDetailsScreen from "../screens/FoodDetailsScreen";
 import NutriTableEditScreen from "../screens/NutriTableEditScreen";
 import FoodCreateScreen from "../screens/FoodCreateScreen";
 import NutriTableCreateScreen from "../screens/NutriTableCreateScreen";
+import EntryEditScreen from "../screens/EntryEditScreen";
 
 const MealsStack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ export default function MealsStackNavigator() {
         name="Add Nutritional Table"
         component={NutriTableCreateScreen}
       />
+      <MealsStack.Screen name="Edit Entry" component={EntryEditScreen} />
     </MealsStack.Navigator>
   );
 }

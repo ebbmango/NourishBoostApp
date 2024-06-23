@@ -71,9 +71,7 @@ export default function MealDrawer({ meal, date, entries }) {
           }}
         >
           {entries.map((entry) => {
-            return (
-              <Entry key={entry.id} name={entry.foodName} kcals={entry.kcals} />
-            );
+            return <Entry key={entry.id} entry={entry} />;
           })}
 
           <Button
