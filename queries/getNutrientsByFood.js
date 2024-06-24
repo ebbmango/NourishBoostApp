@@ -15,7 +15,9 @@ FROM
 INNER JOIN 
     units AS u ON n.unitId = u.id
 WHERE 
-    n.foodId = $foodId;
+    n.foodId = $foodId
+AND
+    n.isDeleted = 0;
 `;
 
 // This query gets all the nutritional tables for a particular food item.

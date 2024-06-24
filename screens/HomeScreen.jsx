@@ -64,6 +64,7 @@ export default function HomeScreen() {
           kcals: proportion(table.kcals, entry.amount, table.baseMeasure),
           carbs: proportion(table.carbs, entry.amount, table.baseMeasure),
           protein: proportion(table.protein, entry.amount, table.baseMeasure),
+          nutrients: table,
         };
       }),
     { initialData: [] }

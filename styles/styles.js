@@ -128,7 +128,7 @@ export default StyleSheet.create({
       alignItems: "center",
       gap: 15,
       marginLeft: 16,
-      marginBottom: 10,
+      marginTop: 10,
     },
     inputFieldStyle: {
       width: screenWidth - 64,
@@ -147,7 +147,7 @@ export default StyleSheet.create({
       backgroundColor: Colors.green40,
       borderRadius: 5,
       marginLeft: 10,
-      marginBottom: 10,
+      marginTop: 10,
       alignItems: "center",
     },
     buttonsView: {

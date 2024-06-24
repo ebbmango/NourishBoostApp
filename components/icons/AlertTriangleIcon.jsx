@@ -21,4 +21,3 @@ export default AlertTriangleIcon;
 
 // Component:
 // https://react-svgr.com/playground/?native=true
-

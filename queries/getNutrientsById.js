@@ -2,8 +2,9 @@ import toSQLiteParameters from "../functions/toSQLiteParameters";
 
 const query = ` 
 SELECT 
-    n.id AS nutrientsId,
-    n.baseMeasure AS baseMeasure,
+    n.id,
+    n.isDeleted,
+    n.baseMeasure,
     u.id AS unitId,
     u.symbol AS unitSymbol,
     n.kcals,
@@ -30,7 +31,8 @@ const getNutrientsById = (database, params) => {
     fats: nutrients.fats,
     kcals: nutrients.kcals,
     protein: nutrients.protein,
-    tableId: nutrients.tableId,
+    nutrientsId: nutrients.id,
+    isDeleted: nutrients.isDeleted,
     unit: {
       id: nutrients.unitId,
       symbol: nutrients.unitSymbol,

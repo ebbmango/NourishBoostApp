@@ -1,9 +1,6 @@
 import toSQLiteParameters from "../functions/toSQLiteParameters";
 
-const query = `
-UPDATE nutrients SET
-WHERE id = $nutrientsId;
-`;
+const query = "UPDATE nutrients SET isDeleted = 1 WHERE id = $nutrientsId;";
 
 const setDeletedNutrients = (database, params) => {
   return database.runSync(query, toSQLiteParameters(params));
