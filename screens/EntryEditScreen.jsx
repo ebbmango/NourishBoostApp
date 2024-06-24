@@ -65,6 +65,7 @@ export default function FoodDetailsScreen() {
         refetchNutrients();
         refetchUnits();
         setSelected((prev) => (prev === 0 ? 0 : prev - 1));
+        console.log(change);
       }
       if (change.tableName === "foods") refetchFoodName();
     });

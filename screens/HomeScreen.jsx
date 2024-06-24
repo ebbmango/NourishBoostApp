@@ -129,6 +129,26 @@ export default function HomeScreen() {
     Colors.green10, // carbs
   ];
 
+  useEffect(() => {
+    database.getAllSync("select * from foods;").forEach((item) => {
+      console.log(item);
+    });
+    console.log("\n");
+    database
+      .getAllSync("select * from nutrients;")
+      .map((nutrients) => {
+        return {
+          foodId: nutrients.foodId,
+          nutrientsId: nutrients.id,
+          isDeleted: nutrients.isDeleted,
+        };
+      })
+      .forEach((item) => {
+        console.log(item);
+      });
+    console.log("\n");
+  }, []);
+
   return (
     <>
       {/* Date banner */}
