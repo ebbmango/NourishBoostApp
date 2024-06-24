@@ -2,7 +2,7 @@ import toSQLiteParameters from "../functions/toSQLiteParameters";
 
 const query = `
 INSERT INTO nutrients
-(foodId, unitId, baseMeasure, kcals, protein, carbs, fats)
+(foodId, unitId, baseMeasure, kcals, protein, carbs, fats, isDeleted)
 VALUES (
   $foodId,
   $unitId,
@@ -10,7 +10,8 @@ VALUES (
   $kcals,
   $protein,
   $carbs,
-  $fats
+  $fats,
+  0
 );`;
 
 const createNutrients = (database, params) => {
