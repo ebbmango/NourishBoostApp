@@ -9,6 +9,10 @@ import WeightScreen from "../screens/WeightScreen";
 import UtensilsIcon from "../components/icons/UtensilsIcon";
 import ScaleIcon from "../components/icons/ScaleIcon";
 import MealsStackNavigator from "./MealsStackNavigator";
+import WeightStackNavigator from "./WeightStackNavigator";
+import ExportImportDataScreen from "../screens/ExportImportDataScreen";
+import FloppyDiskIcon from "../components/icons/FloppyDiskIcon";
+import ExportStackNavigator from "./ExportStackNavigator";
 
 // Initializing navigator
 const Tab = createBottomTabNavigator();
@@ -20,6 +24,19 @@ export default function BottomTabsNavigator() {
       screenOptions={{ headerShown: false }}
       initialRouteName="Diary"
     >
+      <Tab.Screen
+        name="Data"
+        component={ExportStackNavigator}
+        options={{
+          tabBarShowLabel: false,
+          tabBarIcon: ({ focused }) => (
+            <FloppyDiskIcon
+              color={focused ? Colors.green30 : Colors.black}
+              style={{ width: 28, height: 28 }}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Diary"
         component={MealsStackNavigator}
@@ -35,7 +52,7 @@ export default function BottomTabsNavigator() {
       />
       <Tab.Screen
         name="Weight"
-        component={WeightScreen}
+        component={WeightStackNavigator}
         options={{
           tabBarShowLabel: false,
           tabBarIcon: ({ focused }) => (
