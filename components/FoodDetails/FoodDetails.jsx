@@ -17,6 +17,10 @@ import PencilIcon from "../icons/PencilIcon";
 import FilePlusIcon from "../icons/FilePlusIcon";
 import FileWriteIcon from "../icons/FileWriteIcon";
 import FileDeleteIcon from "../icons/FileDeleteIcon";
+import WheatIcon from "../icons/WheatIcon";
+import BaconIcon from "../icons/BaconIcon";
+import CaloriesIcon from "../icons/CaloriesIcon";
+import DrumstickIcon from "../icons/DrumstickIcon";
 
 // Queries
 import deleteFood from "../../queries/deleteFood";
@@ -28,6 +32,7 @@ import fixDecimals from "../../functions/fixDecimals";
 
 // Stylesheets
 import foodDetailsScreenStyles from "../../styles/foodDetailsScreenStyles";
+import GaugeIcon from "../icons/GaugeIcon";
 
 export default function FoodDetails({
   food,
@@ -119,18 +124,22 @@ export default function FoodDetails({
           {
             title: "Calories",
             value: fixMacros(selectedTable.kcals),
+            icon: <CaloriesIcon />,
           },
           {
             title: "Carbohydrates",
             value: fixMacros(selectedTable.carbs),
+            icon: <WheatIcon />,
           },
           {
             title: "Fats",
             value: fixMacros(selectedTable.fats),
+            icon: <BaconIcon />,
           },
           {
             title: "Protein",
             value: fixMacros(selectedTable.protein),
+            icon: <DrumstickIcon />,
           },
         ]}
       />

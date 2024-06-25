@@ -149,6 +149,7 @@ export default StyleSheet.create({
       marginLeft: 10,
       marginTop: 10,
       alignItems: "center",
+      overflow: 'hidden',
     },
     buttonsView: {
       marginTop: 24,
