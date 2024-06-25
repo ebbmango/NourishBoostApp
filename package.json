@@ -32,6 +32,7 @@
     "react-native-screens": "^3.31.1",
     "react-native-svg": "^15.2.0",
     "react-native-ui-lib": "^7.22.0",
+    "react-native-wheely": "^0.6.0",
     "react-query": "^3.39.3"
   },
   "devDependencies": {

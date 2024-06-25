@@ -54,6 +54,9 @@ const homeScreenStyles = StyleSheet.create({
     },
     item: { flexDirection: "row", alignItems: "center", gap: 8 },
   },
+  nutrientVerticalCard: {
+    
+  }
 });
 
 export default homeScreenStyles;

@@ -1,5 +1,12 @@
 // External dependencies
-import { Button, Colors, Dialog, Text, View } from "react-native-ui-lib";
+import {
+  Button,
+  Colors,
+  Dialog,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native-ui-lib";
 
 // Components
 import AlertTriangleIcon from "./icons/AlertTriangleIcon";
@@ -8,6 +15,8 @@ import AlertTriangleIcon from "./icons/AlertTriangleIcon";
 import styles from "../styles/styles";
 import tweakStyles from "../functions/tweakStyles";
 import PencilIcon from "./icons/PencilIcon";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { Pressable } from "react-native";
 
 export default function TextFieldDialogue({
   red,
@@ -15,6 +24,7 @@ export default function TextFieldDialogue({
   visible,
   setVisible,
   onConfirm,
+  type,
 }) {
   const color = red ? Colors.red10 : Colors.green10;
 
@@ -34,6 +44,50 @@ export default function TextFieldDialogue({
         NEW FOOD
       </Text>
       <View>{content.alertContent}</View>
+
+      <View row style={{ marginTop: 10, gap: 16 }}>
+        <Pressable
+          onPress={() => {
+            type.set("food");
+          }}
+        >
+          <View
+            center
+            style={{
+              width: 100,
+              height: 100,
+              backgroundColor:
+                type.selected === "food" ? Colors.green20 : Colors.green50,
+              borderRadius: 10,
+            }}
+          >
+            <Text text50 white>
+              Food
+            </Text>
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            type.set("recipe");
+          }}
+        >
+          <View
+            center
+            style={{
+              width: 100,
+              height: 100,
+              backgroundColor:
+                type.selected === "recipe" ? Colors.green20 : Colors.green50,
+              borderRadius: 10,
+            }}
+          >
+            <Text text50 white>
+              Recipe
+            </Text>
+          </View>
+        </Pressable>
+      </View>
+
       <View style={styles.dialogues.buttonsView}>
         <Button
           style={styles.dialogues.button[red ? "lightRed" : "lightGreen"]}

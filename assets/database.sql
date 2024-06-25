@@ -15,12 +15,11 @@ CREATE TABLE IF NOT EXISTS "foods" (
 CREATE TABLE IF NOT EXISTS "ingredients" (
   "id" INTEGER UNIQUE PRIMARY KEY NOT NULL,
   "recipeId" INTEGER,
-  "ingredientId" INTEGER,
+  "nutrientsId" INTEGER,
   "amount" REAL,
-  "unitId" INTEGER,
   -- One recipe can have multiple ingredients and a single ingredient can appear in many recipes.
   FOREIGN KEY ("recipeId") REFERENCES "foods" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY ("ingredientId") REFERENCES "foods" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY ("nutrientsId") REFERENCES "nutrients" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- MEASUREMENT UNITS
 CREATE TABLE IF NOT EXISTS "units" (

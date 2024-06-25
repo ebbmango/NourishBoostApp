@@ -7,6 +7,7 @@ import NutriTableEditScreen from "../screens/NutriTableEditScreen";
 import FoodCreateScreen from "../screens/FoodCreateScreen";
 import NutriTableCreateScreen from "../screens/NutriTableCreateScreen";
 import EntryEditScreen from "../screens/EntryEditScreen";
+import RecipeCreateScreen from "../screens/RecipeCreateScreen";
 
 const MealsStack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ export default function MealsStackNavigator() {
       <MealsStack.Screen name="Details" component={FoodDetailsScreen} />
       <MealsStack.Screen name="Edit" component={NutriTableEditScreen} />
       <MealsStack.Screen name="Add Food Item" component={FoodCreateScreen} />
+      <MealsStack.Screen name="Create Recipe" component={RecipeCreateScreen} />
       <MealsStack.Screen
         name="Add Nutritional Table"
         component={NutriTableCreateScreen}

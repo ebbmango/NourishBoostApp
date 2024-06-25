@@ -73,6 +73,7 @@ export default function FoodsScreen() {
   const [showNameAlert, setShowNameAlert] = useState(false);
 
   const [newFoodName, setNewFoodName] = useState("");
+  const [foodType, setFoodType] = useState("food");
 
   return (
     <>
@@ -87,6 +88,7 @@ export default function FoodsScreen() {
       <TextFieldDialogue
         visible={showTextDialogue}
         setVisible={setShowTextDialogue}
+        type={{ selected: foodType, set: setFoodType }}
         onConfirm={() => {
           if (
             foods.some(
@@ -97,9 +99,15 @@ export default function FoodsScreen() {
             setShowNameAlert(true);
           } else {
             setShowTextDialogue(false);
-            navigator.navigate("Add Food Item", {
-              foodName: newFoodName.trim(),
-            });
+            if (foodType === "food")
+              navigator.navigate("Add Food Item", {
+                foodName: newFoodName.trim(),
+              });
+
+            if (foodType === "recipe")
+              navigator.navigate("Create Recipe", {
+                recipeName: newFoodName.trim(),
+              });
           }
         }}
         content={{

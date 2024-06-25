@@ -82,7 +82,11 @@ export default function FoodDetailsScreen() {
       setQuantity(nutrientsArray[selected].baseMeasure);
   }, [selected]);
 
-  return nutrientsLoaded && unitsLoaded ? (
+  return nutrientsLoaded &&
+    unitsLoaded &&
+    nutrientsArray &&
+    nutrientsArray[selected] &&
+    nutrientsArray.length !== 0 ? (
     <>
       <FoodDetails
         food={{ id: foodId, name: foodName, nutritionalTables: nutrientsArray }}
