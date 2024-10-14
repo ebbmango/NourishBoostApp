@@ -6,31 +6,57 @@ import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
 import RecipeIcon from "./icons/RecipeIcon";
 import foodsListScreenStyles from "../styles/foodsListScreenStyles";
 import FoodIcon from "./icons/FoodIcon";
+import DuotoneCasseroleIcon from "./icons/DuotoneCasseroleIcon";
+import DuotoneChefIcon from "./icons/DuotoneChefIcon";
+import DuotoneBowlChopsticksIcon from "./icons/DuotoneBowlChopsticksIcon";
 
 const screenWidth = Dimensions.get("window").width;
 
 // Render a touchable rectangle that redirects to the relevant page
 export default function FoodListItem({ foodName, foodType, navigate }) {
-  const badgeProps = {
-    primaryColor: Colors.white,
-    secondaryColor: Colors.green30,
-    width: 20,
-    height: 20,
-    style: foodsListScreenStyles.typeBadge,
-  };
+  // const badgeProps = {
+  //   primaryColor: Colors.white,
+  //   secondaryColor: Colors.green30,
+  //   width: 20,
+  //   height: 20,
+  //   style: foodsListScreenStyles.typeBadge,
+  // };
 
   // const foodType = "food";
 
   return (
     <TouchableOpacity row center onPress={navigate}>
-      {foodType === "food" ? (
-        <FoodIcon {...badgeProps} />
-      ) : (
-        <RecipeIcon {...badgeProps} />
-      )}
-
-      <View style={{ position: "absolute", zIndex: 1, right: -8 }} />
+      {/* <View style={{ position: "absolute", zIndex: 1, right: -8 }} /> */}
       <View style={styles.foodListItem}>
+        {foodType === "food" ? (
+          <DuotoneBowlChopsticksIcon
+            style={{
+              position: "absolute",
+              transform: [{ rotate: "-10deg" }],
+              bottom: -10,
+              right: 5,
+            }}
+            width={50}
+            height={50}
+            primary={Colors.green70}
+            secondary={Colors.green50}
+          />
+        ) : (
+          <DuotoneChefIcon
+            style={{
+              position: "absolute",
+              // top: ,
+              // transform: [{ rotate: "135deg" }],
+              bottom: 0,
+              right: 0,
+            }}
+            width={56}
+            height={56}
+            primary={Colors.green70}
+            secondary={Colors.green50}
+          />
+        )}
+
         <Text text60L>{foodName}</Text>
       </View>
     </TouchableOpacity>
@@ -48,5 +74,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     zIndex: -1,
+    overflow: "hidden",
   },
 });
