@@ -17,7 +17,7 @@ import tweakStyles from "../functions/tweakStyles";
 import PencilIcon from "./icons/PencilIcon";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
-import DuotonePanIcon from "./icons/DuotonePanIcon";
+import DuotoneCasseroleIcon from "./icons/DuotonePanIcon";
 import DuotoneChefIcon from "./icons/DuotoneChefIcon";
 import DuotoneBowlChopsticksIcon from "./icons/DuotoneBowlChopsticksIcon";
 import DuotoneEggIcon from "./icons/DuotoneEggIcon";
@@ -145,7 +145,7 @@ export default function CreateFoodDialogue({
                 borderRadius: 3,
               }}
             >
-              <DuotonePanIcon
+              <DuotoneCasseroleIcon
                 style={{
                   position: "absolute",
                   top: 8,

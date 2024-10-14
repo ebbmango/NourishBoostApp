@@ -1,7 +1,7 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const DuotonePanIcon = ({ primary, secondary, ...props }) => (
+const DuotoneCasseroleIcon = ({ primary, secondary, ...props }) => (
   <Svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" {...props}>
     <Path
       fill={secondary}
@@ -16,7 +16,7 @@ const DuotonePanIcon = ({ primary, secondary, ...props }) => (
   </Svg>
 );
 
-export default DuotonePanIcon;
+export default DuotoneCasseroleIcon;
 
 // Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com
 // License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc
