@@ -17,8 +17,6 @@ import tweakStyles from "../functions/tweakStyles";
 import PencilIcon from "./icons/PencilIcon";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
-import ChefIcon from "./icons/ChefIcon";
-import PanIcon from "./icons/PanIcon";
 import DuotonePanIcon from "./icons/DuotonePanIcon";
 import DuotoneChefIcon from "./icons/DuotoneChefIcon";
 import DuotoneBowlChopsticksIcon from "./icons/DuotoneBowlChopsticksIcon";
@@ -151,9 +149,6 @@ export default function CreateFoodDialogue({
                 style={{
                   position: "absolute",
                   top: 8,
-                  // top: -10,
-                  // right: -10,
-                  // transform: [{ rotate: '45deg' }],
                 }}
                 width={60}
                 height={60}
@@ -162,11 +157,7 @@ export default function CreateFoodDialogue({
                   type.selected === "recipe" ? Colors.green40 : Colors.green60
                 }
               />
-              <Text
-                text60
-                white
-                // style={{ marginBottom: 8 }}
-              >
+              <Text text60 white>
                 Recipe
               </Text>
               <DuotoneChefIcon
@@ -180,8 +171,6 @@ export default function CreateFoodDialogue({
                   type.selected === "recipe" ? Colors.green40 : Colors.green60
                 }
               />
-              {/* <ChefIcon width={50} height={50} color={Colors.white} /> */}
-              {/* <PanIcon width={50} height={50} color={Colors.white} /> */}
             </View>
           </View>
         </Pressable>
