@@ -17,3 +17,12 @@ const DuotoneBowlChopsticksIcon = ({ primary, secondary, ...props }) => (
 );
 
 export default DuotoneBowlChopsticksIcon;
+
+// Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com
+// License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc
+
+// Icon:
+// https://fontawesome.com/icons/bowl-chopsticks-noodles?f=duotone&s=solid
+
+// React Component:
+// https://react-svgr.com/playground/?native=true

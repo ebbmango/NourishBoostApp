@@ -12,12 +12,11 @@ const TrashIcon = ({ color, ...props }) => (
 
 export default TrashIcon;
 
-// Icon:
 // Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com
 // License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc
 
-// Source:
+// Icon:
 // https://fontawesome.com/icons/trash-can?f=classic&s=solid
 
-// Component:
+// React Component:
 // https://react-svgr.com/playground/?native=true

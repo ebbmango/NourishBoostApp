@@ -12,12 +12,11 @@ const PencilIcon = ({ color, ...props }) => (
 
 export default PencilIcon;
 
-// Icon:
 // Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com
 // License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc
 
-// Source:
+// Icon:
 // https://fontawesome.com/icons/pencil?f=classic&s=solid
 
-// Component:
+// React Component:
 // https://react-svgr.com/playground/?native=true
