@@ -17,7 +17,7 @@ import tweakStyles from "../functions/tweakStyles";
 import PencilIcon from "./icons/PencilIcon";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
-import DuotoneCasseroleIcon from "./icons/DuotonePanIcon";
+import DuotoneCasseroleIcon from "./icons/DuotoneCasseroleIcon";
 import DuotoneChefIcon from "./icons/DuotoneChefIcon";
 import DuotoneBowlChopsticksIcon from "./icons/DuotoneBowlChopsticksIcon";
 import DuotoneEggIcon from "./icons/DuotoneEggIcon";
