@@ -30,8 +30,6 @@ export default function MealDrawer({ meal, date, entries }) {
 
   const kcals = entries.reduce((acc, val) => acc + val.kcals, 0);
 
-  // console.log(meal.name, meal.id, entries);
-
   return (
     <>
       <ExpandableSection

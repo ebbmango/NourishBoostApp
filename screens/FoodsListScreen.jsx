@@ -24,7 +24,7 @@ import getFoods from "../queries/getFoods";
 import styles from "../styles/styles";
 const screenWidth = Dimensions.get("window").width;
 
-import TextFieldDialogue from "../components/TextFieldDialogue";
+import CreateFoodDialogue from "../components/CreateFoodDialogue";
 import AlertDialogue from "../components/AlertDialogue";
 import { Dimensions, FlatList } from "react-native";
 import CarrotIcon from "../components/icons/CarrotIcon";
@@ -85,7 +85,8 @@ export default function FoodsScreen() {
           confirmText: "I understand",
         }}
       />
-      <TextFieldDialogue
+      <CreateFoodDialogue
+        // Food creation confirmation dialogue
         visible={showTextDialogue}
         setVisible={setShowTextDialogue}
         type={{ selected: foodType, set: setFoodType }}
@@ -142,6 +143,7 @@ export default function FoodsScreen() {
         )}
       />
       <View
+        // Bottom-screen searchbox view
         style={{
           width: screenWidth,
           justifyContent: "center",
@@ -149,6 +151,7 @@ export default function FoodsScreen() {
         }}
       >
         <View
+          // Green background
           style={{
             width: screenWidth * 0.95,
             backgroundColor: Colors.green30,
@@ -167,14 +170,15 @@ export default function FoodsScreen() {
           }}
         >
           <View
+            // Top row (type buttons) view
             row
-            // spread
             style={{
               paddingBottom: 12,
               justifyContent: "space-around",
             }}
           >
             <TouchableOpacity
+              // Foods button
               row
               center
               style={{
@@ -187,16 +191,20 @@ export default function FoodsScreen() {
                 Foods
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity row center>
+            <TouchableOpacity
+              // "All" button
+              row
+              center
+            >
               <Text text70BL white>
                 All
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              // "Recipes" button
               row
               center
               style={{
-                // width: (screenWidth * 0.95) / 3 - 8,
                 gap: 12,
                 alignItems: "center",
                 alignContent: "center",
@@ -205,20 +213,19 @@ export default function FoodsScreen() {
               <Text text70BL white>
                 Recipes
               </Text>
-              {/* <RecipeIcon height={24} width={24} color={Colors.white} style /> */}
             </TouchableOpacity>
           </View>
-          {/* Search Field */}
           <View row center style={{ gap: 8 }}>
             <TextField
+              // Searchfield
               onChangeText={(text) => {
                 setSearchParams(text.trim());
               }}
               placeholder={"Search"}
               containerStyle={foodsListScreenStyles.searchField}
             />
-            {/* Add food button */}
             <Button
+              // Add food button
               iconSource={() => {
                 return <PlusIcon color={Colors.green20} />;
               }}
@@ -234,57 +241,4 @@ export default function FoodsScreen() {
       </View>
     </>
   );
-}
-
-// Top bar
-// <View style={foodsListScreenStyles.searchBar}>
-// {/* Search Field */}
-// <TextField
-//   onChangeText={(text) => {
-//     setSearchParams(text.trim());
-//   }}
-//   placeholder={"Search"}
-//   containerStyle={styles.foodList.searchField}
-// />
-// {/* Add food button */}
-// <Button
-//   iconSource={() => {
-//     return <PlusIcon color={Colors.white} />;
-//   }}
-//   backgroundColor={Colors.green30}
-//   round
-//   style={{ width: 30, height: 30, padding: 6, marginTop: 2 }}
-//   onPress={() => {
-//     setShowTextDialogue(true);
-//   }}
-// />
-// </View>
-{
-  /* <View
-  row
-  center
-  style={{
-    width: screenWidth,
-    // height: 100,
-    paddingTop: 8,
-    paddingBottom: 12,
-    backgroundColor: Colors.green30,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  }}
->
-  {["Foods", "All", "Recipes"].map((number) => (
-    <TouchableOpacity
-      row
-      key={number}
-      center
-      style={{ width: screenWidth / 3 - 8, gap: 12 }}
-    >
-      <CarrotIcon height={20} width={20} color={Colors.white} />
-      <Text text70BL white>
-        {number}
-      </Text>
-    </TouchableOpacity>
-  ))}
-</View> */
 }
