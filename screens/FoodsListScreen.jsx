@@ -27,11 +27,7 @@ const screenWidth = Dimensions.get("window").width;
 import CreateFoodDialogue from "../components/CreateFoodDialogue";
 import AlertDialogue from "../components/AlertDialogue";
 import { Dimensions, FlatList } from "react-native";
-import CarrotIcon from "../components/icons/CarrotIcon";
 import foodsListScreenStyles from "../styles/foodsListScreenStyles";
-import RecipeIcon from "../components/icons/RecipeIcon";
-import FoodIcon from "../components/icons/FoodIcon";
-import SparklesIcon from "../components/icons/SparklesIcon";
 
 export default function FoodsScreen() {
   // Instantiating functionalities.

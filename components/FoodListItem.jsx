@@ -3,10 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Dimensions, StyleSheet } from "react-native";
 import { Text, Colors, ListItem, View } from "react-native-ui-lib";
 import { TouchableOpacity } from "react-native-ui-lib/src/incubator";
-import RecipeIcon from "./icons/RecipeIcon";
 import foodsListScreenStyles from "../styles/foodsListScreenStyles";
-import FoodIcon from "./icons/FoodIcon";
-import DuotoneCasseroleIcon from "./icons/DuotoneCasseroleIcon";
 import DuotoneChefIcon from "./icons/DuotoneChefIcon";
 import DuotoneBowlChopsticksIcon from "./icons/DuotoneBowlChopsticksIcon";
 
