@@ -46,28 +46,26 @@ export default function NutrientsGrid({ items }) {
             position: "absolute",
             left: -8,
             bottom: -8,
-            // transform: [{ rotate: "-20deg" }],
           }}
             color={Colors.green50}
           />
         )}
         {title === "Carbohydrates" && (
           <WheatIcon
-            width={50}
-            height={50}
-            style={{
-              position: "absolute",
-              left: -6,
-              bottom: 2,
-              transform: [{ rotate: "-45deg" }],
-            }}
+          width={64}
+          height={64}
+          style={{
+            position: "absolute",
+            left: -4,
+            bottom: -4,
+          }}
             color={Colors.green50}
           />
           
         )}
 
-        <Text text70>{title}</Text>
-        <Text text70BL>
+        <Text text70BL>{title}</Text>
+        <Text text70BL whites >
           {value}
           {title !== "Calories" && "g"}
         </Text>
