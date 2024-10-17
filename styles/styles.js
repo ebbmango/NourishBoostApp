@@ -141,6 +141,7 @@ export default StyleSheet.create({
       justifyContent: "flex-start",
     },
     nutrientsBoxStyle: {
+      overflow: "hidden",
       width: screenWidth / 2 - 15,
       padding: 10,
       justifyContent: "center",
