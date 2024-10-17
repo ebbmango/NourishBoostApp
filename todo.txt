@@ -1,0 +1,25 @@
+[] Disable recipes for now. They are completely glitched.
+
+[] Implement smooth expansion/retraction of the pie chart whenever an entry is first added to any given day
+
+[] Implement item renaming.
+
+[] Whenever I click on an entry, the pre-selected measurement unit should be the one that the entry currently already has.
+
+[] If I press and hold any buttons on the food/entry details screen, their explanation should expand.
+
+[] Colour the calendar picker with the application's theme.
+
+[] Invert the scroll direction in the foods/recipes list.
+
+[] Allow the user to change the app's theme to their preferred colors.
+
+[] Allow the user to change the app's icons to their preferred ones.
+
+known issues:
+
+1. In EntryEditScreen.jsx and FoodDetailsScreen.jsx:
+   Changing the selected table index every time ANY change happens in the database.
+   In the future, it would be good to change this to happen in case ONLY of deletion or flagging (flag as deleted (isDeleted = 1))
+
+2. No transaction handling.

@@ -1,5 +1,0 @@
-1. In EntryEditScreen.jsx and FoodDetailsScreen.jsx:
-   Changing the selected table index every time ANY change happens in the database.
-   In the future, it would be good to change this to happen in case ONLY of deletion or flagging (flag as deleted (isDeleted = 1))
-
-2. No transaction handling.
