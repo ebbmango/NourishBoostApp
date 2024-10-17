@@ -65,7 +65,7 @@ export default function NutrientsGrid({ items }) {
         )}
 
         <Text text70BL>{title}</Text>
-        <Text text70BL whites >
+        <Text text70BL >
           {value}
           {title !== "Calories" && "g"}
         </Text>
